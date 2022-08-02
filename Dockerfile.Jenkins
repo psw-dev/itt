@@ -1,0 +1,7 @@
+# Build runtime image
+FROM dev.docker.registry:5000/vendor/mcr.microsoft.com/dotnet/core/aspnet:3.1
+WORKDIR /app
+EXPOSE 3050
+ENV ASPNETCORE_URLS http://*:2200
+COPY ./out/ .
+ENTRYPOINT ["dotnet", "psw.itt.api.dll"]
