@@ -10,7 +10,7 @@ using psw.itt.service.Strategies;
 
 namespace psw.itt.api.Controllers
 {
-    [Route("api/v1/itt/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class ITTController : BaseController
     {
