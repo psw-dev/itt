@@ -11,7 +11,7 @@ using System.Text;
 
 namespace psw.itt.data.sql.Repositories
 {
-    internal abstract class Repository<T> : IRepository<T> where T : Entity
+    public abstract class Repository<T> : IRepository<T> where T : Entity
     {
         #region Protected properties
         protected string TableName { get; set; }

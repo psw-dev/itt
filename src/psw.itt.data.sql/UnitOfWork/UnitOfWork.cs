@@ -22,7 +22,11 @@ namespace psw.itt.data.sql.UnitOfWork
 
         // Repositories 
 
-
+        private IChapterAgencyLinkRepository _chapterAgencyLinkRepository;
+        private IProductCodeChapterRepository _productCodeChapterRepository;
+        private IProductCodeEntityRepository _productCodeEntityRepository;
+        private IProductCodeSheetUploadHistoryRepository _productCodeSheetUploadHistoryRepository;
+        private IProductCodeSheetUploadStatusRepository _productCodeSheetUploadStatusRepository;
 
         private IEventBus _eventBus;
         public IEventBus eventBus => _eventBus;
@@ -58,6 +62,11 @@ namespace psw.itt.data.sql.UnitOfWork
 
 
         #region Public Properties
+        public IChapterAgencyLinkRepository ChapterAgencyLinkRepository => _chapterAgencyLinkRepository ?? (_chapterAgencyLinkRepository = new ChapterAgencyLinkRepository(_connection));
+        public IProductCodeChapterRepository ProductCodeChapterRepository => _productCodeChapterRepository ?? (_productCodeChapterRepository = new ProductCodeChapterRepository(_connection));
+        public IProductCodeEntityRepository ProductCodeEntityRepository => _productCodeEntityRepository ?? (_productCodeEntityRepository = new ProductCodeEntityRepository(_connection));
+        public IProductCodeSheetUploadHistoryRepository ProductCodeSheetUploadHistoryRepository => _productCodeSheetUploadHistoryRepository ?? (_productCodeSheetUploadHistoryRepository = new ProductCodeSheetUploadHistoryRepository(_connection));
+        public IProductCodeSheetUploadStatusRepository ProductCodeSheetUploadStatusRepository => _productCodeSheetUploadStatusRepository ?? (_productCodeSheetUploadStatusRepository = new ProductCodeSheetUploadStatusRepository(_connection));
 
         #endregion
 

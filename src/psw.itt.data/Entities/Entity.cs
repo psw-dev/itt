@@ -10,7 +10,12 @@ namespace psw.itt.data.Entities
 
         public virtual Dictionary<string, object> GetColumns()
         {
-            return new Dictionary<string, object>();
+            return null;
+        }
+
+        public virtual object GetInsertUpdateParams()
+        {
+            return null;
         }
     }
 }
