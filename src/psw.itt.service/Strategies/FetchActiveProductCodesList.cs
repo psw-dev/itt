@@ -6,10 +6,10 @@ using PSW.Lib.Logs;
 
 namespace psw.itt.service.Strategies
 {
-    public class TestStrategy : ApiStrategy<Unspecified, Unspecified>
+    public class FetchActiveProductCodesList : ApiStrategy<Unspecified, Unspecified>
     {
         #region Constructors
-        public TestStrategy(CommandRequest commandRequest) : base(commandRequest)
+        public FetchActiveProductCodesList(CommandRequest commandRequest) : base(commandRequest)
         {
 
         }

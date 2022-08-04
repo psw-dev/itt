@@ -25,7 +25,14 @@ namespace psw.itt.service.Strategies
         {
             switch (request.methodId)
             {
-                case "2200": return new TestStrategy(request);
+                case "2200": return new FetchActiveProductCodesList(request);
+                case "2201": return new UploadSingleProductCode(request);
+                case "2202": return new EditProductCode(request);
+                case "2203": return new CloseProductCode(request);
+                case "2204": return new GetChaptersListWithAgencies(request);
+                case "2205": return new UpdateChapterAgencyAssociation(request);
+                case "2206": return new GetAgencyList(request);
+
                 default: break;
             }
 
