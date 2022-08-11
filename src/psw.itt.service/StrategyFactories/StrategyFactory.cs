@@ -32,6 +32,7 @@ namespace psw.itt.service.Strategies
                 case "2204": return new GetChaptersListWithAgencies(request);
                 case "2205": return new UpdateChapterAgencyAssociation(request);
                 case "2206": return new GetAgencyList(request);
+                case "2220": return new GetColumnNamesForExcelStrategy(request);
 
                 default: break;
             }
