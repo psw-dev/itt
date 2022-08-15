@@ -27,6 +27,7 @@ namespace psw.itt.data.sql.UnitOfWork
         private IProductCodeEntityRepository _productCodeEntityRepository;
         private IProductCodeSheetUploadHistoryRepository _productCodeSheetUploadHistoryRepository;
         private IProductCodeSheetUploadStatusRepository _productCodeSheetUploadStatusRepository;
+        private ISheetAttributeMappingRepository _sheetAttributeMappingRepository;
 
         private IEventBus _eventBus;
         public IEventBus eventBus => _eventBus;
@@ -67,6 +68,7 @@ namespace psw.itt.data.sql.UnitOfWork
         public IProductCodeEntityRepository ProductCodeEntityRepository => _productCodeEntityRepository ?? (_productCodeEntityRepository = new ProductCodeEntityRepository(_connection));
         public IProductCodeSheetUploadHistoryRepository ProductCodeSheetUploadHistoryRepository => _productCodeSheetUploadHistoryRepository ?? (_productCodeSheetUploadHistoryRepository = new ProductCodeSheetUploadHistoryRepository(_connection));
         public IProductCodeSheetUploadStatusRepository ProductCodeSheetUploadStatusRepository => _productCodeSheetUploadStatusRepository ?? (_productCodeSheetUploadStatusRepository = new ProductCodeSheetUploadStatusRepository(_connection));
+        public ISheetAttributeMappingRepository SheetAttributeMappingRepository => _sheetAttributeMappingRepository ?? (_sheetAttributeMappingRepository = new SheetAttributeMappingRepository(_connection));
 
         #endregion
 
