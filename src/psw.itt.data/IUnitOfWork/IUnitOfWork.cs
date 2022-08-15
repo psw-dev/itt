@@ -13,6 +13,7 @@ namespace psw.itt.data
         IProductCodeEntityRepository ProductCodeEntityRepository { get; }
         IProductCodeSheetUploadHistoryRepository ProductCodeSheetUploadHistoryRepository { get; }
         IProductCodeSheetUploadStatusRepository ProductCodeSheetUploadStatusRepository { get; }
+        ISheetAttributeMappingRepository SheetAttributeMappingRepository { get; }
 
         IEventBus eventBus { get; }
         #endregion
