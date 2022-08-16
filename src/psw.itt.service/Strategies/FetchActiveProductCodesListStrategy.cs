@@ -1,15 +1,17 @@
-using System;
-using psw.itt.service.Command;
+using PSW.ITT.Service.Command;
 using PSW.ITT.Service.DTO;
-using psw.itt.service.Exception;
+using PSW.ITT.Service.Exception;
 using PSW.Lib.Logs;
+using System.Linq;
+using System.Collections.Generic;
 
-namespace psw.itt.service.Strategies
+namespace PSW.ITT.Service.Strategies
 {
-    public class GetChaptersListWithAgencies : ApiStrategy<Unspecified, Unspecified>
+    public class FetchActiveProductCodesList : ApiStrategy<Unspecified, List<FetchActiveProductCodesListResponseDTO>>
     {
+        
         #region Constructors
-        public GetChaptersListWithAgencies(CommandRequest commandRequest) : base(commandRequest)
+        public FetchActiveProductCodesList(CommandRequest commandRequest) : base(commandRequest)
         {
 
         }
@@ -21,10 +23,13 @@ namespace psw.itt.service.Strategies
             try
             {
                 Log.Information("|{0}|{1}| Request DTO {@RequestDTO}", StrategyName, MethodID, RequestDTO);
+                var ActiveProductCodesList = Command.UnitOfWork.ProductCodeEntityRepository.GetActiveProductCode();
 
-                ResponseDTO = new Unspecified();
-                // Prepare and return command reply
-                return OKReply("Test Successful congratulations buddy :)");
+                ResponseDTO = new List<FetchActiveProductCodesListResponseDTO>();
+                ResponseDTO = ActiveProductCodesList.Select(item => Mapper.Map<FetchActiveProductCodesListResponseDTO>(item)).ToList();
+
+
+                return OKReply("Active Product Code List Fetched Successfully");
             }
             catch (ServiceException ex)
             {

@@ -1,6 +1,6 @@
 using System.Text.Json;
-using PSW.itt.Common.Constants;
-using psw.itt.service.Command;
+using PSW.ITT.Common.Constants;
+using PSW.ITT.Service.Command;
 using PSW.RabbitMq;
 using PSW.RabbitMq.ServiceCommand;
 using PSW.ITT.Service.DTO;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using PSW.Lib.Logs;
 
-namespace  psw.itt.service.Helpers
+namespace  PSW.ITT.Service.Helpers
 {
     public static class FileHelper
     { 

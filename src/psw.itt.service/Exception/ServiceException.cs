@@ -1,4 +1,4 @@
-namespace psw.itt.service.Exception
+namespace PSW.ITT.Service.Exception
 {
     public class ServiceException : System.Exception
     {

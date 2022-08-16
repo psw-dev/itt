@@ -1,7 +1,7 @@
 using FluentValidation;
 using PSW.ITT.Service.DTO;
 
-namespace PSW.SD.Service.ModelValidators
+namespace PSW.ITT.Service.ModelValidators
 {
     public class EditProductCodeRequestDTOValidator : AbstractValidator<EditProductCodeRequestDTO>
     {

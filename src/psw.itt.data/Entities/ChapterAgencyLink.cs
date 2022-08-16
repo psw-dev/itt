@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace psw.itt.data.Entities
+namespace PSW.ITT.Data.Entities
 {
     /// <summary>
     /// This class represents the ChapterAgencyLink table in the database 

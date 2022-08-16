@@ -8,11 +8,11 @@ using System;
 using Microsoft.Extensions.Configuration;
 using PSW.Common.Crypto;
 using System.Text.Json;
-using psw.itt.service.IServices;
-using psw.itt.service.Command;
-using psw.itt.service.Services;
-using psw.itt.data.sql.UnitOfWork;
-using psw.itt.service.Strategies;
+using PSW.ITT.Service.IServices;
+using PSW.ITT.Service.Command;
+using PSW.ITT.Service.Services;
+using PSW.ITT.Data.Sql.UnitOfWork;
+using PSW.ITT.Service.Strategies;
 using System.Security.Cryptography;
 using PSW.Lib.Logs;
 /// <summary>

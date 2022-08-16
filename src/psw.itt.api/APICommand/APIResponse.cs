@@ -1,7 +1,7 @@
-using psw.itt.common.Pagination;
+using PSW.ITT.Common.Pagination;
 using System.Text.Json;
 
-namespace psw.itt.api.APICommand
+namespace PSW.ITT.Api.APICommand
 {
     public class APIResponse
     {

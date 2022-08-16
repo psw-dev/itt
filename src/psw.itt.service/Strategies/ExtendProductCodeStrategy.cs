@@ -1,19 +1,20 @@
 using System;
-using psw.itt.service.Command;
+using PSW.ITT.Service.Command;
 using PSW.ITT.Service.DTO;
-using psw.itt.service.Exception;
+using PSW.ITT.Service.Exception;
 using PSW.Lib.Logs;
 using System.Linq;
-using PSW.SD.Service.ModelValidators;
+using PSW.ITT.Service.ModelValidators;
 
-namespace psw.itt.service.Strategies
+namespace PSW.ITT.Service.Strategies
 {
-    public class CloseProductCode : ApiStrategy<CloseProductCodeRequestDTO, Unspecified>
+    public class EditProductCode : ApiStrategy<EditProductCodeRequestDTO, Unspecified>
     {
+        private DateTime currentDateTime = DateTime.Now;
         #region Constructors
-        public CloseProductCode(CommandRequest commandRequest) : base(commandRequest)
+        public EditProductCode(CommandRequest commandRequest) : base(commandRequest)
         {
-            this.Validator = new CloseProductCodeRequestDTOValidator();
+            this.Validator = new EditProductCodeRequestDTOValidator();
         }
         #endregion
 
@@ -28,19 +29,20 @@ namespace psw.itt.service.Strategies
                     HSCode = RequestDTO.HSCode,
                     ProductCode = RequestDTO.ProductCode
                 }).FirstOrDefault();
-                if (ProductCodeEntity.EffectiveThruDt <= DateTime.Now)
+                if (ProductCodeEntity.EffectiveThruDt <= currentDateTime)
                 {
                     return BadRequestReply("Product Code already deactivated");
                 }
-                ProductCodeEntity.EffectiveThruDt = DateTime.Now.AddDays(1).Date.AddSeconds(-1);
+                ProductCodeEntity.EffectiveFromDt = RequestDTO.EffectiveFromDt;
+                ProductCodeEntity.EffectiveThruDt = RequestDTO.EffectiveThruDt;
                 ProductCodeEntity.UpdatedBy = Command.LoggedInUserRoleID;
-                ProductCodeEntity.UpdatedOn = DateTime.Now;
-                // This will set time at max of same day
-                // as Product code will be closed at the end of day 
+                ProductCodeEntity.UpdatedOn = currentDateTime;
+
                 Command.UnitOfWork.ProductCodeEntityRepository.Update(ProductCodeEntity);
 
+
                 // Prepare and return command reply
-                return OKReply("Product Code Closed Successfully");
+                return OKReply("Product Code Update Sucessfully");
             }
             catch (ServiceException ex)
             {

@@ -1,8 +1,8 @@
 using System.Data;
-using psw.itt.data.Entities;
-using psw.itt.data.IRepositories;
+using PSW.ITT.Data.Entities;
+using PSW.ITT.Data.IRepositories;
 
-namespace psw.itt.data.sql.Repositories
+namespace PSW.ITT.Data.Sql.Repositories
 {
     public class ProductCodeSheetUploadHistoryRepository : Repository<ProductCodeSheetUploadHistory>, IProductCodeSheetUploadHistoryRepository
     {

@@ -1,17 +1,18 @@
 using System;
-using psw.itt.service.Command;
+using PSW.ITT.Service.Command;
 using PSW.ITT.Service.DTO;
-using psw.itt.service.Exception;
+using PSW.ITT.Service.Exception;
 using PSW.Lib.Logs;
-using psw.itt.data.Entities;
-using BLL;
+using PSW.ITT.Data.Entities;
 using System.Linq;
-using PSW.SD.Service.ModelValidators;
+using PSW.ITT.Service.ModelValidators;
+using PSW.ITT.Service.BusinessLogicLayer;
 
-namespace psw.itt.service.Strategies
+namespace PSW.ITT.Service.Strategies
 {
     public class UploadSingleProductCode : ApiStrategy<UploadSingleProductCodeRequestDTO, Unspecified>
     {
+        private DateTime currentDateTime = DateTime.Now;
         #region Constructors
         public UploadSingleProductCode(CommandRequest commandRequest) : base(commandRequest)
         {
@@ -33,6 +34,7 @@ namespace psw.itt.service.Strategies
                 }
                 catch (System.Exception ex)
                 {
+                    Log.Error("|{0}|{1}| {@ErrorMsg}", StrategyName, MethodID, ex.Message);
                     return BadRequestReply(ex.Message);
                 }
                 var ChapterCode = RequestDTO.HSCode.Substring(0, 2);
@@ -52,9 +54,9 @@ namespace psw.itt.service.Strategies
                 ProductCodeEntity.EffectiveFromDt = RequestDTO.EffectiveFromDt;
                 ProductCodeEntity.EffectiveThruDt = RequestDTO.EffectiveThruDt;
                 ProductCodeEntity.CreatedBy = Command.LoggedInUserRoleID;
-                ProductCodeEntity.CreatedOn = DateTime.Now;
+                ProductCodeEntity.CreatedOn = currentDateTime;
                 ProductCodeEntity.UpdatedBy = Command.LoggedInUserRoleID;
-                ProductCodeEntity.UpdatedOn = DateTime.Now;
+                ProductCodeEntity.UpdatedOn = currentDateTime;
 
                 Command.UnitOfWork.ProductCodeEntityRepository.Add(ProductCodeEntity);
 

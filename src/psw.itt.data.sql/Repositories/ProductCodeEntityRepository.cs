@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Dapper;
-using psw.itt.data.Entities;
-using psw.itt.data.IRepositories;
+using PSW.ITT.Data.Entities;
+using PSW.ITT.Data.IRepositories;
 using SqlKata;
 
-namespace psw.itt.data.sql.Repositories
+namespace PSW.ITT.Data.Sql.Repositories
 {
     public class ProductCodeEntityRepository : Repository<ProductCodeEntity>, IProductCodeEntityRepository
     {
@@ -25,8 +25,8 @@ namespace psw.itt.data.sql.Repositories
         public List<ProductCodeEntity> GetActiveProductCode()
         {
             var query = new Query("ProductCode")
-              .Where("EffectiveFromDt", "<=", DateTime.Now)
-              .Where("EffectiveThruDt", ">=", DateTime.Now)
+              .Where("EffectiveFromDt", "<=", "GetDate()")
+              .Where("EffectiveThruDt", ">=", "GetDate()")
               .Select("*");
 
             var result = _sqlCompiler.Compile(query);
@@ -35,14 +35,15 @@ namespace psw.itt.data.sql.Repositories
 
             return _connection.Query<ProductCodeEntity>(sql, param: parameters, transaction: _transaction).ToList();
         }
-        public List<ProductCodeEntity> GetOverlappingEffectiveFromProductCode(string hscode, string ProductCode, DateTime effectiveFromDt)
+        public List<ProductCodeEntity> GetOverlappingProductCode(string hscode, string ProductCode, DateTime effectiveFromDt, DateTime effectiveThruDt)
         {
             var query = new Query("ProductCode")
                 .Where("HSCode", "=", hscode)
                 .Where("ProductCode", "=", ProductCode)
-                .Where("EffectiveFromDt", "<=", effectiveFromDt)
-                .Where("EffectiveThruDt", ">=", effectiveFromDt)
+                .Where("EffectiveFromDt", ">", effectiveThruDt)
+                .OrWhere("EffectiveThruDt", "<", effectiveFromDt)
                 .Select("*");
+
 
             var result = _sqlCompiler.Compile(query);
             var sql = result.Sql;

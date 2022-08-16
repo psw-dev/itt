@@ -1,4 +1,4 @@
-namespace psw.itt.service.IServices
+namespace PSW.ITT.Service.IServices
 {
     public interface IITTService : IService
     {

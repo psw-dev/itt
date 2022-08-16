@@ -2,10 +2,10 @@
 You can find the source code of the code generator from here -> https://git.psw.gov.pk/unais.vayani/DalGenerator*/
 
 using System.Data;
-using psw.itt.data.Entities;
-using psw.itt.data.IRepositories;
+using PSW.ITT.Data.Entities;
+using PSW.ITT.Data.IRepositories;
 
-namespace psw.itt.data.sql.Repositories
+namespace PSW.ITT.Data.Sql.Repositories
 {
     public class SheetAttributeMappingRepository : Repository<SheetAttributeMapping>, ISheetAttributeMappingRepository
     {

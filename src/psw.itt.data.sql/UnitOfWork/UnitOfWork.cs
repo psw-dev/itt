@@ -1,15 +1,15 @@
 using Dapper;
 using Microsoft.Extensions.Configuration;
-using psw.itt.common;
-using psw.itt.data.IRepositories;
-using psw.itt.data.sql.Repositories;
+using PSW.ITT.Common;
+using PSW.ITT.Data.IRepositories;
+using PSW.ITT.Data.Sql.Repositories;
 using PSW.RabbitMq;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace psw.itt.data.sql.UnitOfWork
+namespace PSW.ITT.Data.Sql.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
