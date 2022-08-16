@@ -4,16 +4,16 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using psw.itt.api.APICommand;
-using psw.itt.common.Pagination;
-using psw.itt.data;
-using psw.itt.service.Command;
-using psw.itt.service.IServices;
-using psw.itt.service.Strategies;
+using PSW.ITT.Api.APICommand;
+using PSW.ITT.Common.Pagination;
+using PSW.ITT.Data;
+using PSW.ITT.Service.Command;
+using PSW.ITT.Service.IServices;
+using PSW.ITT.Service.Strategies;
 using PSW.Common.Crypto;
 using psw.common.Extensions;
 
-namespace psw.itt.api.Controllers
+namespace PSW.ITT.Api.Controllers
 {
     public class BaseController : Controller
     {

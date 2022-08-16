@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 
-namespace psw.itt.common
+namespace PSW.ITT.Common
 {
     public static class Utility
     {

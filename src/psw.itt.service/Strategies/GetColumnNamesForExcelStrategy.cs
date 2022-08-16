@@ -1,13 +1,13 @@
 using PSW.ITT.Service.DTO;
-using psw.itt.service.Command;
+using PSW.ITT.Service.Command;
 using System;
 using System.Collections.Generic;
 using PSW.Lib.Logs;
 using System.Security.Claims;
 using System.Linq;
-using psw.itt.data.Entities;
+using PSW.ITT.Data.Entities;
 
-namespace psw.itt.service.Strategies
+namespace PSW.ITT.Service.Strategies
 {
     public class GetColumnNamesForExcelStrategy : ApiStrategy<ColumnNamesForExcelRequestDTO, List<ColumnNamesForExcelResponseDTO>>
     {

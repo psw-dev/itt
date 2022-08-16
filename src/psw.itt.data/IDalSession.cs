@@ -1,6 +1,6 @@
 using System;
 
-namespace psw.itt.data
+namespace PSW.ITT.Data
 {
     public interface IDalSession : IDisposable
     {

@@ -1,7 +1,7 @@
 using System.Globalization;
 using AutoMapper;
 
-namespace psw.itt.service.AutoMapper
+namespace PSW.ITT.Service.AutoMapper
 {
     public class DTOToEntityMappingProfile : Profile
     {

@@ -1,11 +1,11 @@
-using psw.itt.data;
-using psw.itt.service.Command;
-using psw.itt.service.Exception;
-using psw.itt.service.IServices;
-using psw.itt.service.Strategies;
+using PSW.ITT.Data;
+using PSW.ITT.Service.Command;
+using PSW.ITT.Service.Exception;
+using PSW.ITT.Service.IServices;
+using PSW.ITT.Service.Strategies;
 using PSW.Common.Crypto;
 
-namespace psw.itt.service.Services
+namespace PSW.ITT.Service.Services
 {
     public class ITTService : IITTService
     {

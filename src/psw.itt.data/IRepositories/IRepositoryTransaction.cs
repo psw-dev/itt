@@ -3,7 +3,7 @@ You can find the source code of the code generator from here -> https://git.psw.
 
 using System.Data;
 
-namespace psw.itt.data.IRepositories
+namespace PSW.ITT.Data.IRepositories
 {
     public interface IRepositoryTransaction
     {

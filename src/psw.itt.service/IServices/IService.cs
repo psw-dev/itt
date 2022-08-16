@@ -1,9 +1,9 @@
-using psw.itt.data;
-using psw.itt.service.Command;
-using psw.itt.service.Strategies;
+using PSW.ITT.Data;
+using PSW.ITT.Service.Command;
+using PSW.ITT.Service.Strategies;
 using PSW.Common.Crypto;
 
-namespace psw.itt.service.IServices
+namespace PSW.ITT.Service.IServices
 {
     public interface IService
     {

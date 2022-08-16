@@ -1,8 +1,13 @@
-using psw.itt.data.Entities;
+using System;
+using System.Collections.Generic;
+using PSW.ITT.Data.Entities;
 
-namespace psw.itt.data.IRepositories
+namespace PSW.ITT.Data.IRepositories
 {
     public interface IProductCodeEntityRepository : IRepository<ProductCodeEntity>
     {
+        List<ProductCodeEntity> GetActiveProductCode();
+        List<ProductCodeEntity> GetOverlappingProductCode(string hscode, string ProductCode, DateTime effectiveFromDt, DateTime effectiveThruDt);
+
     }
 }

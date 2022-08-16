@@ -2,9 +2,9 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Data.SqlClient;
 
-// using psw.itt.Data;
+// using PSW.ITT.Data;
 
-namespace psw.itt.data.sql
+namespace PSW.ITT.Data.Sql
 {
     public sealed class DalSession : IDalSession, IDisposable
     {

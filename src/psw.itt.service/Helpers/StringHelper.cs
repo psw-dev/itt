@@ -1,7 +1,7 @@
 
 using System.Text.Json;
-using PSW.itt.Common.Constants;
-using psw.itt.service.Command;
+using PSW.ITT.Common.Constants;
+using PSW.ITT.Service.Command;
 using PSW.RabbitMq;
 using PSW.RabbitMq.ServiceCommand;
 using PSW.RabbitMq.Task;

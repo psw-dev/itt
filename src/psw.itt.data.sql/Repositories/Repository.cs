@@ -1,6 +1,7 @@
 ﻿using Dapper;
-using psw.itt.data.Entities;
-using psw.itt.data.IRepositories;
+using PSW.ITT.Data.Entities;
+using PSW.ITT.Data.IRepositories;
+using SqlKata.Compilers;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -9,14 +10,14 @@ using System.Text;
 // using SqlKata;
 // using SqlKata.Compilers;
 
-namespace psw.itt.data.sql.Repositories
+namespace PSW.ITT.Data.Sql.Repositories
 {
     public abstract class Repository<T> : IRepository<T> where T : Entity
     {
         #region Protected properties
         protected string TableName { get; set; }
         protected string PrimaryKeyName { get; set; }
-        //protected SqlServerCompiler _sqlCompiler;
+        protected SqlServerCompiler _sqlCompiler;
 
         #endregion
 
@@ -35,7 +36,7 @@ namespace psw.itt.data.sql.Repositories
         {
             Dapper.SqlMapper.AddTypeMap(typeof(string), System.Data.DbType.AnsiString);
             _connection = connection;
-            //  _sqlCompiler = new SqlServerCompiler();
+            _sqlCompiler = new SqlServerCompiler();
         }
 
         #endregion

@@ -1,7 +1,7 @@
 
 using System.ComponentModel;
 
-namespace PSW.itt.Common.Enums
+namespace PSW.ITT.Common.Enums
 {
     public enum ProductCodeSheetUploadStatusEnum
     {

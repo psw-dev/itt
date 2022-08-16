@@ -1,15 +1,15 @@
 using System;
-using psw.itt.service.Command;
+using PSW.ITT.Service.Command;
 using PSW.ITT.Service.DTO;
-using psw.itt.service.Exception;
+using PSW.ITT.Service.Exception;
 using PSW.Lib.Logs;
 
-namespace psw.itt.service.Strategies
+namespace PSW.ITT.Service.Strategies
 {
-    public class GetChaptersListWithAgencies : ApiStrategy<Unspecified, Unspecified>
+    public class GetAgencyList : ApiStrategy<Unspecified, Unspecified>
     {
         #region Constructors
-        public GetChaptersListWithAgencies(CommandRequest commandRequest) : base(commandRequest)
+        public GetAgencyList(CommandRequest commandRequest) : base(commandRequest)
         {
 
         }

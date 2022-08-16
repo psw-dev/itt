@@ -1,18 +1,17 @@
 using System.Linq;
 using System.Collections.Generic;
 using System;
-using psw.itt.service.Command;
+using PSW.ITT.Service.Command;
 using PSW.ITT.Service.DTO;
-using psw.itt.data.Entities;
+using PSW.ITT.Data.Entities;
 using PSW.Lib.Logs;
 using System.Security.Claims;
-using PSW.itt.Common.Enums;
+using PSW.ITT.Common.Enums;
 using System.Threading;
-using psw.itt.service.Helpers;
-using PSW.itt.Service.Helpers;
+using PSW.ITT.Service.Helpers;
 using psw.oga.service.Helpers;
 
-namespace psw.itt.service.Strategies
+namespace PSW.ITT.Service.Strategies
 {
     public class FetchUploadedSheetsListStrategy : ApiStrategy<UploadFileHistoryRequestDTO, List<UploadFileHistoryResponseDTO>>
     {
