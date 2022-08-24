@@ -25,10 +25,10 @@ namespace PSW.ITT.Service.Strategies
         {
             switch (request.methodId)
             {
-                case "2200": return new FetchActiveProductCodesList(request);
-                case "2201": return new UploadSingleProductCode(request);
-                case "2202": return new EditProductCode(request);
-                case "2203": return new CloseProductCode(request);
+                case "2200": return new FetchActiveProductCodesListStrategy(request);
+                case "2201": return new UploadSingleProductCodeStrategy(request);
+                case "2202": return new ExtendProductCodeStrategy(request);
+                case "2203": return new CloseProductCodeStrategy(request);
                 case "2204": return new GetChaptersListWithAgencies(request);
                 case "2205": return new UpdateChapterAgencyAssociation(request);
                 case "2206": return new GetAgencyList(request);

@@ -10,11 +10,11 @@ using PSW.ITT.Service.BusinessLogicLayer;
 
 namespace PSW.ITT.Service.Strategies
 {
-    public class UploadSingleProductCode : ApiStrategy<UploadSingleProductCodeRequestDTO, Unspecified>
+    public class UploadSingleProductCodeStrategy : ApiStrategy<UploadSingleProductCodeRequestDTO, Unspecified>
     {
         private DateTime currentDateTime = DateTime.Now;
         #region Constructors
-        public UploadSingleProductCode(CommandRequest commandRequest) : base(commandRequest)
+        public UploadSingleProductCodeStrategy(CommandRequest commandRequest) : base(commandRequest)
         {
             this.Validator = new UploadSingleProductCodeRequestDTOValidator();
         }

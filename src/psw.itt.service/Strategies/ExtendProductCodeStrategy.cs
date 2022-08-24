@@ -8,11 +8,11 @@ using PSW.ITT.Service.ModelValidators;
 
 namespace PSW.ITT.Service.Strategies
 {
-    public class EditProductCode : ApiStrategy<EditProductCodeRequestDTO, Unspecified>
+    public class ExtendProductCodeStrategy : ApiStrategy<EditProductCodeRequestDTO, Unspecified>
     {
         private DateTime currentDateTime = DateTime.Now;
         #region Constructors
-        public EditProductCode(CommandRequest commandRequest) : base(commandRequest)
+        public ExtendProductCodeStrategy(CommandRequest commandRequest) : base(commandRequest)
         {
             this.Validator = new EditProductCodeRequestDTOValidator();
         }
