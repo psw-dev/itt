@@ -34,6 +34,8 @@ namespace psw.itt.service.Strategies
                 case "2206": return new GetAgencyList(request);
                 case "2220": return new GetColumnNamesForExcelStrategy(request);
                 case "2221": return new FetchUploadedSheetsListStrategy(request);
+                case "2222": return new UploadFileStrategy(request);
+                case "2223": return new GetUploadFileProgressStrategy(request);
 
                 default: break;
             }

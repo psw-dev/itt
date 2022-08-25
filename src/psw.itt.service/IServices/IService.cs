@@ -3,7 +3,7 @@ using psw.itt.service.Command;
 using psw.itt.service.Strategies;
 using PSW.Common.Crypto;
 
-namespace psw.itt.service.IServices
+namespace psw.itt.service
 {
     public interface IService
     {

@@ -8,7 +8,7 @@ using System;
 using Microsoft.Extensions.Configuration;
 using PSW.Common.Crypto;
 using System.Text.Json;
-using psw.itt.service.IServices;
+using psw.itt.service;
 using psw.itt.service.Command;
 using psw.itt.service.Services;
 using psw.itt.data.sql.UnitOfWork;

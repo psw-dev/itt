@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using psw.itt.api.APICommand;
 using psw.itt.data;
-using psw.itt.service.IServices;
+using psw.itt.service;
 using PSW.Common.Crypto;
 using psw.common.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -16,8 +16,8 @@ namespace psw.itt.api.Controllers
     {
         #region Constructors
 
-        public ITTController(IITTService service, IUnitOfWork uow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor)
-        : base(service, uow, strategyFactory, cryptoAlgorithm, httpContextAccessor)
+        public ITTController(IITTService service, IITTOpenService openService, IUnitOfWork uow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor)
+        : base(service, openService, uow, strategyFactory, cryptoAlgorithm, httpContextAccessor)
         {
         }
 

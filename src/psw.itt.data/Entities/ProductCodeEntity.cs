@@ -18,6 +18,7 @@ namespace psw.itt.data.Entities
         private string _chapterCode;
         private string _description;
         private long? _productCodeSheetUploadHistoryID;
+        private short _tradeTranTypeID;
         private DateTime _effectiveFromDt;
         private DateTime _effectiveThruDt;
         private int _createdBy;
@@ -36,6 +37,7 @@ namespace psw.itt.data.Entities
         public short ProductCodeChapterID { get { return _productCodeChapterID; } set { _productCodeChapterID = value; } }
         public string ChapterCode { get { return _chapterCode; } set { _chapterCode = value; } }
         public string Description { get { return _description; } set { _description = value; } }
+        public short TradeTranTypeID { get { return _tradeTranTypeID; } set { _tradeTranTypeID = value; } }
         public long? ProductCodeSheetUploadHistoryID { get { return _productCodeSheetUploadHistoryID; } set { _productCodeSheetUploadHistoryID = value; } }
         public DateTime EffectiveFromDt { get { return _effectiveFromDt; } set { _effectiveFromDt = value; } }
         public DateTime EffectiveThruDt { get { return _effectiveThruDt; } set { _effectiveThruDt = value; } }
@@ -64,6 +66,7 @@ namespace psw.itt.data.Entities
                 {"ChapterCode", ChapterCode},
                 {"Description", Description},
                 {"ProductCodeSheetUploadHistoryID", ProductCodeSheetUploadHistoryID},
+                {"TradeTranTypeID",TradeTranTypeID},
                 {"EffectiveFromDt", EffectiveFromDt},
                 {"EffectiveThruDt", EffectiveThruDt},
                 {"CreatedBy", CreatedBy},
@@ -84,6 +87,7 @@ namespace psw.itt.data.Entities
                 ChapterCode,
                 Description,
                 ProductCodeSheetUploadHistoryID,
+                TradeTranTypeID,
                 EffectiveFromDt,
                 EffectiveThruDt,
                 CreatedBy,

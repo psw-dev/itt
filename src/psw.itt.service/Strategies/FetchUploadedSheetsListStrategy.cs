@@ -50,10 +50,10 @@ namespace psw.itt.service.Strategies
                 }
 
                 // Get File Ids from FSS
-                List<string> fileIds = new List<string>();
-                fileIds.AddRange(listFileUploadHistory.Select(x => Command.CryptoAlgorithm.Encrypt(x.AttachedFileID.ToString())));
+                // List<string> fileIds = new List<string>();
+                // fileIds.AddRange(listFileUploadHistory.Select(x => Command.CryptoAlgorithm.Encrypt(x.AttachedFileID.ToString())));
 
-                var listFileDetails = FileHelper.GetFilesDetails(Command, fileIds);
+                // var listFileDetails = FileHelper.GetFilesDetails(Command, fileIds);
 
                 var last = listFileUploadHistory.First();
                 foreach (var item in listFileUploadHistory)
@@ -65,11 +65,11 @@ namespace psw.itt.service.Strategies
                     // fileUploadItem.OwnerDocumentTypeName = GetDocumentTypeCode(item.OwnerDocumentTypeCode).Name.ToString();
                     // fileUploadItem.AgencyID = item.AgencyID;
                     fileUploadItem.AttachedFileID = Command.CryptoAlgorithm.Encrypt(item.AttachedFileID.ToString());
-                    fileUploadItem.AttachedFileName = GetFileName(listFileDetails, item.AttachedFileID);
+                    fileUploadItem.AttachedFileName = item.Name;//GetFileName(listFileDetails, item.AttachedFileID);
                     fileUploadItem.TotalRecordsCount = item.TotalRecordsCount;
-                    fileUploadItem.ProcessedRecordsCount = item.ProcessedRecordsCount;
+                    fileUploadItem.DisputedRecordsCount = item.DisputedRecordsCount;
                     fileUploadItem.DuplicateRecordsCount = item.DuplicateRecordsCount;
-                    // fileUploadItem.DisputedRecordsCount = item.DisputedRecordsCount;
+                    fileUploadItem.ProcessedRecordsCount = item.ProcessedRecordsCount;
                     // fileUploadItem.DisputedRecordsData = item.DisputedRecordsData;
                     fileUploadItem.StatusId = item.ProductCodeSheetUploadStatusID;
                     fileUploadItem.StatusName = EnumHelper.GetEnumDescription(((ProductCodeSheetUploadStatusEnum)item.ProductCodeSheetUploadStatusID));

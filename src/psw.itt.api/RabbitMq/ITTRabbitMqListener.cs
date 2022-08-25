@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 using psw.itt.data;
 using psw.itt.data.sql.UnitOfWork;
 using psw.itt.service.Command;
-using psw.itt.service.IServices;
+using psw.itt.service;
 using psw.itt.service.Strategies;
 using PSW.RabbitMq;
 using PSW.RabbitMq.ServiceCommand;

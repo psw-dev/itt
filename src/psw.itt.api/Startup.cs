@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using psw.itt.data;
 using psw.itt.data.sql.UnitOfWork;
-using psw.itt.service.IServices;
+using psw.itt.service;
 using psw.itt.service.Services;
 using PSW.Lib.Consul;
 using PSW.RabbitMq;
@@ -49,6 +49,7 @@ namespace psw.itt.api
 
             services.AddTransient<IITTService, ITTService>();
             services.AddTransient<IStrategyFactory, StrategyFactory>();
+            services.AddTransient<IITTOpenService, ITTOpenService>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             // Auto Mapper Profiles 

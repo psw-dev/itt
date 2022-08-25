@@ -6,6 +6,7 @@ using System.Text.Json;
 using AutoMapper;
 using psw.itt.common.Pagination;
 using PSW.Common.Crypto;
+using Microsoft.AspNetCore.Http;
 
 namespace psw.itt.service.Command
 {
@@ -19,6 +20,9 @@ namespace psw.itt.service.Command
         public ServerPaginationModel pagination { get; set; }
         public IEnumerable<Claim> UserClaims { get; set; }
         public ClaimsPrincipal CurrentUser { get; set; }
+        public string roleCode { get; set; }
+        public IFormFile file { get; set; }
+        public long fileId { get; set; }
         public int LoggedInUserRoleID { get; set; }
         public string CurrentUserName
         {
