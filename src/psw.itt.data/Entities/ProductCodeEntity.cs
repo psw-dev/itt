@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace psw.itt.data.Entities
+namespace PSW.ITT.Data.Entities
 {
     /// <summary>
     /// This class represents the ProductCode table in the database 
@@ -14,7 +14,7 @@ namespace psw.itt.data.Entities
         private string _hSCode;
         private string _hSCodeExt;
         private string _productCode;
-        private short _productCodeChapterID;
+        private long _productCodeChapterID;
         private string _chapterCode;
         private string _description;
         private long? _productCodeSheetUploadHistoryID;
@@ -34,7 +34,7 @@ namespace psw.itt.data.Entities
         public string HSCode { get { return _hSCode; } set { _hSCode = value; } }
         public string HSCodeExt { get { return _hSCodeExt; } set { _hSCodeExt = value; } }
         public string ProductCode { get { return _productCode; } set { _productCode = value; } }
-        public short ProductCodeChapterID { get { return _productCodeChapterID; } set { _productCodeChapterID = value; } }
+        public long ProductCodeChapterID { get { return _productCodeChapterID; } set { _productCodeChapterID = value; } }
         public string ChapterCode { get { return _chapterCode; } set { _chapterCode = value; } }
         public string Description { get { return _description; } set { _description = value; } }
         public short TradeTranTypeID { get { return _tradeTranTypeID; } set { _tradeTranTypeID = value; } }

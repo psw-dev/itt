@@ -1,7 +1,7 @@
 using System.Text.Json;
-using psw.itt.common.Pagination;
+using PSW.ITT.Common.Pagination;
 
-namespace psw.itt.service.Command
+namespace PSW.ITT.Service.Command
 {
     public class CommandReply
     {

@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace psw.itt.common
+namespace PSW.ITT.Common
 {
     public class PSWHttpClient : IDisposable
     {

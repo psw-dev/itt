@@ -1,8 +1,8 @@
-using psw.itt.data.IRepositories;
+using PSW.ITT.Data.IRepositories;
 using PSW.RabbitMq;
 using System;
 
-namespace psw.itt.data
+namespace PSW.ITT.Data
 {
     public interface IUnitOfWork : IDisposable
     {

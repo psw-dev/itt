@@ -1,7 +1,7 @@
-using psw.itt.service.Command;
+using PSW.ITT.Service.Command;
 using System.Text.Json;
 
-namespace psw.itt.service.Strategies
+namespace PSW.ITT.Service.Strategies
 {
     public class InvalidStrategy : Strategy
     {

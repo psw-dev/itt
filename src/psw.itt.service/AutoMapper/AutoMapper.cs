@@ -1,7 +1,6 @@
 using AutoMapper;
-using psw.itt.data.Entities;
 
-namespace psw.itt.service.AutoMapper
+namespace PSW.ITT.Service.AutoMapper
 {
 
     public class ObjectMapper

@@ -1,4 +1,4 @@
-namespace psw.itt.common.Pagination
+namespace PSW.ITT.Common.Pagination
 {
     public class ServerPaginationModel
     {

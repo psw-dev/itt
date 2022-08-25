@@ -1,4 +1,4 @@
-namespace PSW.itt.Common.Constants
+namespace PSW.ITT.Common.Constants
 {
     public static class Constant
     {

@@ -3,29 +3,24 @@ using System.Collections.Generic;
 using System.Data;
 using System;
 using System.Reflection;
-using psw.itt.service.Command;
 using PSW.ITT.Service.DTO;
-using psw.itt.service.Exception;
-using BLL;
 using PSW.Lib.Logs;
 using OfficeOpenXml;
-using System.IO;
-using System.Security.Claims;
 using PSW.itt.Common.Constants;
 using PSW.itt.Common.Enums;
 using System.Dynamic;
-using PSW.itt.Common;
-using PSW.itt.Service.Helpers;
 using System.Collections;
 using System.Threading.Tasks;
-using PSW.RabbitMq;
-using psw.itt.data.Entities;
 using System.Threading;
-using psw.itt.common;
-using psw.itt.data.sql.UnitOfWork;
 using psw.itt.service.Helpers;
+using PSW.ITT.Service.Strategies;
+using PSW.ITT.Service.Command;
+using PSW.ITT.Common;
+using PSW.ITT.Common.Enums;
+using PSW.ITT.Data.Entities;
+using PSW.ITT.Data.Sql.UnitOfWork;
 
-namespace psw.itt.service.Strategies
+namespace PSW.ITT.Service.Strategies
 {
     public class UploadFileStrategy : ApiStrategy<UploadFileRequestDTO, UploadFileResponseDTO>
     {

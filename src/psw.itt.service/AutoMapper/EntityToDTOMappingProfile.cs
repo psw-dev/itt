@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace PSW.OGA.Service.AutoMapper
+namespace PSW.ITT.Service.AutoMapper
 {
     public class EntityToDTOMappingProfile : Profile
     {

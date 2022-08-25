@@ -8,7 +8,7 @@ using System;
 using System.Reflection;
 using System.Net;
 
-namespace  psw.itt.service.Helpers
+namespace  PSW.ITT.Service.Helpers
 {
     /// <summary>
     ///     SDHelper

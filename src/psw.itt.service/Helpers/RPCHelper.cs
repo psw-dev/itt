@@ -7,7 +7,7 @@ using PSW.RabbitMq.RPC;
 using PSW.RabbitMq.ServiceCommand;
 using PSW.RabbitMq.Task;
 
-namespace psw.itt.service.Helpers
+namespace PSW.ITT.Service.Helpers
 {
     public class RPCHelper
     {

@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using psw.itt.data;
+using PSW.ITT.Data;
 using System.Text.Json;
 using AutoMapper;
-using psw.itt.common.Pagination;
+using PSW.ITT.Common.Pagination;
 using PSW.Common.Crypto;
 using Microsoft.AspNetCore.Http;
 
-namespace psw.itt.service.Command
+namespace PSW.ITT.Service.Command
 {
     public class CommandRequest
     {

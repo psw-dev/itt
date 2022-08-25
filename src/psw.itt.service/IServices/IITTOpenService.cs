@@ -1,5 +1,6 @@
 
-namespace psw.itt.service
+
+namespace PSW.ITT.Service.IServices
 {
     public interface IITTOpenService : IService
     {

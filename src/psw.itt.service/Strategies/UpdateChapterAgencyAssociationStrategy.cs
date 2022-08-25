@@ -1,15 +1,15 @@
 using System;
-using psw.itt.service.Command;
+using PSW.ITT.Service.Command;
 using PSW.ITT.Service.DTO;
-using psw.itt.service.Exception;
+using PSW.ITT.Service.Exception;
 using PSW.Lib.Logs;
 
-namespace psw.itt.service.Strategies
+namespace PSW.ITT.Service.Strategies
 {
-    public class FetchActiveProductCodesList : ApiStrategy<Unspecified, Unspecified>
+    public class UpdateChapterAgencyAssociation : ApiStrategy<Unspecified, Unspecified>
     {
         #region Constructors
-        public FetchActiveProductCodesList(CommandRequest commandRequest) : base(commandRequest)
+        public UpdateChapterAgencyAssociation(CommandRequest commandRequest) : base(commandRequest)
         {
 
         }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
-namespace psw.itt.common
+namespace PSW.ITT.Common
 {
     public static class Utility
     {

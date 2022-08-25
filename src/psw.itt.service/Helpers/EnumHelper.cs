@@ -1,13 +1,13 @@
 using System;
 using System.ComponentModel;
 using System.Text.Json;
-using psw.itt.service.Command;
+using PSW.ITT.Service.Command;
 using PSW.ITT.Service.DTO;
 using PSW.RabbitMq;
 using PSW.RabbitMq.ServiceCommand;
 using PSW.RabbitMq.Task;
 
-namespace PSW.itt.Service.Helpers
+namespace PSW.ITT.Service.Helpers
 {
     public static class EnumHelper
     {

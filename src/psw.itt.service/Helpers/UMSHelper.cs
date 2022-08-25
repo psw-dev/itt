@@ -1,7 +1,7 @@
 
 using System.Text.Json;
-using PSW.itt.Common.Constants;
-using psw.itt.service.Command;
+using PSW.ITT.Common.Constants;
+using PSW.ITT.Service.Command;
 using PSW.ITT.Service.DTO;
 using PSW.RabbitMq;
 using PSW.RabbitMq.ServiceCommand;
@@ -11,7 +11,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace psw.itt.service.Helpers
+namespace PSW.ITT.Service.Helpers
 {
     public static class UMSHelper
     {

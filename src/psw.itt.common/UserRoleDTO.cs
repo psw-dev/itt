@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace psw.itt.common
+namespace PSW.ITT.Common
 {
     public class UserRoleDTO 
     {

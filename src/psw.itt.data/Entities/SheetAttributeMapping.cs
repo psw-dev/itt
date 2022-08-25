@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace psw.itt.data.Entities
+namespace PSW.ITT.Data.Entities
 {
     /// <summary>
     /// This class represents the SheetAttributeMapping table in the database 

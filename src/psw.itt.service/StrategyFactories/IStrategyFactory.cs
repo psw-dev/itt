@@ -1,7 +1,7 @@
 
-using psw.itt.service.Command;
+using PSW.ITT.Service.Command;
 
-namespace psw.itt.service.Strategies
+namespace PSW.ITT.Service.Strategies
 {
     public interface IStrategyFactory
     {

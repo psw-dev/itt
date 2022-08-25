@@ -1,14 +1,14 @@
 using Microsoft.Extensions.Configuration;
-using psw.itt.data;
-using psw.itt.data.sql.UnitOfWork;
-using psw.itt.service.Command;
-using psw.itt.service;
-using psw.itt.service.Strategies;
+using PSW.ITT.Data;
+using PSW.ITT.Data.Sql.UnitOfWork;
+using PSW.ITT.Service.Command;
+using PSW.ITT.Service.IServices;
+using PSW.ITT.Service.Strategies;
 using PSW.RabbitMq;
 using PSW.RabbitMq.ServiceCommand;
 using System.Text.Json;
 
-namespace psw.itt.api.RabbitMq
+namespace PSW.ITT.Api.RabbitMq
 {
     public class ITTRabbitMqListener : RabbitMqListener
     {

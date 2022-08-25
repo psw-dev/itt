@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace psw.itt.service
+namespace PSW.ITT.Service.IServices
 {
     public interface IITTService : IService
     {

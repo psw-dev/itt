@@ -7,21 +7,20 @@ using AutoMapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using psw.itt.data;
-using psw.itt.data.sql.UnitOfWork;
-using psw.itt.service;
-using psw.itt.service.Services;
+using PSW.ITT.Data;
+using PSW.ITT.Data.Sql.UnitOfWork;
+using PSW.ITT.Service.Services;
 using PSW.Lib.Consul;
 using PSW.RabbitMq;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
-using psw.itt.service.AutoMapper;
+using PSW.ITT.Service.AutoMapper;
 using PSW.Common.Crypto;
-using PSW.OGA.Service.AutoMapper;
 using PSW.Lib.Logs;
-using psw.itt.service.Strategies;
+using PSW.ITT.Service.Strategies;
+using PSW.ITT.Service.IServices;
 
-namespace psw.itt.api
+namespace PSW.ITT.Api
 {
     public class Startup
     {

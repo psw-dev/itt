@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace psw.itt.data.IRepositories
+namespace PSW.ITT.Data.IRepositories
 {
     public interface IRepository<T> : IRepositoryTransaction
     {

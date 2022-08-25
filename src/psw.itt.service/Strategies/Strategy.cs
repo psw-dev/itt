@@ -1,9 +1,9 @@
 using System.Net;
 using AutoMapper;
-using psw.itt.service.Command;
+using PSW.ITT.Service.Command;
 using Serilog;
 
-namespace psw.itt.service.Strategies
+namespace PSW.ITT.Service.Strategies
 {
     public class Strategy
     {

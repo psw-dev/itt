@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace psw.itt.data.Entities
+namespace PSW.ITT.Data.Entities
 {
     public abstract class Entity
     {

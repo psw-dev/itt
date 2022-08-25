@@ -1,8 +1,8 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
-using psw.itt.common.Pagination;
+using PSW.ITT.Common.Pagination;
 
-namespace psw.itt.api.APICommand
+namespace PSW.ITT.Api.APICommand
 {
     public class APIRequestFile
     {

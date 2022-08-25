@@ -1,9 +1,9 @@
 
+using PSW.ITT.Data;
+using PSW.ITT.Service.Command;
+using PSW.ITT.Service.Strategies;
 
-using psw.itt.data;
-using psw.itt.service.Command;
-
-namespace psw.itt.service.Strategies
+namespace PSW.ITT.Service.Strategies
 {
     public class OpenStrategyFactory : IStrategyFactory
     {

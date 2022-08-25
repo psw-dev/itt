@@ -3,12 +3,12 @@ using System;
 using System.Reflection;
 using PSW.Lib.Logs;
 using System.Security.Claims;
-using psw.itt.service.Strategies;
-using psw.itt.service.Command;
 using PSW.OGA.Service.DTO;
-using PSW.itt.Common.Enums;
+using PSW.ITT.Service.Strategies;
+using PSW.ITT.Service.Command;
+using PSW.ITT.Common.Enums;
 
-namespace psw.itt.service.Strategies
+namespace PSW.ITT.Service.Strategies
 {
     public class GetUploadFileProgressStrategy : ApiStrategy<UploadProgressRequestDTO, UploadProgressResponseDTO>
     {

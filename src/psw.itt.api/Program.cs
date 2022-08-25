@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using PSW.Lib.Logs;
 using System;
 
-namespace psw.itt.api
+namespace PSW.ITT.Api
 {
     public class Program
     {

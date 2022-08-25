@@ -1,10 +1,10 @@
 using System.Linq;
 using System.Text.Json;
 using FluentValidation;
-using psw.itt.common.Pagination;
-using psw.itt.service.Command;
+using PSW.ITT.Common.Pagination;
+using PSW.ITT.Service.Command;
 
-namespace psw.itt.service.Strategies
+namespace PSW.ITT.Service.Strategies
 {
     /// <summary>
     /// Generic API strategy written specifically for an API call

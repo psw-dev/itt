@@ -1,17 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using psw.itt.api.APICommand;
-using psw.itt.data;
 using psw.itt.service;
 using PSW.Common.Crypto;
 using psw.common.Extensions;
 using Microsoft.AspNetCore.Http;
-using psw.itt.service.Strategies;
-using PSW.Lib.Logs;
-using System;
-using System.Threading.Tasks;
+using PSW.ITT.Api.APICommand;
+using PSW.ITT.Service.IServices;
+using PSW.ITT.Data;
+using PSW.ITT.Service.Strategies;
 
-namespace psw.itt.api.Controllers
+namespace PSW.ITT.Api.Controllers
 {
     [Route("api/v1/itt/[controller]")]
     [ApiController]
