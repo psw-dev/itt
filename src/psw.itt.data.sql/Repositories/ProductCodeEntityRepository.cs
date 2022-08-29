@@ -24,16 +24,18 @@ namespace PSW.ITT.Data.Sql.Repositories
         #region Public methods
         public List<ProductCodeEntity> GetActiveProductCode()
         {
-            var query = new Query("ProductCode")
-              .Where("EffectiveFromDt", "<=", "GetDate()")
-              .Where("EffectiveThruDt", ">=", "GetDate()")
-              .Select("*");
+            try
+            {
+                var query = @"SELECT * FROM ProductCode WHERE EffectiveThruDt >= GETDATE()";
 
-            var result = _sqlCompiler.Compile(query);
-            var sql = result.Sql;
-            var parameters = new DynamicParameters(result.NamedBindings);
-
-            return _connection.Query<ProductCodeEntity>(sql, param: parameters, transaction: _transaction).ToList();
+                return _connection.Query<ProductCodeEntity>(query,
+                transaction: _transaction
+                ).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         public List<ProductCodeEntity> GetOverlappingProductCode(string hscode, string ProductCode, DateTime effectiveFromDt, DateTime effectiveThruDt)
         {
