@@ -15,6 +15,7 @@ namespace PSW.ITT.Data.Entities
         private long _attachedFileID;
         private short _productCodeSheetUploadStatusID;
         private int _totalRecordsCount;
+        private int _disputedRecordsCount;
         private int _processedRecordsCount;
         private int _duplicateRecordsCount;
         private int _createdBy;
@@ -31,10 +32,9 @@ namespace PSW.ITT.Data.Entities
         public long AttachedFileID { get { return _attachedFileID; } set { _attachedFileID = value; } }
         public short ProductCodeSheetUploadStatusID { get { return _productCodeSheetUploadStatusID; } set { _productCodeSheetUploadStatusID = value; } }
         public int TotalRecordsCount { get { return _totalRecordsCount; } set { _totalRecordsCount = value; } }
-        public int ProcessedRecordsCount { get { return _processedRecordsCount; } set { _processedRecordsCount = value; } }
-
+        public int ProcessedRecordsCount  { get { return _processedRecordsCount ; } set { _processedRecordsCount  = value; } }
+        public int DisputedRecordsCount  { get { return _disputedRecordsCount ; } set { _disputedRecordsCount  = value; } }
         public int DuplicateRecordsCount { get { return _duplicateRecordsCount; } set { _duplicateRecordsCount = value; } }
-
         public int CreatedBy { get { return _createdBy; } set { _createdBy = value; } }
         public DateTime CreatedOn { get { return _createdOn; } set { _createdOn = value; } }
         public int UpdatedBy { get { return _updatedBy; } set { _updatedBy = value; } }
@@ -57,7 +57,8 @@ namespace PSW.ITT.Data.Entities
                 {"AttachedFileID", AttachedFileID},
                 {"ProductCodeSheetUploadStatusID", ProductCodeSheetUploadStatusID},
                 {"TotalRecordsCount",TotalRecordsCount},
-                {"ProcessedRecordsCount",ProcessedRecordsCount},
+                {"DisputedRecordsCount",DisputedRecordsCount },
+                {"ProcessedRecordsCount",ProcessedRecordsCount },
                 {"DuplicateRecordsCount", DuplicateRecordsCount},
                 {"CreatedBy", CreatedBy},
                 {"CreatedOn", CreatedOn},
@@ -74,8 +75,9 @@ namespace PSW.ITT.Data.Entities
                 AttachedFileID,
                 ProductCodeSheetUploadStatusID,
                 TotalRecordsCount,
-                ProcessedRecordsCount,
+                DisputedRecordsCount,
                 DuplicateRecordsCount,
+                ProcessedRecordsCount,
                 CreatedBy,
                 CreatedOn,
                 UpdatedBy,
