@@ -1,4 +1,6 @@
 using AutoMapper;
+using PSW.ITT.Data.Entities;
+using PSW.ITT.Service.DTO;
 
 namespace PSW.ITT.Service.AutoMapper
 {
@@ -26,7 +28,8 @@ namespace PSW.ITT.Service.AutoMapper
                 // NewKeyDTO to ApiKey Mappings 
                 var config = new MapperConfiguration(cfg =>
                 {
-                    // cfg.CreateMap<SendEmailRequestDTO, Message>();
+                     cfg.CreateMap<ProductCodeEntity, FetchActiveProductCodesListResponseDTO>();
+
                 });
 
                 _mapper = config.CreateMapper();

@@ -7,11 +7,11 @@ using System.Collections.Generic;
 
 namespace PSW.ITT.Service.Strategies
 {
-    public class FetchActiveProductCodesList : ApiStrategy<Unspecified, List<FetchActiveProductCodesListResponseDTO>>
+    public class FetchActiveProductCodesListStrategy : ApiStrategy<Unspecified, List<FetchActiveProductCodesListResponseDTO>>
     {
         
         #region Constructors
-        public FetchActiveProductCodesList(CommandRequest commandRequest) : base(commandRequest)
+        public FetchActiveProductCodesListStrategy(CommandRequest commandRequest) : base(commandRequest)
         {
 
         }
