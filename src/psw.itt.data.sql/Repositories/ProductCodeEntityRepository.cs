@@ -41,8 +41,7 @@ namespace PSW.ITT.Data.Sql.Repositories
             var query = new Query("ProductCode")
                 .Where("HSCode", "=", hscode)
                 .Where("ProductCode", "=", ProductCode)
-                .Where("EffectiveFromDt", ">", effectiveThruDt)
-                .OrWhere("EffectiveThruDt", "<", effectiveFromDt)
+                .WhereRaw("(EffectiveFromDt > '" + effectiveThruDt + "' OR EffectiveThruDt < '" + effectiveFromDt + "')")
                 .Select("*");
 
 
