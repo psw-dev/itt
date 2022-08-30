@@ -16,7 +16,7 @@ namespace PSW.ITT.Service.BusinessLogicLayer
         public ProductCodeValidation(string hSCode, string productCode, DateTime effectiveFromDt, DateTime effectiveThruDt, CommandRequest command)
         {
             this.hSCode = hSCode;
-            this.productCode = hSCode;
+            this.productCode = productCode;
             this.effectiveFromDt = effectiveFromDt;
             this.effectiveThruDt = effectiveThruDt;
             this.command = command;
@@ -31,24 +31,24 @@ namespace PSW.ITT.Service.BusinessLogicLayer
             }
 
             // Product code effective from date can not be set as a previous date. More preciously, the effective date should always be current or future date.
-            if (effectiveFromDt < DateTime.Now)
-            {
-                Log.Error($"|ProductCodeValidation| Product code effective from date can not be set as a previous date");
-                throw new System.Exception($"the effective date {effectiveFromDt} should always be current or future date");
-            }
+            // if (effectiveFromDt >= DateTime.Now)
+            // {
+            //     Log.Error($"|ProductCodeValidation| Product code effective from date can not be set as a previous date");
+            //     throw new System.Exception($"the effective date {effectiveFromDt} should always be current or future date");
+            // }
 
             // Product code end date can not be set as a previous date. It should always be today's or future date.
-            if (effectiveThruDt < DateTime.Now)
+            if (DateTime.Compare(DateTime.Now, effectiveThruDt) > 0)
             {
                 Log.Error($"|ProductCodeValidation| Product code end date can not be set as a previous date");
                 throw new System.Exception($"the effective thru {effectiveThruDt} should always be current or future date");
             }
             // Product code thru date can not be set less than start date. It should always be greater than from date
 
-            if (effectiveThruDt <= effectiveFromDt)
+            if (DateTime.Compare(effectiveFromDt, effectiveThruDt) > 0)
             {
-                Log.Error($"|ProductCodeValidation| Product code end date can not be set as a previous date");
-                throw new System.Exception($"the effective thru {effectiveThruDt} should always be current or future date");
+                Log.Error($"|ProductCodeValidation| Product code end date can not be set before start date");
+                throw new System.Exception($"the effective thru {effectiveThruDt} should always greater than Effective from date");
             }
 
             // HSCode lenght should be 8 digits (numeric value)
