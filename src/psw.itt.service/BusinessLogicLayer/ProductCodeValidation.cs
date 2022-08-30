@@ -43,6 +43,14 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                 Log.Error($"|ProductCodeValidation| Product code end date can not be set as a previous date");
                 throw new System.Exception($"the effective thru {effectiveThruDt} should always be current or future date");
             }
+            // Product code thru date can not be set less than start date. It should always be greater than from date
+
+            if (effectiveThruDt <= effectiveFromDt)
+            {
+                Log.Error($"|ProductCodeValidation| Product code end date can not be set as a previous date");
+                throw new System.Exception($"the effective thru {effectiveThruDt} should always be current or future date");
+            }
+
             // HSCode lenght should be 8 digits (numeric value)
             string pattern = @"([0-9]{4})\.([0-9]{4})";
             string input = hSCode;
@@ -65,7 +73,7 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                 Log.Error($"|ProductCodeValidation| Invalid Product Code");
                 throw new System.Exception($"Invalid Product Code {productCode}");
             }
-            match = Regex.Match(input, @"[0-9]{4})", RegexOptions.IgnoreCase);
+            match = Regex.Match(input, @"[0-9]{4}", RegexOptions.IgnoreCase);
             if (!match.Success)
             {
                 Log.Error($"|ProductCodeValidation| Invalid Product Code");

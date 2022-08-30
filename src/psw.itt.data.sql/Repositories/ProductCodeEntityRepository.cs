@@ -25,9 +25,10 @@ namespace PSW.ITT.Data.Sql.Repositories
         public List<ProductCodeEntity> GetActiveProductCode()
         {
             var query = new Query("ProductCode")
-              .Where("EffectiveFromDt", "<=", "GetDate()")
-              .Where("EffectiveThruDt", ">=", "GetDate()")
-              .Select("*");
+              .WhereRaw("(EffectiveFromDt <= GetDate() AND EffectiveThruDt >= GetDate())")
+              .OrWhereRaw("(EffectiveFromDt >= GetDate() AND EffectiveThruDt >= GetDate())")
+              .SelectRaw("ROW_NUMBER() OVER(Order By(Select 1)), *")
+              .OrderBy("EffectiveThruDt");
 
             var result = _sqlCompiler.Compile(query);
             var sql = result.Sql;

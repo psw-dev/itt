@@ -2,6 +2,7 @@ using System.Linq;
 using System.Text.Json;
 using FluentValidation;
 using PSW.ITT.Common.Pagination;
+using PSW.ITT.Service.AutoMapper;
 using PSW.ITT.Service.Command;
 
 namespace PSW.ITT.Service.Strategies
@@ -76,6 +77,7 @@ namespace PSW.ITT.Service.Strategies
             // Deserialize Json to DTO
             RequestDTO = JsonSerializer.Deserialize<T1>(jsonString);
             Pagination = request.pagination;
+            this.Mapper = new ObjectMapper().GetMapper();
         }
 
         public CommandReply OKReply(string message = "success")
