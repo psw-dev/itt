@@ -7,6 +7,7 @@ using PSW.Common.Crypto;
 using psw.common.Extensions;
 using Microsoft.AspNetCore.Http;
 using PSW.ITT.Service.Strategies;
+using psw.itt.service;
 
 namespace PSW.ITT.Api.Controllers
 {
@@ -16,8 +17,8 @@ namespace PSW.ITT.Api.Controllers
     {
         #region Constructors
 
-        public ITTController(IITTService service, IUnitOfWork uow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor)
-        : base(service, uow, strategyFactory, cryptoAlgorithm, httpContextAccessor)
+        public ITTController(IITTService service, IITTOpenService openService, IUnitOfWork uow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor)
+        : base(service, openService, uow, strategyFactory, cryptoAlgorithm, httpContextAccessor)
         {
         }
 

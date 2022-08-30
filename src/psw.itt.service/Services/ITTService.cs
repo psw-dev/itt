@@ -1,9 +1,12 @@
 using PSW.ITT.Data;
 using PSW.ITT.Service.Command;
 using PSW.ITT.Service.Exception;
-using PSW.ITT.Service.IServices;
 using PSW.ITT.Service.Strategies;
 using PSW.Common.Crypto;
+using psw.itt.service;
+using PSW.ITT.Service.IServices;
+using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace PSW.ITT.Service.Services
 {
@@ -13,6 +16,7 @@ namespace PSW.ITT.Service.Services
         public IUnitOfWork UnitOfWork { get; set; }
         public IStrategyFactory StrategyFactory { get; set; }
         public ICryptoAlgorithm CryptoAlgorithm { get; set; }
+        public IEnumerable<Claim> UserClaims { get; set; }
         public int LoggedInUserRoleId { get; set; }
 
         #endregion
@@ -33,6 +37,8 @@ namespace PSW.ITT.Service.Services
             {
                 //check if UnitOfWork is set otherwise set the service's UoW as default
                 request.UnitOfWork = request.UnitOfWork ?? UnitOfWork;
+
+                request.UserClaims = request.UserClaims ?? this.UserClaims;
                 // Check if CryptoAlgorith is set otherwise set the service's Crypto Algorithm as default
                 request.CryptoAlgorithm = request.CryptoAlgorithm ?? CryptoAlgorithm;
                 //create strategy based on request. it can be dynamic

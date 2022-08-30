@@ -24,11 +24,6 @@ namespace PSW.ITT.Common.Constants
 
     }
 
-    public enum FindingsAndTreatmentsStatusEnum
-    {
-        REQUESTED = 1
-    }
-
     public struct AltCode
     {
         public const string CERTIFICATE = "C";
