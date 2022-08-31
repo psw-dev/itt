@@ -372,7 +372,8 @@ namespace PSW.ITT.Service.Strategies
 
             try
             {
-                string connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__ITTConnectionString");
+                //string connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__ITTConnectionString");
+                string connectionString = "Server=10.1.4.58;Initial Catalog=ITT;User ID=psw_app;Password=@Password1;";
                 Log.Information($"UploadFileStrategy: Connectstring: {connectionString}");
                 using (UnitOfWork uow = new UnitOfWork(connectionString))
                 {
@@ -382,7 +383,7 @@ namespace PSW.ITT.Service.Strategies
             }
             catch (System.Exception ex)
             {
-                string connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__ITTConnectionString");
+                string connectionString = "Server=10.1.4.58;Initial Catalog=ITT;User ID=psw_app;Password=@Password1;";
                 Log.Information($"UploadFileStrategy: Connectstring: {connectionString}");
                 Log.Error("[{0}.{1}] {2}-{3}", this.GetType().Name, MethodBase.GetCurrentMethod().Name, ex, ex.StackTrace);
                 using (UnitOfWork uow = new UnitOfWork(connectionString))
