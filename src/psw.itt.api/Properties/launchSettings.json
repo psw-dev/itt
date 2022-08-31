@@ -28,7 +28,7 @@
         "SEQ_URL": "http://localhost:5341/",
         "ENCRYPTION_SALT": "random",
         "ENCRYPTION_PASSWORD": "pass",
-        "ConnectionStrings__ConnectionString": "Server=10.1.4.62,1443;Initial Catalog=ITT;User ID=dev;Password=@Password1;"
+        "ConnectionStrings__ITTConnectionString": "Server=10.1.4.62,1443;Initial Catalog=ITT;User ID=dev;Password=@Password1;"
       }
     }
   }
