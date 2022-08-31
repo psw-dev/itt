@@ -42,9 +42,9 @@ namespace PSW.ITT.Api
                 throw new Exception("Please provide salt and password for Crypto Algorithm in Environment Variable");
             }
 
-            // services.AddSingleton<IAppSettingsProcessor>(_ => new AppSettingsDecrypter<AesManaged>(_.GetService<IConfiguration>(),
-            //     password,
-            //     salt));
+            services.AddSingleton<IAppSettingsProcessor>(_ => new AppSettingsDecrypter<AesManaged>(_.GetService<IConfiguration>(),
+                password,
+                salt));
             services.AddScoped<ICryptoAlgorithm>(x =>
             {
                 return new CryptoFactory().Create<AesManaged>(password, salt);
