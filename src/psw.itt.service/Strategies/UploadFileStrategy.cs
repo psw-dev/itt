@@ -373,6 +373,7 @@ namespace PSW.ITT.Service.Strategies
             try
             {
                 string connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__ITTConnectionString");
+                Log.Information($"UploadFileStrategy: Connectstring: {connectionString}");
                 using (UnitOfWork uow = new UnitOfWork(connectionString))
                 {
                     MapandInsertDataTable(uow, dt, request, propertyNameList, fileUploadHistoryID, token, cts, userRoleId);
@@ -381,8 +382,9 @@ namespace PSW.ITT.Service.Strategies
             }
             catch (System.Exception ex)
             {
-                Log.Error("[{0}.{1}] {2}-{3}", this.GetType().Name, MethodBase.GetCurrentMethod().Name, ex, ex.StackTrace);
                 string connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__ITTConnectionString");
+                Log.Information($"UploadFileStrategy: Connectstring: {connectionString}");
+                Log.Error("[{0}.{1}] {2}-{3}", this.GetType().Name, MethodBase.GetCurrentMethod().Name, ex, ex.StackTrace);
                 using (UnitOfWork uow = new UnitOfWork(connectionString))
                 {
                     if (ex is ObjectDisposedException)
