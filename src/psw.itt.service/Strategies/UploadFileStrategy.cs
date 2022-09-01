@@ -511,25 +511,32 @@ namespace PSW.ITT.Service.Strategies
             {
                 var ChapterCode = Row[0].ToString().Substring(0, 2);
                 var ProductCodeChapter = uow.ProductCodeChapterRepository.Where(new { Code = ChapterCode }).FirstOrDefault();
+                if(ProductCodeChapter!= null)
+                {
+                    productCodeEntity.HSCode = Row[0].ToString();
+                    productCodeEntity.HSCodeExt = Row[0].ToString() + "." + Row[1].ToString();
+                    productCodeEntity.ProductCode = Row[1].ToString();
+                    productCodeEntity.TradeTranTypeID = Convert.ToInt16(Row[3]);
+                    productCodeEntity.ChapterCode = ChapterCode;
+                    productCodeEntity.ProductCodeChapterID = (short)ProductCodeChapter.ID;
+                    productCodeEntity.Description = Row[2].ToString();
+                    productCodeEntity.ProductCodeSheetUploadHistoryID = fileUploadHistoryID;
+                    productCodeEntity.EffectiveFromDt = Convert.ToDateTime(Row[4].ToString());
+                    productCodeEntity.EffectiveThruDt = Convert.ToInt32(Row[6].ToString()) == 0 ? Convert.ToDateTime(Row[5].ToString()) : DateTime.MaxValue;
 
-                productCodeEntity.HSCode = Row[0].ToString();
-                productCodeEntity.HSCodeExt = Row[0].ToString() + "." + Row[1].ToString();
-                productCodeEntity.ProductCode = Row[1].ToString();
-                productCodeEntity.TradeTranTypeID = Convert.ToInt16(Row[3]);
-                productCodeEntity.ChapterCode = ChapterCode;
-                productCodeEntity.ProductCodeChapterID = (short)ProductCodeChapter.ID;
-                productCodeEntity.Description = Row[2].ToString();
-                productCodeEntity.ProductCodeSheetUploadHistoryID = fileUploadHistoryID;
-                productCodeEntity.EffectiveFromDt = Convert.ToDateTime(Row[4].ToString());
-                productCodeEntity.EffectiveThruDt = Convert.ToInt32(Row[6].ToString()) == 0 ? Convert.ToDateTime(Row[5].ToString()) : DateTime.MaxValue;
+                    productCodeEntity.CreatedOn = DateTime.Now;
+                    productCodeEntity.UpdatedOn = DateTime.Now;
+                    productCodeEntity.CreatedBy = userRoleId;
+                    productCodeEntity.UpdatedBy = userRoleId;
+                    // ACRHeader.CompletedOn = DateTime.Now;
 
-                productCodeEntity.CreatedOn = DateTime.Now;
-                productCodeEntity.UpdatedOn = DateTime.Now;
-                productCodeEntity.CreatedBy = userRoleId;
-                productCodeEntity.UpdatedBy = userRoleId;
-                // ACRHeader.CompletedOn = DateTime.Now;
-
-                var productCodeEntityId = uow.ProductCodeEntityRepository.Add(productCodeEntity);
+                    var productCodeEntityId = uow.ProductCodeEntityRepository.Add(productCodeEntity);
+                }
+                else{
+                    Log.Information("[{0}.{1}] Product Code Chapter Not Found {2} ", this.GetType().Name, MethodBase.GetCurrentMethod().Name, ProductCodeChapter);
+                    throw new NullReferenceException(" Product Code Chapter Not Found ");
+           
+                }
             }
             catch (System.Exception ex)
             {
