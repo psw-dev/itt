@@ -20,6 +20,12 @@ namespace PSW.ITT.Api.Controllers
         public UploadController(IITTService secureService, IITTOpenService openService, IUnitOfWork uow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor) : 
         base(secureService, openService, uow, strategyFactory, cryptoAlgorithm, httpContextAccessor)
         {
+            // OpenService = openService;
+            // OpenService.UnitOfWork = uow;
+            // OpenService.StrategyFactory = new OpenStrategyFactory(uow);
+            // OpenService.CryptoAlgorithm = cryptoAlgorithm;
+
+          
         }
 
         #endregion

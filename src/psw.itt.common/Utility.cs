@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using PSW.Common.Crypto;
 
 namespace PSW.ITT.Common
 {
@@ -193,6 +194,35 @@ namespace PSW.ITT.Common
                 random.GetNonZeroBytes(salt);
             }
             return salt;
+        }
+
+    public static string DecryptConnectionString(){
+            try
+        {
+            string salt = Environment.GetEnvironmentVariable("ENCRYPTION_SALT");
+            string password = Environment.GetEnvironmentVariable("ENCRYPTION_PASSWORD");
+            string connection=  Environment.GetEnvironmentVariable("ConnectionStrings__ITTConnectionString");
+            if (string.IsNullOrWhiteSpace(salt) || string.IsNullOrWhiteSpace(password))
+            {
+                throw new System.Exception("Please provide salt and password for Crypto Algorithm in Environment Variable");
+            }
+
+            var crypto = new CryptoFactory().Create<AesManaged>(password, salt);
+            
+            if (string.IsNullOrWhiteSpace(salt) || string.IsNullOrWhiteSpace(password))
+            {
+                throw new System.Exception("Please provide salt and password for Crypto Algorithm in Environment Variable");
+            }
+            if (string.IsNullOrWhiteSpace(connection) )
+            {
+                throw new System.Exception("Please provide connection string Crypto Algorithm in Environment Variable");
+            }
+            return  crypto.Decrypt(connection);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
         }
 
     }
