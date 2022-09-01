@@ -20,6 +20,18 @@ namespace PSW.ITT.Api.Controllers
         public ITTController(IITTService service, IITTOpenService openService, IUnitOfWork uow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor)
         : base(service, openService, uow, strategyFactory, cryptoAlgorithm, httpContextAccessor)
         {
+        //     Service = service;
+        //     Service.UnitOfWork = uow;
+        //     Service.StrategyFactory = new StrategyFactory(uow);
+        //     Service.CryptoAlgorithm = cryptoAlgorithm;
+
+        // try{
+        //      httpContextAccessor.HttpContext.Request.Headers.TryGetValue("LoggedInUserRoleID", out var userRoleId);
+        //     service.LoggedInUserRoleId = cryptoAlgorithm.Decrypt(userRoleId).ToIntOrDefault();
+        // }
+        // catch{
+
+        // }
         }
 
         #endregion

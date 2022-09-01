@@ -40,9 +40,12 @@ namespace PSW.ITT.Api.Controllers
             OpenService.UnitOfWork = uow;
             OpenService.StrategyFactory = new OpenStrategyFactory(uow);
             OpenService.CryptoAlgorithm = cryptoAlgorithm;
-
-            httpContextAccessor.HttpContext.Request.Headers.TryGetValue("LoggedInUserRoleID", out var userRoleId);
-            service.LoggedInUserRoleId = cryptoAlgorithm.Decrypt(userRoleId).ToIntOrDefault();
+            try
+            {
+                httpContextAccessor.HttpContext.Request.Headers.TryGetValue("LoggedInUserRoleID", out var userRoleId);
+                service.LoggedInUserRoleId = cryptoAlgorithm.Decrypt(userRoleId).ToIntOrDefault();
+            }
+            catch { }
         }
 
         #endregion
@@ -144,7 +147,7 @@ namespace PSW.ITT.Api.Controllers
             return apiResponse;
 
         }
-        
+
         [HttpPost("open")]
         public virtual ActionResult<object> OpenRequest(APIRequest apiRequest)
         {
@@ -280,6 +283,7 @@ namespace PSW.ITT.Api.Controllers
                 // if (authenticated)
                 // {
                 // Calling Service 
+
                 CommandReply commandReply = Service.invokeMethod(
                 new CommandRequest()
                 {
@@ -290,8 +294,9 @@ namespace PSW.ITT.Api.Controllers
                     pagination = apiRequest.pagination,
                     file = apiRequest.file,
                     roleCode = apiRequest.roleCode
-                });
-                 apiResponse = ApiResponseByCommand(commandReply, apiResponse);
+                }
+                );
+                apiResponse = ApiResponseByCommand(commandReply, apiResponse);
 
                 Log.Information($"|FileRegistration| Path {path}.");
                 if (commandReply.code == "400" || commandReply.code == "500")
@@ -301,8 +306,8 @@ namespace PSW.ITT.Api.Controllers
                 path = commandReply.message;
                 Log.Information($"|FileRegistration| Path {path}.");
 
-               
-              
+
+
 
             }
             catch (Exception ex)
@@ -311,7 +316,7 @@ namespace PSW.ITT.Api.Controllers
                 return BadRequest(ex.Message);
             }
             return apiResponse;
-           
+
         }
         #endregion
     }

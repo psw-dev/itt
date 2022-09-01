@@ -19,6 +19,8 @@ using PSW.ITT.Common;
 using PSW.ITT.Common.Enums;
 using PSW.ITT.Data.Entities;
 using PSW.ITT.Data.Sql.UnitOfWork;
+using PSW.Common.Crypto;
+using System.Security.Cryptography;
 
 namespace PSW.ITT.Service.Strategies
 {
@@ -372,8 +374,26 @@ namespace PSW.ITT.Service.Strategies
 
             try
             {
-                //string connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__ITTConnectionString");
-                string connectionString = "Server=10.1.4.58;Initial Catalog=ITT;User ID=psw_app;Password=@Password1;";
+            //     string salt = Environment.GetEnvironmentVariable("ENCRYPTION_SALT");
+            //     string password = Environment.GetEnvironmentVariable("ENCRYPTION_PASSWORD");
+            //     string connection=  Environment.GetEnvironmentVariable("ConnectionStrings__ITTConnectionString");
+            //    if (string.IsNullOrWhiteSpace(salt) || string.IsNullOrWhiteSpace(password))
+            // {
+            //     throw new System.Exception("Please provide salt and password for Crypto Algorithm in Environment Variable");
+            // }
+
+            //     var crypto = new CryptoFactory().Create<AesManaged>(password, salt);
+                
+            //        if (string.IsNullOrWhiteSpace(salt) || string.IsNullOrWhiteSpace(password))
+            // {
+            //     throw new System.Exception("Please provide salt and password for Crypto Algorithm in Environment Variable");
+            // }
+            //   if (string.IsNullOrWhiteSpace(connection) )
+            // {
+            //     throw new System.Exception("Please provide connection string Crypto Algorithm in Environment Variable");
+            // }
+                string connectionString = Utility.DecryptConnectionString();
+                // string connectionString = "Server=10.1.4.58;Initial Catalog=ITT;User ID=psw_app;Password=@Password1;";
                 Log.Information($"UploadFileStrategy: Connectstring: {connectionString}");
                 using (UnitOfWork uow = new UnitOfWork(connectionString))
                 {
@@ -513,6 +533,7 @@ namespace PSW.ITT.Service.Strategies
             }
             catch (System.Exception ex)
             {
+                Log.Error("[{0}.{1}] {2}-{3}", this.GetType().Name, MethodBase.GetCurrentMethod().Name, ex, ex.StackTrace);
                 throw ex;
             }
         }
