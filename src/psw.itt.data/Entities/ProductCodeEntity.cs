@@ -10,6 +10,7 @@ namespace PSW.ITT.Data.Entities
     {
         #region Fields
 
+        private long? _serialId;
         private long _iD;
         private string _hSCode;
         private string _hSCodeExt;
@@ -30,6 +31,7 @@ namespace PSW.ITT.Data.Entities
 
         #region Properties
 
+        public long? SerialID { get { return _serialId; } set { _serialId = value; } }
         public long ID { get { return _iD; } set { _iD = value; PrimaryKey = value; } }
         public string HSCode { get { return _hSCode; } set { _hSCode = value; } }
         public string HSCodeExt { get { return _hSCodeExt; } set { _hSCodeExt = value; } }

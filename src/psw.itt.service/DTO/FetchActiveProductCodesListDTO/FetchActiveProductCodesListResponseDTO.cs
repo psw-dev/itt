@@ -5,6 +5,9 @@ namespace PSW.ITT.Service.DTO
 {
     public class FetchActiveProductCodesListResponseDTO
     {
+        [JsonPropertyName("serialId")]
+        public long? SerialID { get; set; }
+
         [JsonPropertyName("hSCode")]
         public string HSCode { get; set; }
 
