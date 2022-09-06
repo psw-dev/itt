@@ -82,10 +82,10 @@ namespace PSW.ITT.Service.Strategies
 
                 var filePath = Utility.AESDecrypt256(RequestDTO.FilePath);
                 dt = GetDataTableFromExcel(filePath);
-                string disputedRecordsFile = "";
                 var dispuedTable = new DataTable();
                 var duplicateTable = new DataTable();
                 var errorColumnPosition = 0;
+                var errorColumnIndexPosition = 0;
                 if (dt.Rows.Count <= 1)
                 {
                     Log.Information("[{0}.{1}] File not Uploaded Successfully as you are trying to upload an empty File", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
@@ -101,6 +101,7 @@ namespace PSW.ITT.Service.Strategies
                 else
                 {
                     errorColumnPosition = dt.Rows[0].ItemArray.Length;
+                    errorColumnIndexPosition = dt.Rows[0].ItemArray.Length + 1;
                     foreach (var cols in dt.Rows[0].ItemArray)
                     {
                         dispuedTable.Columns.Add(cols.ToString(), typeof(string));
@@ -109,12 +110,13 @@ namespace PSW.ITT.Service.Strategies
                     }
                     dispuedTable.Columns.Add("Error", typeof(string));
                     duplicateTable.Columns.Add("Error", typeof(string));
+                    duplicateTable.Columns.Add("Row Index", typeof(string));
+                    dispuedTable.Columns.Add("Row Index", typeof(string));
                     dt.AcceptChanges();
                     dt.Rows.Remove(dt.Rows[0]);
                 }
 
                 var columnsCheck = CheckIsMandatoryColumnsAvailable(dt);
-
 
                 if (columnsCheck != "")
                 {
@@ -124,10 +126,10 @@ namespace PSW.ITT.Service.Strategies
                 }
                 var activeProductCodes = Command.UnitOfWork.ProductCodeEntityRepository.GetActiveProductCode();
                 var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = 1 }).ToList();
-
+                int rowIndex=0;
 
                 foreach (DataRow d in dt.Rows)
-                {
+                {   rowIndex +=1;
                     var hsCode = propertyNameList.Where(x => x.NameLong == "HSCode").FirstOrDefault();
                     var productCode = propertyNameList.Where(x => x.NameLong == "Product Code").FirstOrDefault();
                     var effectiveDateFrom = propertyNameList.Where(x => x.NameLong == "Effective Date").FirstOrDefault();
@@ -198,6 +200,7 @@ namespace PSW.ITT.Service.Strategies
                     {
                         row.ItemArray = d.ItemArray;
                         row[errorColumnPosition] = error;
+                        row[errorColumnIndexPosition] = rowIndex ;
                         dispuedTable.Rows.Add(row);
                     }
 
@@ -309,9 +312,10 @@ namespace PSW.ITT.Service.Strategies
                 var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = 1 }).OrderBy(x => x.Index).ToList();
 
 
-
+                int rowIndex=0;
                 foreach (DataRow drow in dt.Rows)
                 {
+                    rowIndex +=1;
                     IDictionary<string, object> expandoDict = new ExpandoObject();
                     foreach (var x in propertyNameList)
                     {
@@ -319,6 +323,7 @@ namespace PSW.ITT.Service.Strategies
 
                     }
                     expandoDict.Add("error", drow[propertyNameList.Count]);
+                    expandoDict.Add("rowIndex", rowIndex);
                     gridData.Add(expandoDict);
 
                 }
@@ -339,7 +344,7 @@ namespace PSW.ITT.Service.Strategies
             {
                 List<GridColumns> gridColumns = new List<GridColumns>();
 
-                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = 1 }).ToList();
+                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = 1 }).OrderBy(x=>x.Index).ToList();
                 foreach (var x in propertyNameList)
                 {
                     var column = new GridColumns();
@@ -351,12 +356,19 @@ namespace PSW.ITT.Service.Strategies
                 }
 
 
-                var columnError = new GridColumns();
-                columnError.Field = "error";
-                columnError.Title = "Error";
-                columnError.Editor = "string";
-                columnError.Width = "400px";
+                var columnError = new GridColumns{
+                Field = "error",
+                Title = "Error",
+                Editor = "string",
+                Width = "400px"};
                 gridColumns.Add(columnError);
+
+                var columnErrorRowIndex = new GridColumns{
+                Field = "rowIndex",
+                Title = "Row Index",
+                Editor = "string",
+                Width = "20px"};
+                gridColumns.Add(columnErrorRowIndex);
 
                 return gridColumns;
 
@@ -522,7 +534,7 @@ namespace PSW.ITT.Service.Strategies
                     productCodeEntity.Description = Row[2].ToString();
                     productCodeEntity.ProductCodeSheetUploadHistoryID = fileUploadHistoryID;
                     productCodeEntity.EffectiveFromDt = Convert.ToDateTime(Row[4].ToString());
-                    productCodeEntity.EffectiveThruDt = Convert.ToInt32(Row[6].ToString()) == 0 ? Convert.ToDateTime(Row[5].ToString()) : DateTime.MaxValue;
+                    productCodeEntity.EffectiveThruDt = Convert.ToInt32(Row[6].ToString()) == 0 ? Convert.ToDateTime(Row[5].ToString()).AddHours(23).AddMinutes(59).AddSeconds(59) : DateTime.MaxValue;
 
                     productCodeEntity.CreatedOn = DateTime.Now;
                     productCodeEntity.UpdatedOn = DateTime.Now;
