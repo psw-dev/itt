@@ -8,6 +8,9 @@ namespace PSW.ITT.Service.DTO
         [JsonPropertyName("serialId")]
         public long? SerialID { get; set; }
 
+        [JsonPropertyName("id")]
+        public long ID { get; set; }
+
         [JsonPropertyName("hSCode")]
         public string HSCode { get; set; }
 
