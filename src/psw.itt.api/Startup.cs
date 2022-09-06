@@ -45,7 +45,13 @@ namespace PSW.ITT.Api
             services.AddSingleton<IAppSettingsProcessor>(_ => new AppSettingsDecrypter<AesManaged>(_.GetService<IConfiguration>(),
                 password,
                 salt));
-
+            services.AddScoped<ICryptoAlgorithm>(x =>
+            {
+                return new CryptoFactory().Create<AesManaged>(password, salt);
+            });
+            //  var cryptoAlgorithm = new CryptoFactory().Create<AesManaged>(password, salt);
+            // services.AddScoped<ICryptoAlgorithm>(cryptoAlgorithm);
+            
             services.AddTransient<IITTService, ITTService>();
             services.AddTransient<IStrategyFactory, StrategyFactory>();
             services.AddTransient<IITTOpenService, ITTOpenService>();
@@ -57,8 +63,7 @@ namespace PSW.ITT.Api
                 typeof(EntityToDTOMappingProfile)
             );
 
-            var cryptoAlgorithm = new CryptoFactory().Create<AesManaged>(password, salt);
-            services.AddSingleton<ICryptoAlgorithm>(cryptoAlgorithm);
+           
             services.AddHostedService<ITTWorkerQueueService>();
             services.AddControllers()
                     .AddJsonOptions(options =>

@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "psw.pcs.api": {
+    "psw.itt.api": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "weatherforecast",
@@ -26,8 +26,10 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_IDENTITY_SERVER_ISSUER": "http://localhost:4000",
         "SEQ_URL": "http://localhost:5341/",
-        "ENCRYPTION_SALT": "random",
-        "ENCRYPTION_PASSWORD": "pass"
+        "ENCRYPTION_SALT": "randomsalt",
+        "ENCRYPTION_PASSWORD": "pass",
+        "ConnectionStrings__ITTConnectionString": "X5cFi3MqkFKAn65sb5nZe9Wrzjpnw7j54shkSfCVZBlJpAuen+BIADDhlAll8vbz/ITrSiw14CkHifS0KWQtevPne14X1CklWaX/ssIpecV7NYLULxmMGD3XvSy4NdOKaDUeUElrHCeXlZZgCXgYLjyisK31Af5B2GKGwkHNFSh8iJZ4PHylEh0wPkYXGmlvCuf2/OtFfzj/CUqufp7qCQ=="
+        // "ConnectionStrings__ITTConnectionString": "Server=10.1.4.62,1443;Initial Catalog=ITT;User ID=dev;Password=@Password1;"
       }
     }
   }
