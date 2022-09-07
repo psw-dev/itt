@@ -27,7 +27,7 @@ namespace PSW.ITT.Data.Sql.Repositories
             var query = new Query("ProductCode")
               .WhereRaw("(EffectiveFromDt <= GetDate() AND EffectiveThruDt >= GetDate())")
               .OrWhereRaw("(EffectiveFromDt >= GetDate() AND EffectiveThruDt >= GetDate())")
-              .SelectRaw("ROW_NUMBER() OVER(Order By(Select 1)) as SerialID, *")
+              .SelectRaw("Top 30 ROW_NUMBER() OVER(Order By(Select 1)) as SerialID, *")
               .OrderBy("EffectiveThruDt");
 
             var result = _sqlCompiler.Compile(query);
