@@ -19,6 +19,7 @@ namespace PSW.ITT.Data.IRepositories
 
         string WhereBuilder(object condition);
         T Get(string id);
+        T Get(long id);
 
     }
 }

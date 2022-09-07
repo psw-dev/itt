@@ -8,7 +8,7 @@ namespace PSW.ITT.Data
     {
 
         #region Repositories
-        IChapterAgencyLinkRepository ChapterAgencyLinkRepository { get; }
+        IProductCodeAgencyLinkRepository ProductCodeAgencyLinkRepository { get; }
         IProductCodeChapterRepository ProductCodeChapterRepository { get; }
         IProductCodeEntityRepository ProductCodeEntityRepository { get; }
         IProductCodeSheetUploadHistoryRepository ProductCodeSheetUploadHistoryRepository { get; }
