@@ -63,6 +63,7 @@ namespace PSW.ITT.Service.Strategies
                     CreatedOn = DateTime.Now,
                     UpdatedOn = DateTime.Now
                 };
+                Command.UnitOfWork.ProductCodeAgencyLinkRepository.Add(productCodeAgencyLinkEntity);
             }
 
             void REMOVEOGA()

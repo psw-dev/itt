@@ -28,7 +28,8 @@ namespace PSW.ITT.Service.AutoMapper
                 // NewKeyDTO to ApiKey Mappings 
                 var config = new MapperConfiguration(cfg =>
                 {
-                     cfg.CreateMap<ProductCodeEntity, FetchActiveProductCodesListResponseDTO>();
+                    cfg.CreateMap<ProductCodeEntity, FetchActiveProductCodesListResponseDTO>();
+                    cfg.CreateMap<PSW.ITT.Data.DTO.GetProductCodeListWithAgenciesResponseDTO, GetProductCodeListWithAgenciesResponseDTO>();
 
                 });
 

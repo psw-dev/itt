@@ -83,14 +83,15 @@ namespace PSW.ITT.Data.Sql.Repositories
                 _transaction
                 );
         }
+
         public void Delete(T entity)
         {
             var columns = entity.GetColumns();
-            _connection.Query<T>(
-                "DELETE FROM @TableName WHERE @PrimaryKeyName = @Id",
-                new { TableName = TableName, PrimaryKeyName = PrimaryKeyName, Id = columns[PrimaryKeyName] },
-                _transaction
-                );
+            var sqlQuery = string.Format("DELETE {0} WHERE {2} = '{1}';", TableName, columns[PrimaryKeyName], PrimaryKeyName);
+
+            _connection.Execute(
+                sqlQuery, transaction: _transaction
+            );
         }
         public virtual T Get(string id)
         {

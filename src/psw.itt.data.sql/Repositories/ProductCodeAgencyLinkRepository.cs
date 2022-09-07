@@ -25,7 +25,7 @@ namespace PSW.ITT.Data.Sql.Repositories
         #region Public methods
         public List<GetProductCodeListWithAgenciesResponseDTO> GetProductCodeIDWithOGA()
         {
-            var query = @"SELECT [ProductCodeID] ,[AgencyID],[EffectiveFromDt] ,[EffectiveThruDt]
+            var query = @"SELECT [ProductCodeID] ,[AgencyID],[EffectiveFromDt] ,[EffectiveThruDt],[SHRD]..[agency].Code,[SHRD]..[agency].Name
                          FROM [ITT].[dbo].[ProductCodeAgencyLink]
                          Left Join [SHRD]..[agency] on [SHRD]..[agency].[ID] = [ProductCodeAgencyLink].[AgencyID]
                          WHERE (EffectiveFromDt <= GetDate() AND EffectiveThruDt >= GetDate()) 
