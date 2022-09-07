@@ -4,14 +4,14 @@ using System.Collections.Generic;
 namespace PSW.ITT.Data.Entities
 {
     /// <summary>
-    /// This class represents the ChapterAgencyLink table in the database 
+    /// This class represents the ProductCodeAgencyLink table in the database 
     /// </summary>
-	public class ChapterAgencyLink : Entity
+	public class ProductCodeAgencyLink : Entity
     {
         #region Fields
 
         private long _iD;
-        private short _productCodeChapterID;
+        private long _productCodeID;
         private short _agencyID;
         private DateTime _effectiveFromDt;
         private DateTime _effectiveThruDt;
@@ -25,7 +25,7 @@ namespace PSW.ITT.Data.Entities
         #region Properties
 
         public long ID { get { return _iD; } set { _iD = value; PrimaryKey = value; } }
-        public short ProductCodeChapterID { get { return _productCodeChapterID; } set { _productCodeChapterID = value; } }
+        public long ProductCodeID { get { return _productCodeID; } set { _productCodeID = value; } }
         public short AgencyID { get { return _agencyID; } set { _agencyID = value; } }
         public DateTime EffectiveFromDt { get { return _effectiveFromDt; } set { _effectiveFromDt = value; } }
         public DateTime EffectiveThruDt { get { return _effectiveThruDt; } set { _effectiveThruDt = value; } }
@@ -47,7 +47,7 @@ namespace PSW.ITT.Data.Entities
             return new Dictionary<string, object>
             {
                 {"ID", ID},
-                {"ProductCodeChapterID", ProductCodeChapterID},
+                {"ProductCodeID", ProductCodeID},
                 {"AgencyID", AgencyID},
                 {"EffectiveFromDt", EffectiveFromDt},
                 {"EffectiveThruDt", EffectiveThruDt},
@@ -62,7 +62,7 @@ namespace PSW.ITT.Data.Entities
             return new
             {
 
-                ProductCodeChapterID,
+                ProductCodeID,
                 AgencyID,
                 EffectiveFromDt,
                 EffectiveThruDt,
@@ -76,9 +76,9 @@ namespace PSW.ITT.Data.Entities
         #endregion
 
         #region Constructors
-        public ChapterAgencyLink()
+        public ProductCodeAgencyLink()
         {
-            TableName = "ChapterAgencyLink";
+            TableName = "ProductCodeAgencyLink";
             PrimaryKeyName = "ID";
         }
         #endregion

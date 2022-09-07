@@ -97,6 +97,11 @@ namespace PSW.ITT.Data.Sql.Repositories
             return _connection.Query<T>(string.Format("SELECT TOP 1 * FROM {0} WHERE [{2}] = '{1}'", TableName, id, PrimaryKeyName),
                                         transaction: _transaction).FirstOrDefault();
         }
+        public virtual T Get(long id)
+        {
+            return _connection.Query<T>(string.Format("SELECT TOP 1 * FROM {0} WHERE [{2}] = '{1}'", TableName, id, PrimaryKeyName),
+                                        transaction: _transaction).FirstOrDefault();
+        }
         // public T Find(int id)
         // {
 

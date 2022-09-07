@@ -22,7 +22,7 @@ namespace PSW.ITT.Data.Sql.UnitOfWork
 
         // Repositories 
 
-        private IChapterAgencyLinkRepository _chapterAgencyLinkRepository;
+        private IProductCodeAgencyLinkRepository _productCodeAgencyLinkRepository;
         private IProductCodeChapterRepository _productCodeChapterRepository;
         private IProductCodeEntityRepository _productCodeEntityRepository;
         private IProductCodeSheetUploadHistoryRepository _productCodeSheetUploadHistoryRepository;
@@ -63,7 +63,7 @@ namespace PSW.ITT.Data.Sql.UnitOfWork
 
 
         #region Public Properties
-        public IChapterAgencyLinkRepository ChapterAgencyLinkRepository => _chapterAgencyLinkRepository ?? (_chapterAgencyLinkRepository = new ChapterAgencyLinkRepository(_connection));
+        public IProductCodeAgencyLinkRepository ProductCodeAgencyLinkRepository => _productCodeAgencyLinkRepository ?? (_productCodeAgencyLinkRepository = new ProductCodeAgencyLinkRepository(_connection));
         public IProductCodeChapterRepository ProductCodeChapterRepository => _productCodeChapterRepository ?? (_productCodeChapterRepository = new ProductCodeChapterRepository(_connection));
         public IProductCodeEntityRepository ProductCodeEntityRepository => _productCodeEntityRepository ?? (_productCodeEntityRepository = new ProductCodeEntityRepository(_connection));
         public IProductCodeSheetUploadHistoryRepository ProductCodeSheetUploadHistoryRepository => _productCodeSheetUploadHistoryRepository ?? (_productCodeSheetUploadHistoryRepository = new ProductCodeSheetUploadHistoryRepository(_connection));
