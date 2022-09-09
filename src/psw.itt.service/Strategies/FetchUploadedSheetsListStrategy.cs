@@ -72,8 +72,8 @@ namespace PSW.ITT.Service.Strategies
                     // fileUploadItem.DisputedRecordsData = item.DisputedRecordsData;
                     fileUploadItem.StatusId = item.ProductCodeSheetUploadStatusID;
                     fileUploadItem.StatusName = EnumHelper.GetEnumDescription(((ProductCodeSheetUploadStatusEnum)item.ProductCodeSheetUploadStatusID));
-                    fileUploadItem.CreatedOn = item.CreatedOn.ToString("dd-MMM-yyyy");
-                    fileUploadItem.UpdatedOn = item.UpdatedOn.ToString("dd-MMM-yyyy");
+                    fileUploadItem.CreatedOn = item.CreatedOn.ToString();
+                    fileUploadItem.UpdatedOn = item.UpdatedOn.ToString();
                     fileUploadItem.IsLast = (item.ID == last.ID) ? true : false;
                     fileUploadItem.UploadedBy = UMSHelper.GetUserInformation(Command, (int)item.CreatedBy)?.PersonName ?? "";
 
