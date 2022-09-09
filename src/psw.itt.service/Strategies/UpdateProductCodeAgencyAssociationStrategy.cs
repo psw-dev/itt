@@ -75,7 +75,10 @@ namespace PSW.ITT.Service.Strategies
                         AgencyID = RequestDTO.AgencyID
                     }
                 ).FirstOrDefault();
-                Command.UnitOfWork.ProductCodeAgencyLinkRepository.Delete(productAgencyLinkEntity);
+                productAgencyLinkEntity.UpdatedBy = Command.LoggedInUserRoleID;
+                productAgencyLinkEntity.UpdatedOn = DateTime.Now;
+                productAgencyLinkEntity.EffectiveThruDt = DateTime.Now;
+                Command.UnitOfWork.ProductCodeAgencyLinkRepository.Update(productAgencyLinkEntity);
             }
 
         }
