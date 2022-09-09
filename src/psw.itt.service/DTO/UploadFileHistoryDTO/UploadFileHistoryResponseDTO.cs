@@ -7,15 +7,6 @@ namespace PSW.ITT.Service.DTO
         [JsonPropertyName("id")]
         public long ID { get; set; }
 
-        [JsonPropertyName("agencyId")]
-        public int AgencyID { get; set; }
-
-        [JsonPropertyName("ownerDocumentTypeCode")]
-        public string OwnerDocumentTypeCode { get; set; }
-
-        [JsonPropertyName("ownerDocumentTypeName")]
-        public string OwnerDocumentTypeName { get; set; }
-
         [JsonPropertyName("attachedFileID")]
         public string AttachedFileID { get; set; }
 
