@@ -31,7 +31,7 @@ namespace PSW.ITT.Service.Strategies
                 case "2203": return new CloseProductCodeStrategy(request);
                 case "2204": return new GetProductCodeListWithAgenciesStrategy(request);
                 case "2205": return new UpdateProductCodeAgencyAssociationStrategy(request);
-                case "2206": return new GetAgencyList(request);
+                case "2206": return new BulkAgencyAssociationStrategy(request);
                 case "2220": return new GetColumnNamesForExcelStrategy(request);
                 case "2221": return new FetchUploadedSheetsListStrategy(request);
                 case "2222": return new UploadFileStrategy(request);
