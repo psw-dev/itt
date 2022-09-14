@@ -13,12 +13,12 @@ namespace PSW.ITT.Service.BusinessLogicLayer
         private DateTime effectiveFromDt;
         private DateTime effectiveThruDt;
         private CommandRequest command;
-        public ProductCodeValidation(string hSCode, string productCode, DateTime effectiveFromDt, DateTime effectiveThruDt, CommandRequest command)
+        public ProductCodeValidation(string hSCode, string productCode, DateTime effectiveFromDt, DateTime? effectiveThruDt, CommandRequest command)
         {
             this.hSCode = hSCode;
             this.productCode = productCode;
             this.effectiveFromDt = effectiveFromDt;
-            this.effectiveThruDt = effectiveThruDt;
+            this.effectiveThruDt = (DateTime)effectiveThruDt;
             this.command = command;
         }
 
