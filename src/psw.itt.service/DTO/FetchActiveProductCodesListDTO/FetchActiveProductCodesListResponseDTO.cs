@@ -30,9 +30,9 @@ namespace PSW.ITT.Service.DTO
         public string Description { get; set; }
 
         [JsonPropertyName("effectiveFromDt")]
-        public DateTime EffectiveFromDt { get; set; }
+        public string EffectiveFromDt { get; set; }
 
         [JsonPropertyName("effectiveThruDt")]
-        public DateTime EffectiveThruDt { get; set; }
+        public string EffectiveThruDt { get; set; }
     }
 }

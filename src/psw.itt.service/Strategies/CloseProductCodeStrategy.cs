@@ -33,6 +33,7 @@ namespace PSW.ITT.Service.Strategies
                 {
                     return BadRequestReply("Product Code already deactivated");
                 }
+                Command.UnitOfWork.BeginTransaction();
                 ProductCodeEntity.EffectiveThruDt = currentDateTime.AddDays(1).Date.AddSeconds(-1);
                 ProductCodeEntity.UpdatedBy = Command.LoggedInUserRoleID;
                 ProductCodeEntity.UpdatedOn = currentDateTime;
@@ -40,16 +41,26 @@ namespace PSW.ITT.Service.Strategies
                 // as Product code will be closed at the end of day 
                 Command.UnitOfWork.ProductCodeEntityRepository.Update(ProductCodeEntity);
 
+                var agencyLink = Command.UnitOfWork.ProductCodeAgencyLinkRepository.Get(ProductCodeEntity.ID);
+                agencyLink.UpdatedBy = Command.LoggedInUserRoleID;
+                agencyLink.UpdatedOn = currentDateTime;
+                agencyLink.EffectiveThruDt = currentDateTime.AddDays(1).Date.AddSeconds(-1);
+
+                Command.UnitOfWork.ProductCodeAgencyLinkRepository.Update(agencyLink);
+
+                Command.UnitOfWork.Commit();
                 // Prepare and return command reply
                 return OKReply("Product Code Closed Successfully");
             }
             catch (ServiceException ex)
             {
                 Log.Error("|{0}|{1}| Service exception caught: {2}", StrategyName, MethodID, ex.Message);
+                Command.UnitOfWork.Rollback();
                 return InternalServerErrorReply(ex);
             }
             catch (System.Exception ex)
             {
+                Command.UnitOfWork.Rollback();
                 Log.Error("|{0}|{1}| System exception caught: {2}", StrategyName, MethodID, ex.Message);
                 return InternalServerErrorReply(ex);
             }

@@ -51,21 +51,26 @@ namespace PSW.ITT.Service.Strategies
 
             void ADDOGA()
             {
+                var agencyAssociationList = Command.UnitOfWork.ProductCodeAgencyLinkRepository.Get();
+
                 foreach (var item in RequestDTO.ProductCodes)
                 {
                     var productEntity = Command.UnitOfWork.ProductCodeEntityRepository.Get(item);
-                    var productCodeAgencyLinkEntity = new ProductCodeAgencyLink()
+                    if (agencyAssociationList.Any(x => x.AgencyID == RequestDTO.AgencyID && x.ProductCodeID == item && x.EffectiveThruDt >= DateTime.Now))
                     {
-                        ProductCodeID = item,
-                        AgencyID = RequestDTO.AgencyID,
-                        EffectiveFromDt = productEntity.EffectiveFromDt,
-                        EffectiveThruDt = productEntity.EffectiveThruDt,
-                        CreatedBy = Command.LoggedInUserRoleID,
-                        UpdatedBy = Command.LoggedInUserRoleID,
-                        CreatedOn = DateTime.Now,
-                        UpdatedOn = DateTime.Now
-                    };
-                    Command.UnitOfWork.ProductCodeAgencyLinkRepository.Add(productCodeAgencyLinkEntity);
+                        var productCodeAgencyLinkEntity = new ProductCodeAgencyLink()
+                        {
+                            ProductCodeID = item,
+                            AgencyID = RequestDTO.AgencyID,
+                            EffectiveFromDt = productEntity.EffectiveFromDt,
+                            EffectiveThruDt = productEntity.EffectiveThruDt,
+                            CreatedBy = Command.LoggedInUserRoleID,
+                            UpdatedBy = Command.LoggedInUserRoleID,
+                            CreatedOn = DateTime.Now,
+                            UpdatedOn = DateTime.Now
+                        };
+                        Command.UnitOfWork.ProductCodeAgencyLinkRepository.Add(productCodeAgencyLinkEntity);
+                    }
                 }
 
             }

@@ -9,7 +9,7 @@ namespace PSW.ITT.Service.Strategies
 {
     public class FetchActiveProductCodesListStrategy : ApiStrategy<Unspecified, List<FetchActiveProductCodesListResponseDTO>>
     {
-        
+
         #region Constructors
         public FetchActiveProductCodesListStrategy(CommandRequest commandRequest) : base(commandRequest)
         {
@@ -26,8 +26,22 @@ namespace PSW.ITT.Service.Strategies
                 var ActiveProductCodesList = Command.UnitOfWork.ProductCodeEntityRepository.GetActiveProductCode();
 
                 ResponseDTO = new List<FetchActiveProductCodesListResponseDTO>();
-                ResponseDTO = ActiveProductCodesList.Select(item => Mapper.Map<FetchActiveProductCodesListResponseDTO>(item)).ToList();
+                foreach (var item in ActiveProductCodesList)
+                {
+                    var productCodeItem = new FetchActiveProductCodesListResponseDTO();
+                    productCodeItem.SerialID = item.SerialID;
+                    productCodeItem.ID = item.ID;
+                    productCodeItem.HSCode = item.HSCode;//GetFileName(listFileDetails, item.AttachedFileID);
+                    productCodeItem.HSCodeExt = item.HSCodeExt;
+                    productCodeItem.ProductCode = item.ProductCode;
+                    productCodeItem.ProductCodeChapterID = (short)item.ProductCodeChapterID;
+                    productCodeItem.ChapterCode = item.ChapterCode;
+                    productCodeItem.Description = item.Description;
+                    productCodeItem.EffectiveFromDt = item.EffectiveFromDt.ToString("dd-MMM-yyyy");
+                    productCodeItem.EffectiveThruDt = item.EffectiveThruDt.ToString("dd-MMM-yyyy");
 
+                    ResponseDTO.Add(productCodeItem);
+                }
 
                 return OKReply("Active Product Code List Fetched Successfully");
             }

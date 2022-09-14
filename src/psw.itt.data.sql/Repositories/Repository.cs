@@ -103,6 +103,11 @@ namespace PSW.ITT.Data.Sql.Repositories
             return _connection.Query<T>(string.Format("SELECT TOP 1 * FROM {0} WHERE [{2}] = '{1}'", TableName, id, PrimaryKeyName),
                                         transaction: _transaction).FirstOrDefault();
         }
+        public IEnumerable<T> Get()
+        {
+            return (IEnumerable<T>)_connection.Query<T>(string.Format("SELECT * FROM {0}", TableName),
+                                                        transaction: _transaction);
+        }
         // public T Find(int id)
         // {
 
