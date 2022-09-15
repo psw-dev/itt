@@ -9,6 +9,9 @@ namespace PSW.ITT.Service.DTO
 
         [JsonPropertyName("disputedRecordCount")]
         public long DisputedRecordCount { get; set; }
+        
+        [JsonPropertyName("duplicateRecordCount")]
+        public long DuplicateRecordCount { get; set; }
 
         [JsonPropertyName("totalRecordCount")]
         public long TotalRecordCount { get; set; }

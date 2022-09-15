@@ -95,7 +95,12 @@ namespace PSW.ITT.Service.Strategies
                 }
 
                 var fileCheck = IsFileColumnsCorrect((dt.Rows[0].ItemArray).Select(x => x.ToString()).ToList());
-                if (fileCheck.Item2 != "")
+                if (fileCheck.Item1 != "")
+                {
+                    Log.Information("[{0}.{1}] Error in File, '{2}' ", this.GetType().Name, MethodBase.GetCurrentMethod().Name, fileCheck.Item1, fileCheck.Item2);
+                    return BadRequestReply($"Error in File, {fileCheck.Item1}.");
+                }
+                else if (fileCheck.Item2 != "")
                 {
                     Log.Information("[{0}.{1}] Error in File, Column name '{2}' must be '{3}'", this.GetType().Name, MethodBase.GetCurrentMethod().Name, fileCheck.Item1, fileCheck.Item2);
                     return BadRequestReply($"Error in File, Column name '{fileCheck.Item1}' must be '{fileCheck.Item2}'.");
@@ -199,7 +204,7 @@ namespace PSW.ITT.Service.Strategies
                     {
                         row.ItemArray = d.ItemArray;
                         row[errorColumnPosition] = error;
-                        row[errorColumnIndexPosition] = rowIndex ;
+                        row[errorColumnIndexPosition] = rowIndex + 1;
                         dispuedTable.Rows.Add(row);
                     }
 
@@ -260,7 +265,8 @@ namespace PSW.ITT.Service.Strategies
                     {
                         cts.Dispose();
                     }
-                    ResponseDTO.DisputedRecordCount = mergeDuplicateAndDisputedTable.Rows.Count;
+                    ResponseDTO.DisputedRecordCount = dispuedTable.Rows.Count;
+                    ResponseDTO.DuplicateRecordCount = duplicateTable.Rows.Count;
                     ResponseDTO.TotalRecordCount = dt.Rows.Count;
                     ResponseDTO.GridColumns = GetGridColumns();
                     ResponseDTO.Data = GetRegisteredRecords(mergeDuplicateAndDisputedTable);
@@ -276,7 +282,8 @@ namespace PSW.ITT.Service.Strategies
 
 
 
-                ResponseDTO.DisputedRecordCount = mergeDuplicateAndDisputedTable.Rows.Count;
+                ResponseDTO.DisputedRecordCount = dispuedTable.Rows.Count;
+                ResponseDTO.DuplicateRecordCount = duplicateTable.Rows.Count;
                 ResponseDTO.TotalRecordCount = dt.Rows.Count;
                 ResponseDTO.ProcessedRecordsCount = fileUploadHistoryRecord.ProcessedRecordsCount == null ? 0 : fileUploadHistoryRecord.ProcessedRecordsCount; ;
                 return OKReply("Upload Successfully.");
@@ -315,7 +322,7 @@ namespace PSW.ITT.Service.Strategies
 
                     }
                     expandoDict.Add("error", drow[propertyNameList.Count]);
-                    expandoDict.Add("rowIndex", rowIndex);
+                    expandoDict.Add("rowIndex", rowIndex + 1);
                     gridData.Add(expandoDict);
 
                 }
@@ -568,14 +575,16 @@ namespace PSW.ITT.Service.Strategies
                 else
                     hTable.Add(drow[0] + "" + drow[1] + "" + drow[2] + "" + drow[3] + "" + drow[4] + "" + drow[5] + "" , string.Empty);
             }
+            int rowIndex=0;
 
             //Removing a list of duplicate items from datatable.
             foreach (DataRow dRow in duplicateList)
-            {
+            {   rowIndex +=1;
                 DataRow row = duplicateTable.NewRow();
                 row.ItemArray = dRow.ItemArray;
 
                 row[errorColumnPosition] = "Duplicate Row";
+                row[errorColumnPosition+1] = rowIndex + 1;
                 duplicateTable.Rows.Add(row);
             }
 
@@ -617,7 +626,9 @@ namespace PSW.ITT.Service.Strategies
             List<string> dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = true }).OrderBy(x => x.Index).Select(x => x.NameLong).ToList();
 
             var arraysAreEqual = Enumerable.SequenceEqual(dbColumns, headerRow);
-
+            if(dbColumns.Count != headerRow.Count){
+                return ("column count mismatch", "");
+            }
             for (int i = 0; i < dbColumns.Count; i++)
             {
                 if (dbColumns[i] != headerRow[i].Trim())
