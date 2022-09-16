@@ -5,6 +5,7 @@ using PSW.ITT.Service.Exception;
 using PSW.Lib.Logs;
 using System.Linq;
 using PSW.ITT.Service.ModelValidators;
+using PSW.ITT.Service.BusinessLogicLayer;
 
 namespace PSW.ITT.Service.Strategies
 {
@@ -14,7 +15,7 @@ namespace PSW.ITT.Service.Strategies
         #region Constructors
         public ExtendProductCodeStrategy(CommandRequest commandRequest) : base(commandRequest)
         {
-            this.Validator = new EditProductCodeRequestDTOValidator();
+            this.Validator = new ExtendProductCodeRequestDTOValidator();
         }
         #endregion
 
@@ -24,16 +25,16 @@ namespace PSW.ITT.Service.Strategies
             try
             {
                 Log.Information("|{0}|{1}| Request DTO {@RequestDTO}", StrategyName, MethodID, RequestDTO);
-                var ProductCodeEntity = Command.UnitOfWork.ProductCodeEntityRepository.Where(new
-                {
-                    HSCode = RequestDTO.HSCode,
-                    ProductCode = RequestDTO.ProductCode
-                }).FirstOrDefault();
-                if (ProductCodeEntity.EffectiveThruDt <= currentDateTime)
+                var ProductCodeEntity = Command.UnitOfWork.ProductCodeEntityRepository.Get(RequestDTO.ID);
+                if (ProductCodeEntity.EffectiveThruDt.Date == currentDateTime.Date)
                 {
                     return BadRequestReply("Product Code already deactivated");
                 }
-                ProductCodeEntity.EffectiveFromDt = RequestDTO.EffectiveFromDt;
+                if (DateTime.Compare(ProductCodeEntity.EffectiveThruDt, RequestDTO.EffectiveThruDt) < 0)
+                {
+                    Log.Error($"|ProductCodeValidation| Product code end date can not be set before start date");
+                    return BadRequestReply($"the extended effective thru {RequestDTO.EffectiveThruDt} should always greater than Old Effective Thru date{ProductCodeEntity.EffectiveThruDt}");
+                }
                 ProductCodeEntity.EffectiveThruDt = RequestDTO.EffectiveThruDt;
                 ProductCodeEntity.UpdatedBy = Command.LoggedInUserRoleID;
                 ProductCodeEntity.UpdatedOn = currentDateTime;

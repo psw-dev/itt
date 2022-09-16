@@ -29,6 +29,9 @@ namespace PSW.ITT.Service.Strategies
 
                 try
                 {
+                    if(RequestDTO.EffectiveThruDt == null){
+                        RequestDTO.EffectiveThruDt = new DateTime(9999, 12, 31);
+                    }
                     ProductCodeValidation PCValidator = new ProductCodeValidation(RequestDTO.HSCode, RequestDTO.ProductCode, RequestDTO.EffectiveFromDt, RequestDTO.EffectiveThruDt, Command);
                     PCValidator.validate();
                 }
@@ -52,7 +55,7 @@ namespace PSW.ITT.Service.Strategies
                 ProductCodeEntity.Description = RequestDTO.Description;
                 ProductCodeEntity.ProductCodeSheetUploadHistoryID = null;
                 ProductCodeEntity.EffectiveFromDt = RequestDTO.EffectiveFromDt;
-                ProductCodeEntity.EffectiveThruDt = RequestDTO.EffectiveThruDt;
+                ProductCodeEntity.EffectiveThruDt = (DateTime)RequestDTO.EffectiveThruDt;
                 ProductCodeEntity.CreatedBy = Command.LoggedInUserRoleID;
                 ProductCodeEntity.CreatedOn = currentDateTime;
                 ProductCodeEntity.UpdatedBy = Command.LoggedInUserRoleID;
