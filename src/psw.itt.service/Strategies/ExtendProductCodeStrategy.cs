@@ -30,7 +30,7 @@ namespace PSW.ITT.Service.Strategies
                 {
                     return BadRequestReply("Product Code already deactivated");
                 }
-                if (DateTime.Compare(ProductCodeEntity.EffectiveThruDt, RequestDTO.EffectiveThruDt) < 0)
+                if (DateTime.Compare(ProductCodeEntity.EffectiveThruDt, RequestDTO.EffectiveThruDt) > 0)
                 {
                     Log.Error($"|ProductCodeValidation| Product code end date can not be set before start date");
                     return BadRequestReply($"the extended effective thru {RequestDTO.EffectiveThruDt} should always greater than Old Effective Thru date{ProductCodeEntity.EffectiveThruDt}");
