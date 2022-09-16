@@ -21,6 +21,7 @@ using PSW.ITT.Data.Entities;
 using PSW.ITT.Data.Sql.UnitOfWork;
 using PSW.Common.Crypto;
 using System.Security.Cryptography;
+using System.Globalization;
 
 namespace PSW.ITT.Service.Strategies
 {
@@ -54,6 +55,7 @@ namespace PSW.ITT.Service.Strategies
         {
             try
             {
+                var _culture = new CultureInfo("en-US");
                 Log.Information("[{0}.{1}] Started", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
                 Log.Information("[{0}.{1}] Request DTO: {@RequestDTO}", this.GetType().Name, MethodBase.GetCurrentMethod().Name, RequestDTO);
 
@@ -93,7 +95,12 @@ namespace PSW.ITT.Service.Strategies
                 }
 
                 var fileCheck = IsFileColumnsCorrect((dt.Rows[0].ItemArray).Select(x => x.ToString()).ToList());
-                if (fileCheck.Item2 != "")
+                if (fileCheck.Item1 != "")
+                {
+                    Log.Information("[{0}.{1}] Error in File, '{2}' ", this.GetType().Name, MethodBase.GetCurrentMethod().Name, fileCheck.Item1, fileCheck.Item2);
+                    return BadRequestReply($"Error in File, {fileCheck.Item1}.");
+                }
+                else if (fileCheck.Item2 != "")
                 {
                     Log.Information("[{0}.{1}] Error in File, Column name '{2}' must be '{3}'", this.GetType().Name, MethodBase.GetCurrentMethod().Name, fileCheck.Item1, fileCheck.Item2);
                     return BadRequestReply($"Error in File, Column name '{fileCheck.Item1}' must be '{fileCheck.Item2}'.");
@@ -134,7 +141,7 @@ namespace PSW.ITT.Service.Strategies
                     var productCode = propertyNameList.Where(x => x.NameLong == "Product Code").FirstOrDefault();
                     var effectiveDateFrom = propertyNameList.Where(x => x.NameLong == "Effective Date").FirstOrDefault();
                     var effectiveDateThru = propertyNameList.Where(x => x.NameLong == "End Date").FirstOrDefault();
-                    var infiniteDate = propertyNameList.Where(x => x.NameLong == "Infinite Date(1->Yes/0->No)").FirstOrDefault();
+                    // var infiniteDate = propertyNameList.Where(x => x.NameLong == "Infinite Date(1->Yes/0->No)").FirstOrDefault();
                     var tradeTranType = propertyNameList.Where(x => x.NameLong == "Direction(1->Import/2->Export/3->Both)").FirstOrDefault();
                     string error = "";
                     //HSCode Validation
@@ -169,24 +176,21 @@ namespace PSW.ITT.Service.Strategies
                         error = error == "" ? string.Concat(error, "Product code effective from date can not be set as a previous date.") : string.Concat(error, ", Product code effective from date can not be set as a previous date.");
 
                     }
+                    // var date=(DateTime.TryParseExact(d[effectiveDateThru.Index].ToString(),"dd/mm/yyyy", _culture, DateTimeStyles.None, out DateTime resugfgdgltDate));
+                    if(!(
+                        (String.IsNullOrEmpty(d[effectiveDateThru.Index].ToString())) || 
+                            (String.IsNullOrWhiteSpace(d[effectiveDateThru.Index].ToString()))||
+                            (DateTime.TryParseExact(d[effectiveDateThru.Index].ToString(),"dd/mm/yyyy", _culture, DateTimeStyles.None, out DateTime resultDate)))){
+                        
+                        row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
+                        error = error == "" ? string.Concat(error, "Invalid End Date") : string.Concat(error, ", Invalid End Date");
+
+                    }
                     // Product code end date can not be set as a previous date. It should always be today's or future date.
-                    if (Convert.ToInt32(d[infiniteDate.Index]) == 0 && Convert.ToDateTime(d[effectiveDateThru.Index].ToString()) < DateTime.Now)
+                    else if ((DateTime.TryParseExact(d[effectiveDateThru.Index].ToString(),"dd/mm/yyyy", _culture, DateTimeStyles.None, out DateTime resultsDate)) &&Convert.ToDateTime(d[effectiveDateThru.Index].ToString()) < DateTime.Now)
                     {
                         row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
                         error = error == "" ? string.Concat(error, "Product code end date can not be set as a previous date.") : string.Concat(error, ", Product code end date can not be set as a previous date.");
-
-                    }
-                    // else if (Convert.ToInt32(d[infiniteDate.Index]) == 1)
-                    // {
-                    //     row[effectiveDateThru.Index] = DateTime.MaxValue;
-                    //     // row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
-                    //     // error = error == "" ? string.Concat(error, "Product code end date can not be set as a previous date.") : string.Concat(error, ", Product code end date can not be set as a previous date.");
-
-                    // }
-                    else if (Convert.ToInt32(d[infiniteDate.Index]) != 1 && Convert.ToInt32(d[infiniteDate.Index]) != 0)
-                    {
-                        row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
-                        error = error == "" ? string.Concat(error, "Infinite Date must be selected as 0 or 1") : string.Concat(error, ", Infinite Date must be selected as 0 or 1");
 
                     }
                     // valdate Trade Direction
@@ -200,7 +204,7 @@ namespace PSW.ITT.Service.Strategies
                     {
                         row.ItemArray = d.ItemArray;
                         row[errorColumnPosition] = error;
-                        row[errorColumnIndexPosition] = rowIndex ;
+                        row[errorColumnIndexPosition] = rowIndex + 1;
                         dispuedTable.Rows.Add(row);
                     }
 
@@ -223,8 +227,7 @@ namespace PSW.ITT.Service.Strategies
                 fileUploadHistory.Name = RequestDTO.FileName;
                 fileUploadHistory.TotalRecordsCount = dt.Rows.Count;
                 fileUploadHistory.DuplicateRecordsCount = duplicateTable.Rows.Count;
-                fileUploadHistory.DisputedRecordsCount = dispuedTable.Rows.Count;//Should be Disputed Record Count
-                                                                                 // fileUploadHistory.DisputedRecordsData = "";
+                fileUploadHistory.DisputedRecordsCount = dispuedTable.Rows.Count;
                 fileUploadHistory.ProductCodeSheetUploadStatusID = status;
                 fileUploadHistory.CreatedBy = UserRoleId;
                 fileUploadHistory.UpdatedBy = UserRoleId;
@@ -247,12 +250,6 @@ namespace PSW.ITT.Service.Strategies
 
                     try
                     {
-                        //  ProcessRequestAsyc(dt, filePath, fileUploadHistoryID, RequestDTO, propertyNameList, Command.CurrentUserName, UserRoleId, token, cts);
-
-                        // Task.Run(() =>
-                        //     ProcessRequestAsyc(dt, filePath, fileUploadHistoryID, RequestDTO, propertyNameList, Command.CurrentUserName, UserRoleId, token, cts),
-                        // token);
-
                         Task.Factory.StartNew(
                             async () => await ProcessRequestAsyc(dt, filePath, fileUploadHistoryID, RequestDTO, propertyNameList, Command.CurrentUserName, UserRoleId, token, cts)
                             , token
@@ -268,7 +265,8 @@ namespace PSW.ITT.Service.Strategies
                     {
                         cts.Dispose();
                     }
-                    ResponseDTO.DisputedRecordCount = mergeDuplicateAndDisputedTable.Rows.Count;
+                    ResponseDTO.DisputedRecordCount = dispuedTable.Rows.Count;
+                    ResponseDTO.DuplicateRecordCount = duplicateTable.Rows.Count;
                     ResponseDTO.TotalRecordCount = dt.Rows.Count;
                     ResponseDTO.GridColumns = GetGridColumns();
                     ResponseDTO.Data = GetRegisteredRecords(mergeDuplicateAndDisputedTable);
@@ -284,7 +282,8 @@ namespace PSW.ITT.Service.Strategies
 
 
 
-                ResponseDTO.DisputedRecordCount = mergeDuplicateAndDisputedTable.Rows.Count;
+                ResponseDTO.DisputedRecordCount = dispuedTable.Rows.Count;
+                ResponseDTO.DuplicateRecordCount = duplicateTable.Rows.Count;
                 ResponseDTO.TotalRecordCount = dt.Rows.Count;
                 ResponseDTO.ProcessedRecordsCount = fileUploadHistoryRecord.ProcessedRecordsCount == null ? 0 : fileUploadHistoryRecord.ProcessedRecordsCount; ;
                 return OKReply("Upload Successfully.");
@@ -323,7 +322,7 @@ namespace PSW.ITT.Service.Strategies
 
                     }
                     expandoDict.Add("error", drow[propertyNameList.Count]);
-                    expandoDict.Add("rowIndex", rowIndex);
+                    expandoDict.Add("rowIndex", rowIndex + 1);
                     gridData.Add(expandoDict);
 
                 }
@@ -386,26 +385,7 @@ namespace PSW.ITT.Service.Strategies
 
             try
             {
-            //     string salt = Environment.GetEnvironmentVariable("ENCRYPTION_SALT");
-            //     string password = Environment.GetEnvironmentVariable("ENCRYPTION_PASSWORD");
-            //     string connection=  Environment.GetEnvironmentVariable("ConnectionStrings__ITTConnectionString");
-            //    if (string.IsNullOrWhiteSpace(salt) || string.IsNullOrWhiteSpace(password))
-            // {
-            //     throw new System.Exception("Please provide salt and password for Crypto Algorithm in Environment Variable");
-            // }
-
-            //     var crypto = new CryptoFactory().Create<AesManaged>(password, salt);
-                
-            //        if (string.IsNullOrWhiteSpace(salt) || string.IsNullOrWhiteSpace(password))
-            // {
-            //     throw new System.Exception("Please provide salt and password for Crypto Algorithm in Environment Variable");
-            // }
-            //   if (string.IsNullOrWhiteSpace(connection) )
-            // {
-            //     throw new System.Exception("Please provide connection string Crypto Algorithm in Environment Variable");
-            // }
                 string connectionString = Utility.DecryptConnectionString();
-                // string connectionString = "Server=10.1.4.58;Initial Catalog=ITT;User ID=psw_app;Password=@Password1;";
                 Log.Information($"UploadFileStrategy: Connectstring: {connectionString}");
                 using (UnitOfWork uow = new UnitOfWork(connectionString))
                 {
@@ -534,7 +514,8 @@ namespace PSW.ITT.Service.Strategies
                     productCodeEntity.Description = Row[2].ToString();
                     productCodeEntity.ProductCodeSheetUploadHistoryID = fileUploadHistoryID;
                     productCodeEntity.EffectiveFromDt = Convert.ToDateTime(Row[4].ToString());
-                    productCodeEntity.EffectiveThruDt = Convert.ToInt32(Row[6].ToString()) == 0 ? Convert.ToDateTime(Row[5].ToString()).AddHours(23).AddMinutes(59).AddSeconds(59) : DateTime.MaxValue;
+                    productCodeEntity.EffectiveThruDt = (String.IsNullOrEmpty(Row[5].ToString()) || 
+                                                         String.IsNullOrWhiteSpace(Row[5].ToString())) ? DateTime.MaxValue : Convert.ToDateTime(Row[5].ToString()).AddHours(23).AddMinutes(59).AddSeconds(59) ;
 
                     productCodeEntity.CreatedOn = DateTime.Now;
                     productCodeEntity.UpdatedOn = DateTime.Now;
@@ -589,19 +570,21 @@ namespace PSW.ITT.Service.Strategies
             //And add duplicate item value in arraylist.
             foreach (DataRow drow in dt.Rows)
             {
-                if (hTable.Contains(drow[0] + "" + drow[1] + "" + drow[2] + "" + drow[3] + "" + drow[4] + "" + drow[5] + "" + drow[6]))
+                if (hTable.Contains(drow[0] + "" + drow[1] + "" + drow[2] + "" + drow[3] + "" + drow[4] + "" + drow[5] + "" ))
                     duplicateList.Add(drow);
                 else
-                    hTable.Add(drow[0] + "" + drow[1] + "" + drow[2] + "" + drow[3] + "" + drow[4] + "" + drow[5] + "" + drow[6], string.Empty);
+                    hTable.Add(drow[0] + "" + drow[1] + "" + drow[2] + "" + drow[3] + "" + drow[4] + "" + drow[5] + "" , string.Empty);
             }
+            int rowIndex=0;
 
             //Removing a list of duplicate items from datatable.
             foreach (DataRow dRow in duplicateList)
-            {
+            {   rowIndex +=1;
                 DataRow row = duplicateTable.NewRow();
                 row.ItemArray = dRow.ItemArray;
 
                 row[errorColumnPosition] = "Duplicate Row";
+                row[errorColumnPosition+1] = rowIndex + 1;
                 duplicateTable.Rows.Add(row);
             }
 
@@ -643,7 +626,9 @@ namespace PSW.ITT.Service.Strategies
             List<string> dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = true }).OrderBy(x => x.Index).Select(x => x.NameLong).ToList();
 
             var arraysAreEqual = Enumerable.SequenceEqual(dbColumns, headerRow);
-
+            if(dbColumns.Count != headerRow.Count){
+                return ("column count mismatch", "");
+            }
             for (int i = 0; i < dbColumns.Count; i++)
             {
                 if (dbColumns[i] != headerRow[i].Trim())
