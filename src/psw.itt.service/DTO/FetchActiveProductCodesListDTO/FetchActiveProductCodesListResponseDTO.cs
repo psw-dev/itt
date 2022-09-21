@@ -28,6 +28,8 @@ namespace PSW.ITT.Service.DTO
 
         [JsonPropertyName("description")]
         public string Description { get; set; }
+        [JsonPropertyName("tradeType")]
+        public string TradeType { get; set; }
 
         [JsonPropertyName("effectiveFromDt")]
         public string EffectiveFromDt { get; set; }

@@ -9,17 +9,10 @@ namespace PSW.ITT.Service.ModelValidators
         {
             CascadeMode = CascadeMode.Stop;
 
-            RuleFor(c => c.HSCode)
+            RuleFor(c => c.ID)
             .NotEmpty()
-            .WithName("hSCode")
+            .WithName("id")
             .WithMessage("'{PropertyName}' should not be empty.");
-
-            RuleFor(c => c.ProductCode)
-            .NotNull()
-            .WithName("productCode")
-            .WithMessage("'{PropertyName}' should not be null.");
-
-
         }
     }
 }
