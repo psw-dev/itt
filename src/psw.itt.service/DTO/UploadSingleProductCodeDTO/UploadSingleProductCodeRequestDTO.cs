@@ -19,5 +19,9 @@ namespace PSW.ITT.Service.DTO
 
         [JsonPropertyName("effectiveThruDt")]
         public DateTime? EffectiveThruDt { get; set; }
+
+        [JsonPropertyName("tradeType")]
+        public string TradeType { get; set; }
+
     }
 }

@@ -9,6 +9,11 @@ namespace PSW.ITT.Service.Strategies
 {
     public class FetchActiveProductCodesListStrategy : ApiStrategy<Unspecified, List<FetchActiveProductCodesListResponseDTO>>
     {
+        IDictionary<long, string> tradeType = new Dictionary<long, string>(){
+                {1, "Import"},
+                {2, "Export"},
+                {3, "Both"}
+        };
 
         #region Constructors
         public FetchActiveProductCodesListStrategy(CommandRequest commandRequest) : base(commandRequest)
@@ -37,6 +42,10 @@ namespace PSW.ITT.Service.Strategies
                     productCodeItem.ProductCodeChapterID = (short)item.ProductCodeChapterID;
                     productCodeItem.ChapterCode = item.ChapterCode;
                     productCodeItem.Description = item.Description;
+                    if (tradeType.ContainsKey(item.TradeTranTypeID))
+                    {
+                        productCodeItem.TradeType = tradeType[item.TradeTranTypeID];
+                    }
                     productCodeItem.EffectiveFromDt = item.EffectiveFromDt.ToString("dd-MMM-yyyy");
                     productCodeItem.EffectiveThruDt = item.EffectiveThruDt.ToString("dd-MMM-yyyy");
 

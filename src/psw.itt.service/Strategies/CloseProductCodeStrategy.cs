@@ -24,11 +24,7 @@ namespace PSW.ITT.Service.Strategies
             try
             {
                 Log.Information("|{0}|{1}| Request DTO {@RequestDTO}", StrategyName, MethodID, RequestDTO);
-                var ProductCodeEntity = Command.UnitOfWork.ProductCodeEntityRepository.Where(new
-                {
-                    HSCode = RequestDTO.HSCode,
-                    ProductCode = RequestDTO.ProductCode
-                }).FirstOrDefault();
+                var ProductCodeEntity = Command.UnitOfWork.ProductCodeEntityRepository.Get(RequestDTO.ID);
                 if (ProductCodeEntity.EffectiveThruDt <= currentDateTime)
                 {
                     return BadRequestReply("Product Code already deactivated");
@@ -41,12 +37,18 @@ namespace PSW.ITT.Service.Strategies
                 // as Product code will be closed at the end of day 
                 Command.UnitOfWork.ProductCodeEntityRepository.Update(ProductCodeEntity);
 
-                var agencyLink = Command.UnitOfWork.ProductCodeAgencyLinkRepository.Get(ProductCodeEntity.ID);
-                agencyLink.UpdatedBy = Command.LoggedInUserRoleID;
-                agencyLink.UpdatedOn = currentDateTime;
-                agencyLink.EffectiveThruDt = currentDateTime.AddDays(1).Date.AddSeconds(-1);
+                var agencyLinkList = Command.UnitOfWork.ProductCodeAgencyLinkRepository
+                .Where(new { ProductCodeID = ProductCodeEntity.ID });
+                foreach (var agencyLink in agencyLinkList)
+                {
+                    agencyLink.UpdatedBy = Command.LoggedInUserRoleID;
+                    agencyLink.UpdatedOn = currentDateTime;
+                    agencyLink.EffectiveThruDt = currentDateTime.AddDays(1).Date.AddSeconds(-1);
+                    Command.UnitOfWork.ProductCodeAgencyLinkRepository.Update(agencyLink);
+                }
 
-                Command.UnitOfWork.ProductCodeAgencyLinkRepository.Update(agencyLink);
+
+
 
                 Command.UnitOfWork.Commit();
                 // Prepare and return command reply

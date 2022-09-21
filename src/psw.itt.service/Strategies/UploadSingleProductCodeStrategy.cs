@@ -7,11 +7,17 @@ using PSW.ITT.Data.Entities;
 using System.Linq;
 using PSW.ITT.Service.ModelValidators;
 using PSW.ITT.Service.BusinessLogicLayer;
+using System.Collections.Generic;
 
 namespace PSW.ITT.Service.Strategies
 {
     public class UploadSingleProductCodeStrategy : ApiStrategy<UploadSingleProductCodeRequestDTO, Unspecified>
     {
+        IDictionary<string, short> tradeType = new Dictionary<string, short>(){
+                { "I",1},
+                { "E",2},
+                { "B",3}
+        };
         private DateTime currentDateTime = DateTime.Now;
         #region Constructors
         public UploadSingleProductCodeStrategy(CommandRequest commandRequest) : base(commandRequest)
@@ -29,7 +35,8 @@ namespace PSW.ITT.Service.Strategies
 
                 try
                 {
-                    if(RequestDTO.EffectiveThruDt == null){
+                    if (RequestDTO.EffectiveThruDt == null)
+                    {
                         RequestDTO.EffectiveThruDt = new DateTime(9999, 12, 31);
                     }
                     ProductCodeValidation PCValidator = new ProductCodeValidation(RequestDTO.HSCode, RequestDTO.ProductCode, RequestDTO.EffectiveFromDt, RequestDTO.EffectiveThruDt, Command);
@@ -60,7 +67,10 @@ namespace PSW.ITT.Service.Strategies
                 ProductCodeEntity.CreatedOn = currentDateTime;
                 ProductCodeEntity.UpdatedBy = Command.LoggedInUserRoleID;
                 ProductCodeEntity.UpdatedOn = currentDateTime;
-
+                if (tradeType.ContainsKey(RequestDTO.TradeType))
+                {
+                    ProductCodeEntity.TradeTranTypeID = tradeType[RequestDTO.TradeType];
+                }
                 Command.UnitOfWork.ProductCodeEntityRepository.Add(ProductCodeEntity);
 
                 // Prepare and return command reply
