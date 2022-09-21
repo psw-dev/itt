@@ -56,7 +56,7 @@ namespace PSW.ITT.Service.Strategies
                 foreach (var item in RequestDTO.ProductCodes)
                 {
                     var productEntity = Command.UnitOfWork.ProductCodeEntityRepository.Get(item);
-                    if (agencyAssociationList.Any(x => x.AgencyID == RequestDTO.AgencyID && x.ProductCodeID == item && x.EffectiveThruDt >= DateTime.Now))
+                    if (!agencyAssociationList.Any(x => x.AgencyID == RequestDTO.AgencyID && x.ProductCodeID == item && x.EffectiveThruDt >= DateTime.Now))
                     {
                         var productCodeAgencyLinkEntity = new ProductCodeAgencyLink()
                         {
@@ -85,11 +85,15 @@ namespace PSW.ITT.Service.Strategies
                                           ProductCodeID = item,
                                           AgencyID = RequestDTO.AgencyID
                                       }
-                                  ).FirstOrDefault();
-                    productAgencyLinkEntity.UpdatedBy = Command.LoggedInUserRoleID;
-                    productAgencyLinkEntity.UpdatedOn = DateTime.Now;
-                    productAgencyLinkEntity.EffectiveThruDt = DateTime.Now;
-                    Command.UnitOfWork.ProductCodeAgencyLinkRepository.Update(productAgencyLinkEntity);
+                                  ).LastOrDefault();
+                    if (productAgencyLinkEntity != null)
+                    {
+                        productAgencyLinkEntity.UpdatedBy = Command.LoggedInUserRoleID;
+                        productAgencyLinkEntity.UpdatedOn = DateTime.Now;
+                        productAgencyLinkEntity.EffectiveThruDt = DateTime.Now;
+                        Command.UnitOfWork.ProductCodeAgencyLinkRepository.Update(productAgencyLinkEntity);
+                    }
+
                 }
 
             }
