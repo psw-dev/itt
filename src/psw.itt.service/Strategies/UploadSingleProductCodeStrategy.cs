@@ -37,8 +37,11 @@ namespace PSW.ITT.Service.Strategies
                 {
                     if (RequestDTO.EffectiveThruDt == null)
                     {
-                        RequestDTO.EffectiveThruDt = new DateTime(9999, 12, 31);
+                        RequestDTO.EffectiveThruDt = new DateTime(9999, 12, 30);
                     }
+                    DateTime endDate = (DateTime)RequestDTO.EffectiveThruDt;
+                    RequestDTO.EffectiveFromDt = RequestDTO.EffectiveFromDt.AddDays(1);
+                    RequestDTO.EffectiveThruDt = endDate.AddDays(1);
                     ProductCodeValidation PCValidator = new ProductCodeValidation(RequestDTO.HSCode, RequestDTO.ProductCode, RequestDTO.EffectiveFromDt, RequestDTO.EffectiveThruDt, Command);
                     PCValidator.validate();
                 }

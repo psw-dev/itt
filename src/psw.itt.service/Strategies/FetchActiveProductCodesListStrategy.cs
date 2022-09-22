@@ -2,8 +2,8 @@ using PSW.ITT.Service.Command;
 using PSW.ITT.Service.DTO;
 using PSW.ITT.Service.Exception;
 using PSW.Lib.Logs;
-using System.Linq;
 using System.Collections.Generic;
+using System;
 
 namespace PSW.ITT.Service.Strategies
 {
@@ -46,8 +46,14 @@ namespace PSW.ITT.Service.Strategies
                     {
                         productCodeItem.TradeType = tradeType[item.TradeTranTypeID];
                     }
-                    productCodeItem.EffectiveFromDt = item.EffectiveFromDt.ToString("dd-MMM-yyyy");
-                    productCodeItem.EffectiveThruDt = item.EffectiveThruDt.ToString("dd-MMM-yyyy");
+                    productCodeItem.EffectiveFromDt = item.EffectiveFromDt.ToString("dd-MM-yyyy");
+                    if(DateTime.Compare(item.EffectiveThruDt.Date,  new DateTime(9999, 12, 31).Date)== 0){
+                        productCodeItem.EffectiveThruDt = null;
+                    }
+                    else{
+                        productCodeItem.EffectiveThruDt = item.EffectiveThruDt.ToString("dd-MM-yyyy");
+
+                    }
 
                     ResponseDTO.Add(productCodeItem);
                 }
