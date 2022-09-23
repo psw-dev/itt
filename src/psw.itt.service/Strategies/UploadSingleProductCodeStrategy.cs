@@ -16,7 +16,8 @@ namespace PSW.ITT.Service.Strategies
         IDictionary<string, short> tradeType = new Dictionary<string, short>(){
                 { "I",1},
                 { "E",2},
-                { "B",3}
+                { "T",3},
+                { "A",4}
         };
         private DateTime currentDateTime = DateTime.Now;
         #region Constructors
@@ -42,7 +43,7 @@ namespace PSW.ITT.Service.Strategies
                     DateTime endDate = (DateTime)RequestDTO.EffectiveThruDt;
                     RequestDTO.EffectiveFromDt = RequestDTO.EffectiveFromDt.AddDays(1);
                     RequestDTO.EffectiveThruDt = endDate.AddDays(1);
-                    ProductCodeValidation PCValidator = new ProductCodeValidation(RequestDTO.HSCode, RequestDTO.ProductCode, RequestDTO.EffectiveFromDt, RequestDTO.EffectiveThruDt, Command);
+                    ProductCodeValidation PCValidator = new ProductCodeValidation(RequestDTO.HSCode, RequestDTO.ProductCode, RequestDTO.EffectiveFromDt, RequestDTO.EffectiveThruDt, Command, RequestDTO.TradeType);
                     PCValidator.validate();
                 }
                 catch (System.Exception ex)
@@ -70,10 +71,7 @@ namespace PSW.ITT.Service.Strategies
                 ProductCodeEntity.CreatedOn = currentDateTime;
                 ProductCodeEntity.UpdatedBy = Command.LoggedInUserRoleID;
                 ProductCodeEntity.UpdatedOn = currentDateTime;
-                if (tradeType.ContainsKey(RequestDTO.TradeType))
-                {
-                    ProductCodeEntity.TradeTranTypeID = tradeType[RequestDTO.TradeType];
-                }
+                ProductCodeEntity.TradeTranTypeID = RequestDTO.TradeType;
                 Command.UnitOfWork.ProductCodeEntityRepository.Add(ProductCodeEntity);
 
                 // Prepare and return command reply

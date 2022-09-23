@@ -36,13 +36,24 @@ namespace PSW.ITT.Data.Sql.Repositories
 
             return _connection.Query<ProductCodeEntity>(sql, param: parameters, transaction: _transaction).ToList();
         }
-        public List<ProductCodeEntity> GetOverlappingProductCode(string hscode, string ProductCode, DateTime effectiveFromDt, DateTime effectiveThruDt)
+        public List<ProductCodeEntity> GetOverlappingProductCode(string hscode, string ProductCode, DateTime effectiveFromDt, DateTime effectiveThruDt, short tradeType)
         {
             var query = new Query("ProductCode")
-                .Where("HSCode", "=", hscode)
-                .Where("ProductCode", "=", ProductCode)
-                .WhereRaw("((EffectiveFromDt BETWEEN '" + effectiveFromDt + "' AND '" + effectiveThruDt + "') OR (EffectiveThruDt BETWEEN '" + effectiveFromDt + "' AND '" + effectiveThruDt + "'))")
-                .Select("*");
+               .Where("HSCode", "=", hscode)
+               .Where("ProductCode", "=", ProductCode)
+               .WhereRaw("(TradeTranTypeID = 4 or TradeTranTypeID = " + tradeType + ")")
+               .WhereRaw("((EffectiveFromDt BETWEEN '" + effectiveFromDt + "' AND '" + effectiveThruDt + "') OR (EffectiveThruDt BETWEEN '" + effectiveFromDt + "' AND '" + effectiveThruDt + "'))")
+               .Select("*");
+            if (tradeType == 4)
+            {
+                query = new Query("ProductCode")
+                               .Where("HSCode", "=", hscode)
+                               .Where("ProductCode", "=", ProductCode)
+                               .WhereRaw("(TradeTranTypeID != 4 or TradeTranTypeID = " + tradeType + ")")
+                               .WhereRaw("((EffectiveFromDt BETWEEN '" + effectiveFromDt + "' AND '" + effectiveThruDt + "') OR (EffectiveThruDt BETWEEN '" + effectiveFromDt + "' AND '" + effectiveThruDt + "'))")
+                               .Select("*");
+            }
+
 
 
             var result = _sqlCompiler.Compile(query);

@@ -13,13 +13,15 @@ namespace PSW.ITT.Service.BusinessLogicLayer
         private DateTime effectiveFromDt;
         private DateTime effectiveThruDt;
         private CommandRequest command;
-        public ProductCodeValidation(string hSCode, string productCode, DateTime effectiveFromDt, DateTime? effectiveThruDt, CommandRequest command)
+        private short tradeType;
+        public ProductCodeValidation(string hSCode, string productCode, DateTime effectiveFromDt, DateTime? effectiveThruDt, CommandRequest command, short tradeType)
         {
             this.hSCode = hSCode;
             this.productCode = productCode;
             this.effectiveFromDt = effectiveFromDt;
             this.effectiveThruDt = (DateTime)effectiveThruDt;
             this.command = command;
+            this.tradeType = tradeType;
         }
 
         public void validate()
@@ -82,7 +84,7 @@ namespace PSW.ITT.Service.BusinessLogicLayer
 
             // There should be no active same HsCode + Product Code combination having overlapping effective date and end date. 
 
-            var overLappingProductCode = command.UnitOfWork.ProductCodeEntityRepository.GetOverlappingProductCode(hSCode, productCode, effectiveFromDt, effectiveThruDt);
+            var overLappingProductCode = command.UnitOfWork.ProductCodeEntityRepository.GetOverlappingProductCode(hSCode, productCode, effectiveFromDt, effectiveThruDt, tradeType);
             if (overLappingProductCode.Count > 0)
             {
                 Log.Error($"|ProductCodeValidation| Product Code is overlapping with existing product code");
