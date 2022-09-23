@@ -7,7 +7,7 @@ namespace PSW.ITT.Data.IRepositories
     public interface IProductCodeEntityRepository : IRepository<ProductCodeEntity>
     {
         List<ProductCodeEntity> GetActiveProductCode();
-        List<ProductCodeEntity> GetOverlappingProductCode(string hscode, string ProductCode, DateTime effectiveFromDt, DateTime effectiveThruDt);
+        List<ProductCodeEntity> GetOverlappingProductCode(string hscode, string ProductCode, DateTime effectiveFromDt, DateTime effectiveThruDt, short tradeType);
 
     }
 }

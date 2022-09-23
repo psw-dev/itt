@@ -12,7 +12,8 @@ namespace PSW.ITT.Service.Strategies
         IDictionary<long, string> tradeType = new Dictionary<long, string>(){
                 {1, "Import"},
                 {2, "Export"},
-                {3, "Both"}
+                {3, "Transit"},
+                {4, "All"}
         };
 
         #region Constructors
