@@ -36,6 +36,22 @@ namespace PSW.ITT.Data.Sql.Repositories
 
             return _connection.Query<ProductCodeEntity>(sql, param: parameters, transaction: _transaction).ToList();
         }
+        public List<ProductCodeEntity> GetActiveAgencyProductCode(int agencyID)
+        {
+            var query = new Query("ProductCode")
+              .Join("ProductCodeAgencyLink", "ProductCodeAgencyLink.ProductCodeID", "ProductCode.ID")
+              .WhereRaw("ProductCodeAgencyLink.AgencyID = " + agencyID)
+              .WhereRaw("((ProductCodeAgencyLink.EffectiveFromDt <= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate())")
+              .OrWhereRaw("(ProductCodeAgencyLink.EffectiveFromDt >= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate()))")
+              .SelectRaw(" ROW_NUMBER() OVER(Order By(Select 1)) as SerialID, *")
+              .OrderBy("ProductCodeAgencyLink.EffectiveThruDt");
+
+            var result = _sqlCompiler.Compile(query);
+            var sql = result.Sql;
+            var parameters = new DynamicParameters(result.NamedBindings);
+
+            return _connection.Query<ProductCodeEntity>(sql, param: parameters, transaction: _transaction).ToList();
+        }
         public List<ProductCodeEntity> GetOverlappingProductCode(string hscode, string ProductCode, DateTime effectiveFromDt, DateTime effectiveThruDt, short tradeType)
         {
             var query = new Query("ProductCode")
