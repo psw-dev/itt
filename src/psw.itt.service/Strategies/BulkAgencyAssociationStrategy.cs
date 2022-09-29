@@ -67,7 +67,8 @@ namespace PSW.ITT.Service.Strategies
                             CreatedBy = Command.LoggedInUserRoleID,
                             UpdatedBy = Command.LoggedInUserRoleID,
                             CreatedOn = DateTime.Now,
-                            UpdatedOn = DateTime.Now
+                            UpdatedOn = DateTime.Now,
+                            IsActive = true
                         };
                         Command.UnitOfWork.ProductCodeAgencyLinkRepository.Add(productCodeAgencyLinkEntity);
                     }
