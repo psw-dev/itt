@@ -4,10 +4,11 @@ using PSW.ITT.Service.Exception;
 using PSW.Lib.Logs;
 using System.Collections.Generic;
 using System;
+using PSW.ITT.Data.Entities;
 
 namespace PSW.ITT.Service.Strategies
 {
-    public class FetchActiveProductCodesListStrategy : ApiStrategy<Unspecified, List<FetchActiveProductCodesListResponseDTO>>
+    public class FetchActiveProductCodesListStrategy : ApiStrategy<FetchActiveProductCodesListRequestDTO, List<FetchActiveProductCodesListResponseDTO>>
     {
         IDictionary<long, string> tradeType = new Dictionary<long, string>(){
                 {1, "Import"},
@@ -29,7 +30,18 @@ namespace PSW.ITT.Service.Strategies
             try
             {
                 Log.Information("|{0}|{1}| Request DTO {@RequestDTO}", StrategyName, MethodID, RequestDTO);
-                var ActiveProductCodesList = Command.UnitOfWork.ProductCodeEntityRepository.GetActiveProductCode();
+                List<ProductCodeEntity> ActiveProductCodesList = new List<ProductCodeEntity>();
+
+                if (RequestDTO.userRole == "OTO")
+                {
+                    ActiveProductCodesList = Command.UnitOfWork.ProductCodeEntityRepository.GetActiveAgencyProductCode((int)RequestDTO.agencyID);
+                }
+                else if (RequestDTO.userRole == "ITM")
+                {
+                    ActiveProductCodesList = Command.UnitOfWork.ProductCodeEntityRepository.GetActiveProductCode();
+                }
+
+
 
                 ResponseDTO = new List<FetchActiveProductCodesListResponseDTO>();
                 foreach (var item in ActiveProductCodesList)
@@ -48,10 +60,12 @@ namespace PSW.ITT.Service.Strategies
                         productCodeItem.TradeType = tradeType[item.TradeTranTypeID];
                     }
                     productCodeItem.EffectiveFromDt = item.EffectiveFromDt.ToString("dd-MM-yyyy");
-                    if(DateTime.Compare(item.EffectiveThruDt.Date,  new DateTime(9999, 12, 31).Date)== 0){
+                    if (DateTime.Compare(item.EffectiveThruDt.Date, new DateTime(9999, 12, 31).Date) == 0)
+                    {
                         productCodeItem.EffectiveThruDt = null;
                     }
-                    else{
+                    else
+                    {
                         productCodeItem.EffectiveThruDt = item.EffectiveThruDt.ToString("dd-MM-yyyy");
 
                     }
