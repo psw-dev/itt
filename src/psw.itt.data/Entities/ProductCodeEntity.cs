@@ -26,6 +26,7 @@ namespace PSW.ITT.Data.Entities
         private DateTime _createdOn;
         private int _updatedBy;
         private DateTime _updatedOn;
+        private bool? _isActive;
 
         #endregion
 
@@ -47,6 +48,8 @@ namespace PSW.ITT.Data.Entities
         public DateTime CreatedOn { get { return _createdOn; } set { _createdOn = value; } }
         public int UpdatedBy { get { return _updatedBy; } set { _updatedBy = value; } }
         public DateTime UpdatedOn { get { return _updatedOn; } set { _updatedOn = value; } }
+        public bool? IsActive { get { return _isActive; } set { _isActive = value; } }
+        
 
         #endregion
 

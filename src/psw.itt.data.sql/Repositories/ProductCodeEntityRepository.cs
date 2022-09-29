@@ -43,7 +43,7 @@ namespace PSW.ITT.Data.Sql.Repositories
               .WhereRaw("ProductCodeAgencyLink.AgencyID = " + agencyID)
               .WhereRaw("((ProductCodeAgencyLink.EffectiveFromDt <= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate())")
               .OrWhereRaw("(ProductCodeAgencyLink.EffectiveFromDt >= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate()))")
-              .SelectRaw(" ROW_NUMBER() OVER(Order By(Select 1)) as SerialID, *")
+              .SelectRaw(" ROW_NUMBER() OVER(Order By(Select 1)) as SerialID, ProductCodeAgencyLink.ID,ChapterCode,HSCode,HSCodeExt,ProductCode.ProductCode,ProductCode.[Description],ProductCode.TradeTranTypeID,ProductCodeAgencyLink.EffectiveFromDt, ProductCodeAgencyLink.EffectiveThruDt, ProductCodeAgencyLink.IsActive")
               .OrderBy("ProductCodeAgencyLink.EffectiveThruDt");
 
             var result = _sqlCompiler.Compile(query);

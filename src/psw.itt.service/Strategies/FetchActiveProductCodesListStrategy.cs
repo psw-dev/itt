@@ -69,6 +69,10 @@ namespace PSW.ITT.Service.Strategies
                         productCodeItem.EffectiveThruDt = item.EffectiveThruDt.ToString("dd-MM-yyyy");
 
                     }
+                    if (RequestDTO.userRole == "OTO")
+                    {
+                        productCodeItem.IsActive = item.IsActive;
+                    }
 
                     ResponseDTO.Add(productCodeItem);
                 }
