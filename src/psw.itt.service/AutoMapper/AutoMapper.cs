@@ -30,7 +30,7 @@ namespace PSW.ITT.Service.AutoMapper
                 {
                     cfg.CreateMap<ProductCodeEntity, FetchActiveProductCodesListResponseDTO>();
                     cfg.CreateMap<PSW.ITT.Data.DTO.GetProductCodeListWithAgenciesResponseDTO, GetProductCodeListWithAgenciesResponseDTO>();
-
+                    cfg.CreateMap<SheetAttributeMapping, FetchRegulatoryDataAttributeResponseDTO>();
                 });
 
                 _mapper = config.CreateMapper();
