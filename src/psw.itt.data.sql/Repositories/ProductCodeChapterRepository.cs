@@ -10,7 +10,7 @@ namespace PSW.ITT.Data.Sql.Repositories
 
         public ProductCodeChapterRepository(IDbConnection context) : base(context)
         {
-            TableName = "[dbo].[ProductCodeChapter]";
+            TableName = "[SHRD].[dbo].[ProductCodeChapter]";
             PrimaryKeyName = "ID";
         }
 
