@@ -28,6 +28,8 @@ namespace PSW.ITT.Data.Sql.UnitOfWork
         private IProductCodeSheetUploadHistoryRepository _productCodeSheetUploadHistoryRepository;
         private IProductCodeSheetUploadStatusRepository _productCodeSheetUploadStatusRepository;
         private ISheetAttributeMappingRepository _sheetAttributeMappingRepository;
+        private ILPCORegulationRepository _lPCORegulationRepository;
+        private IProductRegulationRequirementRepository _productRegulationRequirementRepository;
 
         private IEventBus _eventBus;
         public IEventBus eventBus => _eventBus;
@@ -69,6 +71,8 @@ namespace PSW.ITT.Data.Sql.UnitOfWork
         public IProductCodeSheetUploadHistoryRepository ProductCodeSheetUploadHistoryRepository => _productCodeSheetUploadHistoryRepository ?? (_productCodeSheetUploadHistoryRepository = new ProductCodeSheetUploadHistoryRepository(_connection));
         public IProductCodeSheetUploadStatusRepository ProductCodeSheetUploadStatusRepository => _productCodeSheetUploadStatusRepository ?? (_productCodeSheetUploadStatusRepository = new ProductCodeSheetUploadStatusRepository(_connection));
         public ISheetAttributeMappingRepository SheetAttributeMappingRepository => _sheetAttributeMappingRepository ?? (_sheetAttributeMappingRepository = new SheetAttributeMappingRepository(_connection));
+        public ILPCORegulationRepository LPCORegulationRepository => _lPCORegulationRepository ?? (_lPCORegulationRepository = new LPCORegulationRepository(_connection));
+        public IProductRegulationRequirementRepository ProductRegulationRequirementRepository => _productRegulationRequirementRepository ?? (_productRegulationRequirementRepository = new ProductRegulationRequirementRepository(_connection));
 
         #endregion
 
