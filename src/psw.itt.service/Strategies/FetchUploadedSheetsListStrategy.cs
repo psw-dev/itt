@@ -40,9 +40,13 @@ namespace PSW.ITT.Service.Strategies
                 Log.Information($"| Strategy Name : {StrategyName} | Method ID : {MethodID} | Request DTO: {RequestDTO}");
 
                 ResponseDTO = new List<UploadFileHistoryResponseDTO>();
-
-                var listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.All().OrderByDescending(x => x.UpdatedOn).ToList();
-
+                var listFileUploadHistory = new List<ProductCodeSheetUploadHistory>();
+                if(RequestDTO==null)
+                {
+                    listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.All().OrderByDescending(x => x.UpdatedOn).ToList();
+                }else{
+                    listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.Where(new { AgencyID = RequestDTO.AgencyID}).OrderByDescending(x => x.UpdatedOn).ToList();
+                }
                 if (listFileUploadHistory == null || listFileUploadHistory.Count == 0)
                 {
                     return BadRequestReply("No file uploaded");
@@ -75,7 +79,7 @@ namespace PSW.ITT.Service.Strategies
                     fileUploadItem.CreatedOn = item.CreatedOn.ToString();
                     fileUploadItem.UpdatedOn = item.UpdatedOn.ToString();
                     fileUploadItem.IsLast = (item.ID == last.ID) ? true : false;
-                    fileUploadItem.UploadedBy = UMSHelper.GetUserInformation(Command, (int)item.CreatedBy)?.PersonName ?? "";
+                    fileUploadItem.UploadedBy =Command.CryptoAlgorithm.Encrypt( item.CreatedBy.ToString());//UMSHelper.GetUserInformation(Command, (int)item.CreatedBy)?.PersonName ?? "";
 
                     ResponseDTO.Add(fileUploadItem);
                 }

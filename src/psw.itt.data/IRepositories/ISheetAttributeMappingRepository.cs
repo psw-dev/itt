@@ -8,6 +8,6 @@ namespace PSW.ITT.Data.IRepositories
 {
     public interface ISheetAttributeMappingRepository : IRepository<SheetAttributeMapping>
     {
-        List<SheetAttributeMapping> GetAgencyAttributeMapping(short TradeTranTypeID,short AgencyID);
+        List<SheetAttributeMapping> GetAgencyAttributeMapping(short TradeTranTypeID,short AgencyID, short SheetType );
     }
 }

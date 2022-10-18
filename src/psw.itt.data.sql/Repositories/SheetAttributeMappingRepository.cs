@@ -23,19 +23,21 @@ namespace PSW.ITT.Data.Sql.Repositories
         #endregion
 
         #region Public methods
-        public List<SheetAttributeMapping> GetAgencyAttributeMapping(short TradeTranTypeID, short AgencyID)
+        public List<SheetAttributeMapping> GetAgencyAttributeMapping(short TradeTranTypeID, short AgencyID, short SheetType )
         {
             var query = @"SELECT *
                         FROM [ITT].[dbo].[SheetAttributeMapping]
-                        WHERE (TradeTranTypeID = @TRADETRANTYPEID
+                        WHERE ((TradeTranTypeID = @TRADETRANTYPEID
                         AND AgencyID = @AGENCYID) 
                         or (TradeTranTypeID is null
-                        AND AgencyID is null)
-                        AND SheetType = 'OGA'
+                        AND AgencyID = @AGENCYID) 
+                        or (TradeTranTypeID is null
+                        AND AgencyID is null))
+                        AND SheetType = @SHEETTYPE
                         AND IsActive = 1";
 
             return _connection.Query<SheetAttributeMapping>(
-                    query, param: new { TRADETRANTYPEID = TradeTranTypeID, AGENCYID = AgencyID },
+                    query, param: new { TRADETRANTYPEID = TradeTranTypeID, AGENCYID = AgencyID , SHEETTYPE = SheetType },
                     transaction: _transaction
                    ).ToList();
         }
