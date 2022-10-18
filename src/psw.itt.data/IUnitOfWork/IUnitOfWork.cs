@@ -14,6 +14,8 @@ namespace PSW.ITT.Data
         IProductCodeSheetUploadHistoryRepository ProductCodeSheetUploadHistoryRepository { get; }
         IProductCodeSheetUploadStatusRepository ProductCodeSheetUploadStatusRepository { get; }
         ISheetAttributeMappingRepository SheetAttributeMappingRepository { get; }
+        ILPCORegulationRepository LPCORegulationRepository { get; }
+        IProductRegulationRequirementRepository ProductRegulationRequirementRepository { get; }
 
         IEventBus eventBus { get; }
         #endregion
