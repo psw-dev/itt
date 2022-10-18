@@ -20,6 +20,7 @@ namespace PSW.ITT.Data.Entities
         private DateTime _createdOn;
         private int _updatedBy;
         private DateTime _updatedOn;
+        private short _tradeTranTypeID;
 
         #endregion
 
@@ -35,6 +36,7 @@ namespace PSW.ITT.Data.Entities
         public DateTime CreatedOn { get { return _createdOn; } set { _createdOn = value; } }
         public int UpdatedBy { get { return _updatedBy; } set { _updatedBy = value; } }
         public DateTime UpdatedOn { get { return _updatedOn; } set { _updatedOn = value; } }
+        public short TradeTranTypeID { get { return _tradeTranTypeID; } set { _tradeTranTypeID = value; } }
 
 
         #endregion
@@ -59,6 +61,7 @@ namespace PSW.ITT.Data.Entities
                 {"CreatedOn", CreatedOn},
                 {"UpdatedBy", UpdatedBy},
                 {"UpdatedOn", UpdatedOn},
+                {"TradeTranTypeID",TradeTranTypeID}
             };
         }
         public override object GetInsertUpdateParams()
@@ -74,7 +77,8 @@ namespace PSW.ITT.Data.Entities
                 CreatedBy,
                 CreatedOn,
                 UpdatedBy,
-                UpdatedOn
+                UpdatedOn,
+                TradeTranTypeID
             };
         }
 
