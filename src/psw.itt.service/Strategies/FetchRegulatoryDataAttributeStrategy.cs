@@ -26,7 +26,7 @@ namespace PSW.ITT.Service.Strategies
             {
                 Log.Information("|{0}|{1}| Request DTO {@RequestDTO}", StrategyName, MethodID, RequestDTO);
 
-                var agencyAttribute = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.AgencyID, RequestDTO.TradeTranTypeID);
+                var agencyAttribute = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.AgencyID, RequestDTO.TradeTranTypeID,1);
                 ResponseDTO = new List<FetchRegulatoryDataAttributeResponseDTO>();
                 ResponseDTO = agencyAttribute.Select(item => Mapper.Map<FetchRegulatoryDataAttributeResponseDTO>(item)).ToList();
 
