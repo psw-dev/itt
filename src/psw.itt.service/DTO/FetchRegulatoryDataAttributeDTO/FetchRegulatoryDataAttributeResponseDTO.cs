@@ -7,7 +7,7 @@ namespace PSW.ITT.Service.DTO
         [JsonPropertyName("nameLong")]
         public string NameLong { get; set; }
 
-        [JsonPropertyName("nameLong")]
+        [JsonPropertyName("nameShort")]
         public string NameShort { get; set; }
 
         [JsonPropertyName("isMandatory")]

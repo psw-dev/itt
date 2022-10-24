@@ -29,13 +29,13 @@ namespace PSW.ITT.Service.Strategies
 
 
                 var regulatoryData = Command.UnitOfWork.ProductRegulationRequirementRepository.GetRegulatoryDataByTradeTypeAndAgency(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID);
-                // var obj = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(regulatoryData[0].RegulationJson);
                 ResponseDTO = new List<GetRegulatoryDataResponseDTO>();
 
                 foreach (var x in regulatoryData)
                 {
                     var responseData = new GetRegulatoryDataResponseDTO();
                     var obj1 = JsonSerializer.Deserialize<dynamic>(x.RegulationJson);
+                    // var obj1 = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(x.RegulationJson);
                     responseData.Data = obj1;
                     responseData.ID = x.ID;
                     ResponseDTO.Add(responseData);
