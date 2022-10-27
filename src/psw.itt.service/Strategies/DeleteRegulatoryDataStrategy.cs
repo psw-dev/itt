@@ -27,7 +27,7 @@ namespace PSW.ITT.Service.Strategies
                 var ProductRegulationEntity = Command.UnitOfWork.ProductRegulationRequirementRepository.Get(RequestDTO.ID);
                 if (ProductRegulationEntity.EffectiveThruDt <= currentDateTime)
                 {
-                    return BadRequestReply("Product Code already deactivated");
+                    return BadRequestReply("Regulation already deactivated");
                 }
                 Command.UnitOfWork.BeginTransaction();
                 ProductRegulationEntity.EffectiveThruDt = currentDateTime;
@@ -36,7 +36,7 @@ namespace PSW.ITT.Service.Strategies
                 Command.UnitOfWork.ProductRegulationRequirementRepository.Update(ProductRegulationEntity);
                 Command.UnitOfWork.Commit();
                 // Prepare and return command reply
-                return OKReply("Product Code Closed Successfully");
+                return OKReply("Regulation Deleted Successfully");
             }
             catch (ServiceException ex)
             {
