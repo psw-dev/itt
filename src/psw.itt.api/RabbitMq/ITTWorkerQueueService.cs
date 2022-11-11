@@ -94,7 +94,8 @@ public class ITTWorkerQueueService : AsyncWorker, IHostedService
 
         _service = new ITTService();
         _service.UnitOfWork = new UnitOfWork(_configuration);
-        _service.StrategyFactory = new StrategyFactory(_service.UnitOfWork);
+        _service.SHRDUnitOfWork = new SHRDUnitOfWork(_configuration);
+        _service.StrategyFactory = new StrategyFactory(_service.UnitOfWork, _service.SHRDUnitOfWork);
 
 
         ServiceReply svcReply = null;

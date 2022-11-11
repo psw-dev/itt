@@ -11,12 +11,14 @@ namespace PSW.ITT.Service.Strategies
 
         #region Properties
         public IUnitOfWork UnitOfWork { get; protected set; }
+        public ISHRDUnitOfWork SHRDUnitOfWork { get; protected set; }
         #endregion
 
         #region Constructor & Destructor
-        public StrategyFactory(IUnitOfWork uow)
+        public StrategyFactory(IUnitOfWork uow, ISHRDUnitOfWork shrdUow)
         {
             UnitOfWork = uow;
+            SHRDUnitOfWork = shrdUow;
         }
         #endregion
 
@@ -38,6 +40,7 @@ namespace PSW.ITT.Service.Strategies
                 case "2220": return new GetColumnNamesForExcelStrategy(request);
                 case "2221": return new FetchUploadedSheetsListStrategy(request);
                 case "2222": return new UploadFileStrategy(request);
+                case "2225": return new UploadConfigrationFileStrategy(request);
                 case "2223": return new GetUploadFileProgressStrategy(request);
                 case "2224": return new UpdateFileHistoryStatusStrategy(request);
 

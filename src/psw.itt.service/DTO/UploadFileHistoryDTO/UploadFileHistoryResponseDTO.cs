@@ -27,6 +27,9 @@ namespace PSW.ITT.Service.DTO
 
         [JsonPropertyName("disputedRecordsData")]
         public string DisputedRecordsData { get; set; }
+        
+        [JsonPropertyName("processingResponse")]
+        public string ProcessingResponse { get; set; }
 
         [JsonPropertyName("statusId")]
         public int StatusId { get; set; }

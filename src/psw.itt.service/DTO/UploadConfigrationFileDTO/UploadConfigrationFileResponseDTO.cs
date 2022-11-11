@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace PSW.ITT.Service.DTO
 {
-    public class UploadFileResponseDTO
+    public class UploadConfigrationFileResponseDTO
     {
 
         [JsonPropertyName("disputedRecordCount")]
@@ -19,6 +19,9 @@ namespace PSW.ITT.Service.DTO
         [JsonPropertyName("processedRecordsCount")]
         public long ProcessedRecordsCount { get; set; }
 
+        [JsonPropertyName("statusID")]
+        public short StatusID { get; set; }
+
         [JsonPropertyName("gridColumns")]
         public List<GridColumns> GridColumns { get; set; }
 
@@ -26,19 +29,19 @@ namespace PSW.ITT.Service.DTO
         public List<dynamic> Data { get; set; }
     }
 
-    //  public class GridColumns
-    // {
+     public class GridColumns
+    {
 
-    //     [JsonPropertyName("field")]
-    //     public string Field { get; set; }
+        [JsonPropertyName("field")]
+        public string Field { get; set; }
 
-    //     [JsonPropertyName("title")]
-    //     public string Title { get; set; }
+        [JsonPropertyName("title")]
+        public string Title { get; set; }
 
-    //     [JsonPropertyName("editor")]
-    //     public string Editor { get; set; }
+        [JsonPropertyName("editor")]
+        public string Editor { get; set; }
 
-    //     [JsonPropertyName("width")]
-    //     public string Width { get; set; }
-    // }
+        [JsonPropertyName("width")]
+        public string Width { get; set; }
+    }
 }

@@ -18,6 +18,9 @@ namespace PSW.ITT.Data.Entities
         private int _disputedRecordsCount;
         private int _processedRecordsCount;
         private int _duplicateRecordsCount;
+        private short _agencyID;
+        private short _tradeTranTypeID;
+        private string _processingResponse;
         private int _createdBy;
         private DateTime _createdOn;
         private int _updatedBy;
@@ -35,6 +38,9 @@ namespace PSW.ITT.Data.Entities
         public int ProcessedRecordsCount  { get { return _processedRecordsCount ; } set { _processedRecordsCount  = value; } }
         public int DisputedRecordsCount  { get { return _disputedRecordsCount ; } set { _disputedRecordsCount  = value; } }
         public int DuplicateRecordsCount { get { return _duplicateRecordsCount; } set { _duplicateRecordsCount = value; } }
+        public short AgencyID  { get { return _agencyID ; } set { _agencyID  = value; } }
+        public short TradeTranTypeID { get { return _tradeTranTypeID; } set { _tradeTranTypeID = value; } }
+        public string ProcessingResponse { get { return _processingResponse; } set { _processingResponse = value; } }
         public int CreatedBy { get { return _createdBy; } set { _createdBy = value; } }
         public DateTime CreatedOn { get { return _createdOn; } set { _createdOn = value; } }
         public int UpdatedBy { get { return _updatedBy; } set { _updatedBy = value; } }
@@ -60,6 +66,9 @@ namespace PSW.ITT.Data.Entities
                 {"DisputedRecordsCount",DisputedRecordsCount },
                 {"ProcessedRecordsCount",ProcessedRecordsCount },
                 {"DuplicateRecordsCount", DuplicateRecordsCount},
+                {"AgencyID",AgencyID },
+                {"TradeTranTypeID", TradeTranTypeID},
+                {"ProcessingResponse", ProcessingResponse},
                 {"CreatedBy", CreatedBy},
                 {"CreatedOn", CreatedOn},
                 {"UpdatedBy", UpdatedBy},
@@ -78,6 +87,9 @@ namespace PSW.ITT.Data.Entities
                 DisputedRecordsCount,
                 DuplicateRecordsCount,
                 ProcessedRecordsCount,
+                AgencyID,
+                TradeTranTypeID,
+                ProcessingResponse,
                 CreatedBy,
                 CreatedOn,
                 UpdatedBy,

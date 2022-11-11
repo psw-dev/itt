@@ -14,6 +14,7 @@ namespace PSW.ITT.Service.Services
     {
         #region properties 
         public IUnitOfWork UnitOfWork { get; set; }
+        public ISHRDUnitOfWork SHRDUnitOfWork { get; set; }
         public IStrategyFactory StrategyFactory { get; set; }
         public ICryptoAlgorithm CryptoAlgorithm { get; set; }
         public IEnumerable<Claim> UserClaims { get; set; }
@@ -37,6 +38,8 @@ namespace PSW.ITT.Service.Services
             {
                 //check if UnitOfWork is set otherwise set the service's UoW as default
                 request.UnitOfWork = request.UnitOfWork ?? UnitOfWork;
+
+                request.SHRDUnitOfWork = request.SHRDUnitOfWork ?? SHRDUnitOfWork;
 
                 request.UserClaims = request.UserClaims ?? this.UserClaims;
                 // Check if CryptoAlgorith is set otherwise set the service's Crypto Algorithm as default
