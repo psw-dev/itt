@@ -26,10 +26,16 @@ namespace PSW.ITT.Service.Strategies
             {
                 Log.Information("|{0}|{1}| Request DTO {@RequestDTO}", StrategyName, MethodID, RequestDTO);
 
-                var agencyAttribute = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.AgencyID, RequestDTO.TradeTranTypeID,1);
+                var agencyAttribute = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, 1);
                 ResponseDTO = new List<FetchRegulatoryDataAttributeResponseDTO>();
                 ResponseDTO = agencyAttribute.Select(item => Mapper.Map<FetchRegulatoryDataAttributeResponseDTO>(item)).ToList();
-
+                var actionColumn = new FetchRegulatoryDataAttributeResponseDTO();
+                actionColumn.NameLong = "Action";
+                actionColumn.NameShort = "action";
+                actionColumn.Hint = "hint";
+                actionColumn.IsMandatory = true;
+                actionColumn.MaxLength = 10;
+                ResponseDTO.Add(actionColumn);
 
                 // Prepare and return command reply
                 return OKReply("Regulatory Data Attribute fetched Successfully");
