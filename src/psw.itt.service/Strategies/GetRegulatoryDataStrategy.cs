@@ -61,68 +61,7 @@ namespace PSW.ITT.Service.Strategies
                 return InternalServerErrorReply(ex);
             }
         }
-
-        private List<GridColumns> GetGridColumns()
-        {
-            try
-            {
-                List<GridColumns> gridColumns = new List<GridColumns>();
-
-                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, 1).OrderBy(x => x.Index).ToList();
-                foreach (var x in propertyNameList)
-                {
-                    var column = new GridColumns();
-                    column.Field = x.NameShort;
-                    column.Title = x.NameLong;
-                    column.Editor = "string";
-                    column.Width = "90px";
-                    gridColumns.Add(column);
-                }
-
-
-                return gridColumns;
-
-            }
-            catch (System.Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        private List<dynamic> GetRegisteredRecords(DataTable dt)
-        {
-            try
-            {
-                List<dynamic> gridData = new List<dynamic>();
-
-
-                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = 1 }).OrderBy(x => x.Index).ToList();
-
-
-                int rowIndex = 0;
-                foreach (DataRow drow in dt.Rows)
-                {
-                    rowIndex += 1;
-                    IDictionary<string, object> expandoDict = new ExpandoObject();
-                    foreach (var x in propertyNameList)
-                    {
-                        expandoDict.Add(x.NameShort, drow[x.Index]);
-
-                    }
-                    expandoDict.Add("error", drow[propertyNameList.Count]);
-                    expandoDict.Add("rowIndex", rowIndex + 1);
-                    gridData.Add(expandoDict);
-
-                }
-                return gridData;
-
-
-            }
-            catch (System.Exception ex)
-            {
-                throw ex;
-            }
-        }
+        
         #endregion
     }
 }
