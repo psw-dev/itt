@@ -11,6 +11,7 @@ namespace PSW.ITT.Service.DTO
 
         [JsonPropertyName("productCodes")]
         public List<long> ProductCodes { get; set; }
+        
         [JsonPropertyName("agencyID")]
         public short AgencyID { get; set; }
     }

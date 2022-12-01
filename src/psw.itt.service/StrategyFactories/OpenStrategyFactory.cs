@@ -13,14 +13,16 @@ namespace PSW.ITT.Service.Strategies
 
         #region Properties
         public IUnitOfWork UnitOfWork { get; protected set; }
+        public ISHRDUnitOfWork SHRDUnitOfWork { get; protected set; }
 
         #endregion
 
         #region Constructor
 
-        public OpenStrategyFactory(IUnitOfWork uow)
+        public OpenStrategyFactory(IUnitOfWork uow, ISHRDUnitOfWork shrdUow)
         {
             UnitOfWork = uow;
+            SHRDUnitOfWork = shrdUow;
         }
 
         #endregion

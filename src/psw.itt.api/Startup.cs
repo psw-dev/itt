@@ -56,6 +56,7 @@ namespace PSW.ITT.Api
             services.AddTransient<IStrategyFactory, StrategyFactory>();
             services.AddTransient<IITTOpenService, ITTOpenService>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<ISHRDUnitOfWork, SHRDUnitOfWork>();
 
             // Auto Mapper Profiles 
             services.AddAutoMapper(

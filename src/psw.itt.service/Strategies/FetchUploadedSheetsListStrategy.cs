@@ -41,11 +41,15 @@ namespace PSW.ITT.Service.Strategies
 
                 ResponseDTO = new List<UploadFileHistoryResponseDTO>();
                 var listFileUploadHistory = new List<ProductCodeSheetUploadHistory>();
+                var statusList = Command.UnitOfWork.ProductCodeSheetUploadStatusRepository.All().ToList();
                 if(RequestDTO==null)
                 {
                     listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.All().OrderByDescending(x => x.UpdatedOn).ToList();
                 }else{
-                    listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.Where(new { AgencyID = RequestDTO.AgencyID}).OrderByDescending(x => x.UpdatedOn).ToList();
+                    if(!RequestDTO.Event){
+                    Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.SetIsCurrent(RequestDTO.AgencyID);
+                    }
+                    listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.Where(new { AgencyID = RequestDTO.AgencyID, IsCurrent=1}).OrderByDescending(x => x.ID).ToList();
                 }
                 if (listFileUploadHistory == null || listFileUploadHistory.Count == 0)
                 {
@@ -73,9 +77,9 @@ namespace PSW.ITT.Service.Strategies
                     fileUploadItem.DisputedRecordsCount = item.DisputedRecordsCount;
                     fileUploadItem.DuplicateRecordsCount = item.DuplicateRecordsCount;
                     fileUploadItem.ProcessedRecordsCount = item.ProcessedRecordsCount;
-                    // fileUploadItem.DisputedRecordsData = item.DisputedRecordsData;
+                    fileUploadItem.ProcessingResponse = item.ProcessingResponse;
                     fileUploadItem.StatusId = item.ProductCodeSheetUploadStatusID;
-                    fileUploadItem.StatusName = EnumHelper.GetEnumDescription(((ProductCodeSheetUploadStatusEnum)item.ProductCodeSheetUploadStatusID));
+                    fileUploadItem.StatusName = statusList.Find(x=>x.ID == item.ProductCodeSheetUploadStatusID).Name;
                     fileUploadItem.CreatedOn = item.CreatedOn.ToString();
                     fileUploadItem.UpdatedOn = item.UpdatedOn.ToString();
                     fileUploadItem.IsLast = (item.ID == last.ID) ? true : false;

@@ -15,6 +15,7 @@ namespace PSW.ITT.Service.Command
         public JsonElement data { get; set; }
         public string methodId { get; set; }
         public IUnitOfWork UnitOfWork { get; set; }
+        public ISHRDUnitOfWork SHRDUnitOfWork { get; set; }
         public ICryptoAlgorithm CryptoAlgorithm { get; set; }
         public IMapper _mapper { get; set; }
         public ServerPaginationModel pagination { get; set; }

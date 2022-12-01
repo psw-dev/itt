@@ -148,6 +148,17 @@ namespace PSW.ITT.Common.Constants
         //WFS
         public static string WFS_Create_Process_Instance = "1817";
 
-
     }
+
+    public enum RegulationAction {
+    ADD_REGULATION = 1,
+    UPDATE_REGULATION = 2,
+    INACTIVATE_REGULATION = 3
+    }
+    
+    public enum ActionID {
+    CANCEL = 1,
+    SUBMIT = 2,
+    VALIDATE = 3,
+}
 }
