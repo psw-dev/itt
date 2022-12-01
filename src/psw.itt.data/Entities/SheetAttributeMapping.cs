@@ -34,6 +34,7 @@ namespace PSW.ITT.Data.Entities
         private string _tableName;
         private string _columnName;
         private bool _isEditable;
+        private string _serviceName;
 
         #endregion
 
@@ -58,6 +59,7 @@ namespace PSW.ITT.Data.Entities
         public string TableName { get { return _tableName; } set { _tableName = value; } }
         public string ColumnName { get { return _columnName; } set { _columnName = value; } }
         public bool IsEditable { get { return _isEditable; } set { _isEditable = value; } }
+        public string ServiceName { get { return _serviceName; } set { _serviceName = value; } }
 
 
         #endregion
@@ -90,7 +92,8 @@ namespace PSW.ITT.Data.Entities
                 {"SheetType",SheetType},
                 {"TableName",TableName},
                 {"ColumnName",ColumnName},
-                {"IsEditable",IsEditable}
+                {"IsEditable",IsEditable},
+                {"ServiceName",ServiceName}
 
             };
         }
@@ -116,7 +119,8 @@ namespace PSW.ITT.Data.Entities
                 SheetType,
                 TableName,
                 ColumnName,
-                IsEditable
+                IsEditable,
+                ServiceName
             };
         }
 

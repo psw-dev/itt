@@ -25,7 +25,8 @@ namespace PSW.ITT.Service.Strategies
             {
                 Log.Information("|{0}|{1}| Request DTO {@RequestDTO}", StrategyName, MethodID, RequestDTO);
                 Command.UnitOfWork.BeginTransaction();
-                var regulation = Command.UnitOfWork.LPCORegulationRepository.Get(RequestDTO.ID);
+                var regulationID = Command.UnitOfWork.ProductRegulationRequirementRepository.Get(RequestDTO.ID);
+                var regulation = Command.UnitOfWork.LPCORegulationRepository.Get(regulationID.LPCORegulationID);
                 regulation.RegulationJson = JsonSerializer.Serialize<dynamic>(RequestDTO.Data);
                 regulation.UpdatedOn = currentDateTime;
                 regulation.UpdatedBy = Command.LoggedInUserRoleID;
