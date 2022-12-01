@@ -82,6 +82,8 @@ namespace PSW.ITT.Service.Strategies
                     return BadRequestReply("Please wait, The file is already being processed.");
                 }
 
+                Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.SetIsCurrent(RequestDTO.AgencyID);
+
                 DataTable dt = new DataTable();
                 ResponseDTO = new UploadConfigrationFileResponseDTO();
 
@@ -116,11 +118,13 @@ namespace PSW.ITT.Service.Strategies
                 
                  if (RequestDTO.ActionID == (short)ActionID.VALIDATE)
                 {
+                    
                     short validationStatus = (short)ProductCodeSheetUploadStatusEnum.VALIDATED;
                     string processingResponse = "Successfully Validated.";
                     if(fileCheck.Count>0){
                         validationStatus = (short)ProductCodeSheetUploadStatusEnum.STRUCTURE_VALIDATION_FAILED;
-                        processingResponse =string.Concat("Error in File, ", string.Join( ",", fileCheck.Select(kv => kv.Key + " column name should be " + kv.Value).ToArray() ));
+                        
+                        processingResponse =fileCheck.Count==1?string.Concat("Error in File, ", string.Join( ",", fileCheck.Select(kv => kv.Key).ToArray() )):string.Concat("Error in File, ", string.Join( ",", fileCheck.Select(kv => kv.Key + " column name should be " + kv.Value).ToArray() ));
                         
                         formatTable.Columns.Add("Error", typeof(string));
                         formatTable.Columns.Add(processingResponse, typeof(string));
@@ -135,10 +139,11 @@ namespace PSW.ITT.Service.Strategies
                     var validationFileUploadHistory = new ProductCodeSheetUploadHistory{
                     AttachedFileID = RequestDTO.FileID,
                     Name = RequestDTO.FileName,
-                    TotalRecordsCount = dt.Rows.Count,
+                    TotalRecordsCount = dt.Rows.Count-1,
                     AgencyID = RequestDTO.AgencyID,
                     TradeTranTypeID = RequestDTO.TradeTranTypeID,
                     DuplicateRecordsCount = 0,
+                    IsCurrent = true,
                     DisputedRecordsCount = 0,
                     ProcessedRecordsCount = 0,
                     ProductCodeSheetUploadStatusID = validationStatus,
@@ -148,42 +153,24 @@ namespace PSW.ITT.Service.Strategies
                     CreatedOn = DateTime.Now,
                     UpdatedOn = DateTime.Now};
 
-                    long validationFileUploadHistoryID = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.Add(validationFileUploadHistory);
-                
-                ResponseDTO.GridColumns = GetGridFormatColumns(dt.Rows[0].ItemArray.ToList(), processingResponse);
-                ResponseDTO.Data = GetRegisteredRecords(new DataTable());
-
-
-
-                ResponseDTO.DisputedRecordCount = 0;
-                ResponseDTO.StatusID = validationStatus;
-                ResponseDTO.DuplicateRecordCount = 0;
-                ResponseDTO.TotalRecordCount = 0;
-                ResponseDTO.ProcessedRecordsCount = 0 ;
-                // if(fileCheck.Count>0){
-                //     return BadRequestReply("Validation Failed.");
-                // }else{
+                    long validationFileUploadHistoryID = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.Add(validationFileUploadHistory);        
+            
+                   
+                if(fileCheck.Count>0){
+                    ResponseDTO.GridColumns = GetGridFormatColumns(dt.Rows[0].ItemArray.ToList(), processingResponse);
+                    ResponseDTO.Data = GetRegisteredRecords(new DataTable());
+                    ResponseDTO.DisputedRecordCount = 0;
+                    ResponseDTO.StatusID = validationStatus;
+                    ResponseDTO.DuplicateRecordCount = 0;
+                    ResponseDTO.TotalRecordCount = dt.Rows.Count;
+                    ResponseDTO.ProcessedRecordsCount = 0 ;
+                    Log.Information($"| Strategy Name : {StrategyName} | Method ID : {MethodID} | File Structure Validation Failed.");
+                    return BadRequestReply("Validation Failed.");
                     
-                //     return OKReply("Validated Successfully.");
-                // }
-            }
+                }
             
                 dt.Rows.Remove(dt.Rows[0]);
-                // if (fileCheck.Item2 != "")
-                // {
-                //     Log.Information("[{0}.{1}] Error in File, Column name '{2}' must be '{3}'", this.GetType().Name, MethodBase.GetCurrentMethod().Name, fileCheck.Item1, fileCheck.Item2);
-                //     return BadRequestReply($"Error in File, Column name '{fileCheck.Item1}' must be '{fileCheck.Item2}'.");
-                // }
-                // else if (fileCheck.Item1 != "")
-                // {
-                //     Log.Information("[{0}.{1}] Error in File, '{2}' ", this.GetType().Name, MethodBase.GetCurrentMethod().Name, fileCheck.Item1, fileCheck.Item2);
-                //     return BadRequestReply($"Error in File, {fileCheck.Item1}.");
-                // }
-                // else
-                // {
-                   
-                // }
-
+                
                 
                 //TODO will uncomment
                 // var columnsCheck = CheckIsMandatoryColumnsAvailable(dt);
@@ -207,7 +194,8 @@ namespace PSW.ITT.Service.Strategies
                 }
 
                 
-
+                
+                duplicateTable = GetDuplicateRecords(dt, duplicateTable, errorColumnPosition);
                 var activeProductCodes = Command.UnitOfWork.ProductCodeEntityRepository.GetActiveAgencyProductCode( RequestDTO.AgencyID);
                 var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType).ToList();
                 var validationList = Command.UnitOfWork.AttributeValidationMappingRepository.GetAssociatedValidationList(propertyNameList.Select(x=>x.ID).ToList()).ToList();
@@ -215,38 +203,68 @@ namespace PSW.ITT.Service.Strategies
 
                 foreach (DataRow d in dt.Rows)
                 {
-                     DataRow row = dispuedTable.NewRow();  
+                    
+                    string error= "";
+                    DataRow row = dispuedTable.NewRow();  
                     for( var i=0;i< d.ItemArray.Count();i++){
                             List<Data.DTO.ProductCodeValidationList> validation = validationList.Where(x=>x.Index ==i+1).ToList();
-                            ProductCodeFileValidation PCValidator = new ProductCodeFileValidation( d.ItemArray[i].ToString(), dt.Columns[i].ToString(),validation ,Command, RequestDTO.AgencyID);
-                    var validated = PCValidator.validate();
-                     if (!row.ItemArray.All(x => x == null || (x != null && string.IsNullOrWhiteSpace(x.ToString()))))
-                    {
-                        row.ItemArray = d.ItemArray;
-                        row[errorColumnPosition] = validated;
-                        row[errorColumnIndexPosition] = rowIndex + 1;
-                        dispuedTable.Rows.Add(row);
+                            if (validation.Count>0)
+                            {
+                                ProductCodeFileValidation PCValidator = new ProductCodeFileValidation( d.ItemArray[i].ToString(), dt.Columns[i].ToString(),validation ,Command, RequestDTO.AgencyID, RequestDTO.TradeTranTypeID);
+                                var validated = PCValidator.validate();
+                                
+                                if (validated!= "")
+                                {
+                                    error= error == "" ? validated : String.Concat(error,", ",validated);
+                                    // row.ItemArray[0].GetType = d.ItemArray;
+                                    // row[errorColumnPosition] = validated;
+                                    // row[errorColumnIndexPosition] = rowIndex + 1;
+                                    // dispuedTable.Rows.Add(row);
+                                }
+                            }
+                        }
+                        var duplicateCheckIndexList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType).Where(x=>x.CheckDuplicate==true).Select(x=>x.Index).ToList();
+                        
+                        foreach (DataRow drow in duplicateTable.Rows)
+                        {
+                            var count = 0;
+                            foreach(int a in duplicateCheckIndexList){
+                                if(drow[a-1].ToString()==d[a-1].ToString()) count++;
+                            }
+                            if (count==duplicateCheckIndexList.Count) 
+                            {
+                                error=  error == "" ? drow[errorColumnPosition].ToString() :String.Concat(error,", ",drow[errorColumnPosition] );
+                            }
+                        }
+                        if (error!= "")
+                        {
+                            
+                            row.ItemArray = d.ItemArray;
+                            row[errorColumnPosition] = error;
+                            row[errorColumnIndexPosition] = rowIndex + 1;
+                            dispuedTable.Rows.Add(row);
+                        }
                     }
-                    }
-                }
-                // duplicateTable = GetDuplicateRecords(dt, duplicateTable, errorColumnPosition);
-                // var duplicateRecordCount = dt.Rows.Count - duplicateTable.Rows.Count;
-                DataTable mergeDuplicateAndDisputedTable = new DataTable();
-                mergeDuplicateAndDisputedTable.Merge(dispuedTable);
-                mergeDuplicateAndDisputedTable.Merge(duplicateTable);
-                short status = (short)ProductCodeSheetUploadStatusEnum.FILE_COLUMN_VALIDATED;
+                var duplicateRecordCount = dt.Rows.Count - duplicateTable.Rows.Count;
+                // DataTable mergeDuplicateAndDisputedTable = new DataTable();
+                // mergeDuplicateAndDisputedTable.Merge(dispuedTable);
+                // mergeDuplicateAndDisputedTable.Merge(duplicateTable);
+                short status = (short)ProductCodeSheetUploadStatusEnum.DATA_VALIDATED;
                 // ValidateNationalRegistration validateRegistrationData = new ValidateNationalRegistration();
 
                 // Update National RegisterFileHistory
                 var fileUploadHistory = new ProductCodeSheetUploadHistory();
                 if (duplicateTable.Rows.Count > 0 || dispuedTable.Rows.Count > 0)
                 {
-                    status = (short)ProductCodeSheetUploadStatusEnum.FILE_COLUMN_VALUE_VALIDATION_FAILED;
+                    status = (short)ProductCodeSheetUploadStatusEnum.DATA_VALIDATION_FAILED;
                 }
                 fileUploadHistory.AttachedFileID = RequestDTO.FileID;
                 fileUploadHistory.Name = RequestDTO.FileName;
+                fileUploadHistory.AgencyID = RequestDTO.AgencyID;
                 fileUploadHistory.TotalRecordsCount = dt.Rows.Count;
+                fileUploadHistory.ProcessedRecordsCount = dt.Rows.Count;
                 fileUploadHistory.DuplicateRecordsCount = duplicateTable.Rows.Count;
+                fileUploadHistory.IsCurrent = true;
                 fileUploadHistory.DisputedRecordsCount = dispuedTable.Rows.Count;
                 fileUploadHistory.ProductCodeSheetUploadStatusID = status;
                 fileUploadHistory.CreatedBy = UserRoleId;
@@ -262,7 +280,7 @@ namespace PSW.ITT.Service.Strategies
                     Log.Information("[{0}.{1}] Error in File uploading.", this.GetType().Name, MethodBase.GetCurrentMethod().Name); //columnsCheck
                     return BadRequestReply($"Error in File uploading, Please try again later.");
                 }
-                if (mergeDuplicateAndDisputedTable.Rows.Count <= 0)
+                if (dispuedTable.Rows.Count <= 0)
                 {
 
                     // var cts = new CancellationTokenSource();
@@ -289,7 +307,7 @@ namespace PSW.ITT.Service.Strategies
                     ResponseDTO.DuplicateRecordCount = duplicateTable.Rows.Count;
                     ResponseDTO.TotalRecordCount = dt.Rows.Count;
                     ResponseDTO.GridColumns = GetGridColumns(RequestDTO.ActionID);
-                    ResponseDTO.Data = GetRegisteredRecords(mergeDuplicateAndDisputedTable);
+                    ResponseDTO.Data = GetRegisteredRecords(dispuedTable);
                     ResponseDTO.ProcessedRecordsCount = fileUploadHistoryRecord.ProcessedRecordsCount == null ? 0 : fileUploadHistoryRecord.ProcessedRecordsCount;
                     Log.Information($"| Strategy Name : {StrategyName} | Method ID : {MethodID} | Upload Successfully");
                     return OKReply("Upload Successfully.");
@@ -298,7 +316,7 @@ namespace PSW.ITT.Service.Strategies
 
 
                 ResponseDTO.GridColumns = GetGridColumns(RequestDTO.ActionID);
-                ResponseDTO.Data = GetRegisteredRecords(mergeDuplicateAndDisputedTable);
+                ResponseDTO.Data = GetRegisteredRecords(dispuedTable);
 
 
 
@@ -306,6 +324,16 @@ namespace PSW.ITT.Service.Strategies
                 ResponseDTO.DuplicateRecordCount = duplicateTable.Rows.Count;
                 ResponseDTO.TotalRecordCount = dt.Rows.Count;
                 ResponseDTO.ProcessedRecordsCount = fileUploadHistoryRecord.ProcessedRecordsCount == null ? 0 : fileUploadHistoryRecord.ProcessedRecordsCount; ;
+                
+                if(dispuedTable.Rows.Count>0){
+                    return BadRequestReply("Validation Failed.");
+                }else{
+                    
+                    return OKReply("Validated Successfully.");
+                }
+            
+                // return OKReply("Upload Successfully.");
+                }
                 return OKReply("Upload Successfully.");
             }
             catch (System.Exception ex)
@@ -338,10 +366,10 @@ namespace PSW.ITT.Service.Strategies
                     IDictionary<string, object> expandoDict = new ExpandoObject();
                     foreach (var x in propertyNameList)
                     {
-                        expandoDict.Add(x.NameShort, drow[x.Index]);
+                        expandoDict.Add(x.NameShort, drow[x.Index-1]);
 
                     }
-                    if(RequestDTO.ActionID!=(short)ActionID.VALIDATE){
+                    if(RequestDTO.ActionID==(short)ActionID.VALIDATE){
                         expandoDict.Add("error", drow[propertyNameList.Count]);
                         expandoDict.Add("rowIndex", rowIndex + 1);
                     }
@@ -622,14 +650,22 @@ private List<GridColumns> GetGridFormatColumns(List<object> columnNames, string 
             Hashtable hTable = new Hashtable();
             ArrayList duplicateList = new ArrayList();
 
+            var duplicateCheckIndexList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType).Where(x=>x.CheckDuplicate==true).Select(x=>x.Index).ToList();
             //Add list of all the unique item value to hashtable, which stores combination of key, value pair.
             //And add duplicate item value in arraylist.
+            var indexString ="";
+            
             foreach (DataRow drow in dt.Rows)
             {
-                if (hTable.Contains(drow[0] + "" + drow[1] + "" + drow[2] + "" + drow[3] + "" + drow[4] + "" + drow[5] + "" ))
+                foreach(int a in duplicateCheckIndexList){
+                indexString+=drow[a-1].ToString();
+
+            }
+                if (hTable.Contains(indexString ))
                     duplicateList.Add(drow);
                 else
-                    hTable.Add(drow[0] + "" + drow[1] + "" + drow[2] + "" + drow[3] + "" + drow[4] + "" + drow[5] + "" , string.Empty);
+                    hTable.Add(indexString , string.Empty);
+                indexString="";
             }
             int rowIndex=0;
 

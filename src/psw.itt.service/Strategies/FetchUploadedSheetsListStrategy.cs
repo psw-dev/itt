@@ -46,7 +46,10 @@ namespace PSW.ITT.Service.Strategies
                 {
                     listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.All().OrderByDescending(x => x.UpdatedOn).ToList();
                 }else{
-                    listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.Where(new { AgencyID = RequestDTO.AgencyID}).OrderByDescending(x => x.UpdatedOn).ToList();
+                    if(!RequestDTO.Event){
+                    Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.SetIsCurrent(RequestDTO.AgencyID);
+                    }
+                    listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.Where(new { AgencyID = RequestDTO.AgencyID, IsCurrent=1}).OrderByDescending(x => x.ID).ToList();
                 }
                 if (listFileUploadHistory == null || listFileUploadHistory.Count == 0)
                 {

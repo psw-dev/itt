@@ -78,12 +78,13 @@ namespace PSW.ITT.Data.Sql.Repositories
 
             return _connection.Query<ProductCodeEntity>(sql, param: parameters, transaction: _transaction).ToList();
         }
-        public bool GetProductCodeValidity(string ProductCode, int AgencyID)
+        public bool GetProductCodeValidity(string ProductCode, int AgencyID,short tradeType)
         {
             var query = new Query("ProductCode")
               .Join("ProductCodeAgencyLink", "ProductCodeAgencyLink.ProductCodeID", "ProductCode.ID")
-              .WhereRaw("ProductCode.HSCodeExt = " + ProductCode)
+              .WhereRaw("ProductCode.HSCodeExt = '" + ProductCode+"'")
               .WhereRaw("ProductCodeAgencyLink.AgencyID = " + AgencyID)
+              .WhereRaw("(TradeTranTypeID != 4 or TradeTranTypeID = " + tradeType + ")")
               .WhereRaw("((ProductCodeAgencyLink.EffectiveFromDt <= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate())")
               .OrWhereRaw("(ProductCodeAgencyLink.EffectiveFromDt >= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate()))")
               .SelectRaw("ProductCode.HSCodeExt");

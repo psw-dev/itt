@@ -19,9 +19,9 @@ namespace PSW.ITT.Common.Enums
         [Description("Structure Validation Failed")]
         STRUCTURE_VALIDATION_FAILED = 6,
 
-        [Description("File Column Validated")]
-        FILE_COLUMN_VALIDATED = 7,
-        [Description("Column Value Validation Failed")]
-        FILE_COLUMN_VALUE_VALIDATION_FAILED = 8,
+        [Description("Data Validated")]
+        DATA_VALIDATED = 7,
+        [Description("Data Validation Failed")]
+        DATA_VALIDATION_FAILED = 8,
     }
 }

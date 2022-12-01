@@ -11,16 +11,18 @@ namespace PSW.ITT.Service.BusinessLogicLayer
     {
         private string columnValue;
         private string columnName;
+        private short tradeTranTypeID;
         private int agencyID;
         private List<Data.DTO.ProductCodeValidationList> validation;
         private CommandRequest command; 
         
-        public ProductCodeFileValidation(string columnValue, string columnName, List<Data.DTO.ProductCodeValidationList> validation, CommandRequest command, int agencyID )
+        public ProductCodeFileValidation(string columnValue, string columnName, List<Data.DTO.ProductCodeValidationList> validation, CommandRequest command, int agencyID, short tradeTranTypeID )
         {
             this.columnValue = columnValue;
             this.columnName = columnName;
             this.validation = validation;
             this.agencyID = agencyID;
+            this.tradeTranTypeID = tradeTranTypeID;
             this.command = command;
         }
 
@@ -57,7 +59,7 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                         }
                         break;
                     }
-                     case 4:
+                    case 4:
                     {  
                         
                         var FactorList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetLOV(item.TableName, item.ColumnName);
@@ -69,12 +71,34 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                         }
                         break;
                     }
+                    case 5:
+                    {  
+                        var countryList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetList(item.TableName, item.ColumnName);
+                        var value = new List<string>();
+                        foreach(var i in  columnValue. Split(',') ){
+                            var country = countryList.Find( x=>x.ToLower().Trim()==i.ToLower().Trim());
+                            if(String.IsNullOrEmpty(country)){
+                                value.Add(i);
+                            };
+                        }
+                        if(value.Count>0)
+                        {
+                            Error = Error == "" ? columnName+" value "+(String.Join(",",value))+" does not exist in the system" : Error + ", " + columnName+" value "+(String.Join(",",value))+" does not exist in the system";
+                        }
+                        break;
+                    }
                     case 6:
                     {  
-                        
-                        if (String.IsNullOrEmpty(columnValue) || Convert.ToInt32(columnValue) == 0)
-                        {
-                             Error = Error == "" ? columnName+" is Required" : Error + ", " + columnName+" is Required";
+                        var bitList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetLOV(item.TableName, item.ColumnName);
+                        if (String.IsNullOrEmpty(columnValue)){
+                            Error = Error == "" ? columnName+" is null" : Error + ", " + columnName+" is null";
+                        }
+                        else{
+                            string value = bitList.Find( x=>x.Item2.ToLower()==columnValue.ToLower()).Item2;
+                            if (String.IsNullOrEmpty(value) )
+                            {
+                                Error = Error == "" ? columnName+" is Required" : Error + ", " + columnName+" is Required";
+                            }
                         }
                         break;
                     }
@@ -94,13 +118,58 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                         Match match = Regex.Match(columnValue, item.Validation, RegexOptions.IgnoreCase);
                         if (!match.Success)
                         {
-                             Error = Error == "" ? columnName+" should be 1 for Yes and 2 for No" : Error + ", " + columnName+" should be 1 for Yes and 2 for No";
+                             Error = Error == "" ? columnName+"  is not in correct format, it can be 3 digit numbers" : Error + ", " + columnName+" is not in correct format, it can be 3 digit numbers";
+                        }
+                        break;
+                    }
+                    case 17:
+                    case 16:
+                    case 9:
+                    {  
+                        var DocumentList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetDocumentLOV(item.TableName, item.ColumnName, item.Validation, agencyID);
+                        var value = new List<string>();
+                        if (String.IsNullOrEmpty(columnValue)){
+                            Error = Error == "" ? columnName+" is null" : Error + ", " + columnName+" is null";
+                        }
+                        else{
+                            foreach(var i in  columnValue. Split(',') ){
+                            var document = DocumentList.Find( x=>x.ToLower().Trim()==i.ToLower().Trim());
+                                if(String.IsNullOrEmpty(document)){
+                                    value.Add(i);
+                                };
+                            }
+                            if(value.Count>0)
+                            {
+                                Error = Error == "" ? columnName+" value "+(String.Join(",",value))+" does not exist in the system" : Error + ", " + columnName+" value "+(String.Join(",",value))+" does not exist in the system";
+                            }
+                        }
+                        
+                        break;
+                    }
+                    case 10:
+                    {  
+                        var unitList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetList(item.TableName, item.ColumnName);
+                        var value = new List<string>();
+                        if (String.IsNullOrEmpty(columnValue)){
+                            Error = Error == "" ? columnName+" is null" : Error + ", " + columnName+" is null";
+                        }
+                        else{
+                            foreach(var i in  columnValue. Split(',') ){
+                            var unit = unitList.Find( x=>x.ToLower().Trim()==i.ToLower().Trim());
+                            if(String.IsNullOrEmpty(unit)){
+                                value.Add(i);
+                            };
+                            }
+                            if(value.Count>0)
+                            {
+                                Error = Error == "" ? columnName+" value "+(String.Join(",",value))+" does not exist in the system" : Error + ", " + columnName+" value "+(String.Join(",",value))+" does not exist in the system";
+                            }
                         }
                         break;
                     }
                     case 11:
                     {
-                        var isProductCodeValid = command.UnitOfWork.ProductCodeEntityRepository.GetProductCodeValidity(columnValue, agencyID);
+                        var isProductCodeValid = command.UnitOfWork.ProductCodeEntityRepository.GetProductCodeValidity(columnValue, agencyID, tradeTranTypeID);
 
                         //  string value = FactorList.Find( x=>x.Item2.ToLower()==columnValue.ToLower()).ToString();
                         if(!isProductCodeValid)
@@ -111,19 +180,72 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                     }
                     case 12:
                     {
-                         if (!String.IsNullOrEmpty(columnValue) && Convert.ToInt32(columnValue) != 1)
+                        if (String.IsNullOrEmpty(columnValue)){
+                            Error = Error == "" ? columnName+" should not be null" : Error + ", " + columnName+" should not be null";
+                        }
+                        else if (Convert.ToInt32(columnValue) == 0)
                         {
-                            Error = Error == "" ? columnName+" should be null or 1" : Error + ", " + columnName+" should be null or 1";
+                            Error = Error == "" ? columnName+" should not be 0" : Error + ", " + columnName+" should not be 0";
                         }
                         break;
                     }
                     case 13:
                     {
-                         if (Convert.ToInt32(columnValue) == 0)
+                         if (!String.IsNullOrEmpty(columnValue) && Convert.ToInt32(columnValue) != 1)
                         {
-                            Error = Error == "" ? columnName+" should not be 0" : Error + ", " + columnName+" should not be 0";
+                            Error = Error == "" ? columnName+" should be null or 1 if it is Required" : Error + ", " + columnName+" should be null or 1 if it is Required";
                         }
                         break;
+                    }
+                    case 14:
+                    {  
+                        var portList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetList(item.TableName, item.ColumnName);
+                        var value = new List<string>();
+                        foreach(var i in  columnValue. Split(',') ){
+                            var unit = portList.Find( x=>x.ToLower().Trim()==i.ToLower().Trim());
+                            if(String.IsNullOrEmpty(unit)){
+                                value.Add(i);
+                            };
+                        }
+                        if(value.Count>0)
+                        {
+                            Error = Error == "" ? columnName+" value "+(String.Join(",",value))+" does not exist in the system" : Error + ", " + columnName+" value "+(String.Join(",",value))+" does not exist in the system";
+                        }
+                        break;
+                    }
+                    case 15:
+                    {  
+                        
+                        Match match = Regex.Match(columnValue, item.Validation, RegexOptions.IgnoreCase);
+                        if (!match.Success)
+                        {
+                             Error = Error == "" ? columnName+"  is not in correct format, it can be 9 digit number" : Error + ", " + columnName+" is not in correct format, it can be 9 digit number";
+                        }
+                        break;
+                    }
+                    case 20:
+                    case 19:
+                    case 18:
+                    {  
+                        if(String.IsNullOrEmpty(columnValue)){
+                            break;
+                        }
+                        else{
+                            var DocumentList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetDocumentLOV(item.TableName, item.ColumnName, item.Validation, agencyID);
+                            var value = new List<string>();
+                            foreach(var i in  columnValue. Split(',') ){
+                            var document = DocumentList.Find( x=>x.ToLower().Trim()==i.ToLower().Trim());
+                                if(String.IsNullOrEmpty(document)){
+                                    value.Add(i);
+                                };
+                            }
+                            if(value.Count>0)
+                            {
+                                Error = Error == "" ? columnName+" value "+(String.Join(",",value))+" does not exist in the system" : Error + ", " + columnName+" value "+(String.Join(",",value))+" does not exist in the system";
+                            }
+                            break;
+                        }
+                        
                     }
                 }
             }  
