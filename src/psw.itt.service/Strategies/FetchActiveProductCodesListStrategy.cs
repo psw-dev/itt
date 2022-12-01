@@ -34,7 +34,7 @@ namespace PSW.ITT.Service.Strategies
 
                 if (RequestDTO.userRole == "OTO")
                 {
-                    ActiveProductCodesList = Command.UnitOfWork.ProductCodeEntityRepository.GetActiveAgencyProductCode((int)RequestDTO.agencyID);
+                    ActiveProductCodesList = Command.UnitOfWork.ProductCodeEntityRepository.GetActiveAgencyProductCode((int)RequestDTO.agencyID, (short)RequestDTO.tradeTranTypeID);
                 }
                 else if (RequestDTO.userRole == "ITM")
                 {

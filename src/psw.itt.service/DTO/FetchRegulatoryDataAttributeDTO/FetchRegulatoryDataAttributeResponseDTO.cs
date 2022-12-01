@@ -7,7 +7,7 @@ namespace PSW.ITT.Service.DTO
         [JsonPropertyName("nameLong")]
         public string NameLong { get; set; }
 
-        [JsonPropertyName("nameLong")]
+        [JsonPropertyName("nameShort")]
         public string NameShort { get; set; }
 
         [JsonPropertyName("isMandatory")]
@@ -22,5 +22,12 @@ namespace PSW.ITT.Service.DTO
         [JsonPropertyName("maxLength")]
         public short MaxLength { get; set; }
 
+        [JsonPropertyName("tableName")]
+        public string TableName { get; set; }
+
+        [JsonPropertyName("columnName")]
+        public string ColumnName { get; set; }
+        [JsonPropertyName("isEditable")]
+        public bool IsEditable { get; set; }
     }
 }

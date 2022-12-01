@@ -6,5 +6,7 @@ namespace PSW.ITT.Data.IRepositories
 {
     public interface IProductRegulationRequirementRepository : IRepository<ProductRegulationRequirement>
     {
+        List<GetRegulatoryDataDTO> GetRegulatoryDataByTradeTypeAndAgency(short TradeTranTypeID, short AgencyID);
+
     }
 }

@@ -34,6 +34,7 @@ namespace PSW.ITT.Data.Entities
         private string _sheetType;
         private string _tableName;
         private string _columnName;
+        private bool _isEditable;
 
         #endregion
 
@@ -58,6 +59,7 @@ namespace PSW.ITT.Data.Entities
         public string SheetType { get { return _sheetType; } set { _sheetType = value; } }
         public string TableName { get { return _tableName; } set { _tableName = value; } }
         public string ColumnName { get { return _columnName; } set { _columnName = value; } }
+        public bool IsEditable { get { return _isEditable; } set { _isEditable = value; } }
 
 
         #endregion
@@ -90,7 +92,8 @@ namespace PSW.ITT.Data.Entities
                 {"MaxLength",MaxLength},
                 {"SheetType",SheetType},
                 {"TableName",TableName},
-                {"ColumnName",ColumnName}
+                {"ColumnName",ColumnName},
+                {"IsEditable",IsEditable}
 
             };
         }
@@ -116,7 +119,8 @@ namespace PSW.ITT.Data.Entities
                 MaxLength,
                 SheetType,
                 TableName,
-                ColumnName
+                ColumnName,
+                IsEditable
             };
         }
 

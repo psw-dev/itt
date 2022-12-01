@@ -10,5 +10,8 @@ namespace PSW.ITT.Service.DTO
 
         [JsonPropertyName("agencyID")]
         public int? agencyID { get; set; }
+
+        [JsonPropertyName("tradeTranTypeID")]
+        public short? tradeTranTypeID { get; set; }
     }
 }
