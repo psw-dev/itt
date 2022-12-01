@@ -17,13 +17,14 @@ namespace PSW.ITT.Api.RabbitMq
 
 
 
-        public ITTRabbitMqListener(IITTService service, IUnitOfWork uow, IConfiguration configuration)
+        public ITTRabbitMqListener(IITTService service, IUnitOfWork uow, ISHRDUnitOfWork shrdUow, IConfiguration configuration)
         : base(configuration)
         {
             // uow.BeginTransaction();
             _service = service;
             _service.UnitOfWork = uow;
-            _service.StrategyFactory = new StrategyFactory(uow);
+            _service.SHRDUnitOfWork = shrdUow;
+            _service.StrategyFactory = new StrategyFactory(uow, shrdUow);
         }
 
         public override void ProcessMessage(ServiceRequest request, IConfiguration configuration, IEventBus eventBus, string correlationId, string replyTo)

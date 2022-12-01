@@ -14,6 +14,7 @@ using psw.common.Extensions;
 using PSW.Lib.Logs;
 using System.Threading.Tasks;
 using PSW.ITT.Data;
+using System.Collections.Generic;
 
 namespace PSW.ITT.Api.Controllers
 {
@@ -28,17 +29,19 @@ namespace PSW.ITT.Api.Controllers
 
         #region Controller
 
-        public BaseController(IService service, IITTOpenService openService, IUnitOfWork uow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor)
+        public BaseController(IService service, IITTOpenService openService, IUnitOfWork uow, ISHRDUnitOfWork shrdUow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor)
         {
             // Dependency Injection of services
             Service = service;
             Service.UnitOfWork = uow;
-            Service.StrategyFactory = new StrategyFactory(uow);
+            Service.SHRDUnitOfWork = shrdUow;
+            Service.StrategyFactory = new StrategyFactory(uow, shrdUow);
             Service.CryptoAlgorithm = cryptoAlgorithm;
 
             OpenService = openService;
             OpenService.UnitOfWork = uow;
-            OpenService.StrategyFactory = new OpenStrategyFactory(uow);
+            OpenService.SHRDUnitOfWork = shrdUow;
+            OpenService.StrategyFactory = new OpenStrategyFactory(uow, shrdUow);
             OpenService.CryptoAlgorithm = cryptoAlgorithm;
             try
             {
@@ -269,13 +272,24 @@ namespace PSW.ITT.Api.Controllers
             };
             try
             {
+                
                 PSW.ITT.Api.APICommand.Data data = new PSW.ITT.Api.APICommand.Data
                 {
-                    filepath = apiRequest.FilePath,
+                    filepath = apiRequest.filePath,
                     fileId = apiRequest.fileId,
                     fileName = apiRequest.fileName,
-                    roleCode = apiRequest.roleCode
+                    roleCode = apiRequest.roleCode,
+                    agencyID = apiRequest.agencyID,
+                    tradeTranTypeID = apiRequest.tradeTranTypeID,
+                    fileType = apiRequest.fileType,
+                    actionID = apiRequest.actionID
                 };
+                // var dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(apiRequest.data);
+        //         Dictionary<string, string> keyValueMap = new Dictionary<string, string>();
+        //  foreach (KeyValuePair<string, string> keyValuePair in converted)
+        //  {
+        //       keyValueMap.Add(keyValuePair.Key, keyValuePair.Value.ToString());
+        //  }
                 //TODO: Resourse Authorization (Middleware)
                 //TODO: Pass User Detials and Method ID to Middleware for Action/Method/Resourse Authorization
                 // Assuming Request is Authenticated 

@@ -11,6 +11,7 @@ namespace PSW.ITT.Service.Services
     {
         #region properties 
         public IUnitOfWork UnitOfWork { get; set; }
+        public ISHRDUnitOfWork SHRDUnitOfWork { get; set; }
         public IStrategyFactory StrategyFactory { get; set; }
         public ICryptoAlgorithm CryptoAlgorithm { get; set; }
         public int LoggedInUserRoleId { get; set; }
@@ -40,6 +41,8 @@ namespace PSW.ITT.Service.Services
                 // request._mapper = this._mapper;
                 //check if UnitOfWork is set otherwise set the service's UoW as default
                 request.UnitOfWork = request.UnitOfWork ?? this.UnitOfWork;
+
+                request.SHRDUnitOfWork = request.SHRDUnitOfWork ?? this.SHRDUnitOfWork;
                 // Check if CryptoAlgorith is set otherwise set the service's Crypto Algorithm as default
                 //request.CryptoAlgorithm = request.CryptoAlgorithm ?? this.CryptoAlgorithm;
                 //create strategy based on request. it can be dynamic

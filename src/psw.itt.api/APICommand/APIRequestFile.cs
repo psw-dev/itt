@@ -11,9 +11,13 @@ namespace PSW.ITT.Api.APICommand
         public string signature { get; set; }
         public ServerPaginationModel pagination { get; set; }
         public IFormFile file { get; set; }
-        public string FilePath { get; set; }
+        public string filePath { get; set; }
         public string fileName { get; set; }
         public long fileId { get; set; }
+        public long agencyID { get; set; }
+        public long tradeTranTypeID { get; set; }
+        public long fileType { get; set; }
+        public long actionID { get; set; }
         public string roleCode { get; set; }
     }
 
@@ -23,5 +27,10 @@ namespace PSW.ITT.Api.APICommand
         public string fileName { get; set; }
         public long fileId { get; set; }
         public string roleCode { get; set; }
+        public long agencyID { get; set; }
+        public long tradeTranTypeID { get; set; }
+        public long fileType { get; set; }
+        public long actionID { get; set; }
+
     }
 }

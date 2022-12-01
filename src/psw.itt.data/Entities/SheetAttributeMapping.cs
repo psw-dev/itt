@@ -20,6 +20,7 @@ namespace PSW.ITT.Data.Entities
         private string _nameShort;
         private short _index;
         private bool _isActive;
+        private bool _checkDuplicate;
         private bool _isMandatory;
         private DateTime _createdOn;
         private int _createdBy;
@@ -45,6 +46,7 @@ namespace PSW.ITT.Data.Entities
         public string NameShort { get { return _nameShort; } set { _nameShort = value; } }
         public short Index { get { return _index; } set { _index = value; } }
         public bool IsActive { get { return _isActive; } set { _isActive = value; } }
+        public bool CheckDuplicate { get { return _checkDuplicate; } set { _checkDuplicate = value; } }
         public bool IsMandatory { get { return _isMandatory; } set { _isMandatory = value; } }
         public DateTime CreatedOn { get { return _createdOn; } set { _createdOn = value; } }
         public int CreatedBy { get { return _createdBy; } set { _createdBy = value; } }
@@ -80,6 +82,7 @@ namespace PSW.ITT.Data.Entities
                 {"Index", Index},
                 {"IsActive", IsActive},
                 {"IsMandatory", IsMandatory},
+                {"CheckDuplicate", CheckDuplicate},
                 {"CreatedOn", CreatedOn},
                 {"CreatedBy", CreatedBy},
                 {"UpdatedOn", UpdatedOn},
@@ -107,6 +110,7 @@ namespace PSW.ITT.Data.Entities
                 Index,
                 IsActive,
                 IsMandatory,
+                CheckDuplicate,
                 CreatedBy,
                 CreatedOn,
                 UpdatedBy,

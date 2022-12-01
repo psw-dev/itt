@@ -17,8 +17,8 @@ namespace PSW.ITT.Api.Controllers
     {
         #region Constructors
 
-        public UploadController(IITTService secureService, IITTOpenService openService, IUnitOfWork uow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor) : 
-        base(secureService, openService, uow, strategyFactory, cryptoAlgorithm, httpContextAccessor)
+        public UploadController(IITTService secureService, IITTOpenService openService, IUnitOfWork uow, ISHRDUnitOfWork shrdUow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor) : 
+        base(secureService, openService, uow, shrdUow, strategyFactory, cryptoAlgorithm, httpContextAccessor)
         {
             // OpenService = openService;
             // OpenService.UnitOfWork = uow;

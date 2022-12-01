@@ -8,6 +8,7 @@ namespace PSW.ITT.Data
     {
 
         #region Repositories
+		IAttributeValidationMappingRepository AttributeValidationMappingRepository { get; }
         IProductCodeAgencyLinkRepository ProductCodeAgencyLinkRepository { get; }
         IProductCodeChapterRepository ProductCodeChapterRepository { get; }
         IProductCodeEntityRepository ProductCodeEntityRepository { get; }
