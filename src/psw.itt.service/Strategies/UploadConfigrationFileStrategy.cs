@@ -203,7 +203,7 @@ namespace PSW.ITT.Service.Strategies
 
 
                     duplicateTable = GetDuplicateRecords(dt, duplicateTable, errorColumnPosition);
-                    var activeProductCodes = Command.UnitOfWork.ProductCodeEntityRepository.GetActiveAgencyProductCode(RequestDTO.AgencyID);
+                    var activeProductCodes = Command.UnitOfWork.ProductCodeEntityRepository.GetActiveAgencyProductCode(RequestDTO.AgencyID, RequestDTO.TradeTranTypeID);
                     var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType).ToList();
                     var validationList = Command.UnitOfWork.AttributeValidationMappingRepository.GetAssociatedValidationList(propertyNameList.Select(x => x.ID).ToList()).ToList();
                     int rowIndex = 0;
