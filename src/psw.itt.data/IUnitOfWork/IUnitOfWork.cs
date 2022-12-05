@@ -17,7 +17,7 @@ namespace PSW.ITT.Data
         ISheetAttributeMappingRepository SheetAttributeMappingRepository { get; }
         ILPCORegulationRepository LPCORegulationRepository { get; }
         IProductRegulationRequirementRepository ProductRegulationRequirementRepository { get; }
-
+        ILPCOFeeStructureRepository LPCOFeeStructureRepository { get; }
         IEventBus eventBus { get; }
         #endregion
 
