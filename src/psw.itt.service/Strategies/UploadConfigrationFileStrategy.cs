@@ -75,7 +75,7 @@ namespace PSW.ITT.Service.Strategies
 
                 // Check if previous upload is in progress
 
-                var CurrentFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.Where(new{AgencyID= RequestDTO.AgencyID , TradeTranTypeID=RequestDTO.TradeTranTypeID}).LastOrDefault();
+                var CurrentFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.Where(new { AgencyID = RequestDTO.AgencyID, TradeTranTypeID = RequestDTO.TradeTranTypeID }).LastOrDefault();
 
                 if (CurrentFileUploadHistory != null && CurrentFileUploadHistory.ProductCodeSheetUploadStatusID == (int)ProductCodeSheetUploadStatusEnum.IN_PROGRESS)
                 {
@@ -94,20 +94,20 @@ namespace PSW.ITT.Service.Strategies
                 var formatTable = new DataTable();
                 var errorColumnPosition = 0;
                 var errorColumnIndexPosition = 0;
-                 errorColumnPosition = dt.Rows[0].ItemArray.Length;
-                    errorColumnIndexPosition = dt.Rows[0].ItemArray.Length + 1;
-                    foreach (var cols in dt.Rows[0].ItemArray)
-                    {
-                        dispuedTable.Columns.Add(cols.ToString(), typeof(string));
-                        duplicateTable.Columns.Add(cols.ToString(), typeof(string));
-                        formatTable.Columns.Add(cols.ToString(), typeof(string));
+                errorColumnPosition = dt.Rows[0].ItemArray.Length;
+                errorColumnIndexPosition = dt.Rows[0].ItemArray.Length + 1;
+                foreach (var cols in dt.Rows[0].ItemArray)
+                {
+                    dispuedTable.Columns.Add(cols.ToString(), typeof(string));
+                    duplicateTable.Columns.Add(cols.ToString(), typeof(string));
+                    formatTable.Columns.Add(cols.ToString(), typeof(string));
 
-                    }
-                    dispuedTable.Columns.Add("Error", typeof(string));
-                    duplicateTable.Columns.Add("Error", typeof(string));
-                    duplicateTable.Columns.Add("Row Index", typeof(string));
-                    dispuedTable.Columns.Add("Row Index", typeof(string));
-                    dt.AcceptChanges();
+                }
+                dispuedTable.Columns.Add("Error", typeof(string));
+                duplicateTable.Columns.Add("Error", typeof(string));
+                duplicateTable.Columns.Add("Row Index", typeof(string));
+                dispuedTable.Columns.Add("Row Index", typeof(string));
+                dt.AcceptChanges();
                 if (dt.Rows.Count < 1)
                 {
                     Log.Information("[{0}.{1}] File not Uploaded Successfully as you are trying to upload an empty File", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
@@ -124,18 +124,19 @@ namespace PSW.ITT.Service.Strategies
                      var fileCheck = IsFileColumnsCorrect((dt.Rows[0].ItemArray).Select(x => x.ToString()).ToList());
                     short validationStatus = (short)ProductCodeSheetUploadStatusEnum.VALIDATED;
                     string processingResponse = "Successfully Validated.";
-                    if(fileCheck.Count>0){
+                    if (fileCheck.Count > 0)
+                    {
                         validationStatus = (short)ProductCodeSheetUploadStatusEnum.STRUCTURE_VALIDATION_FAILED;
-                        
-                        processingResponse =fileCheck.Count==1?string.Concat("Error in File, ", string.Join( ",", fileCheck.Select(kv => kv.Key).ToArray() )):string.Concat("Error in File, ", string.Join( ",", fileCheck.Select(kv => kv.Key + " column name should be " + kv.Value).ToArray() ));
-                        
+
+                        processingResponse = fileCheck.Count == 1 ? string.Concat("Error in File, ", string.Join(",", fileCheck.Select(kv => kv.Key).ToArray())) : string.Concat("Error in File, ", string.Join(",", fileCheck.Select(kv => kv.Key + " column name should be " + kv.Value).ToArray()));
+
                         formatTable.Columns.Add("Error", typeof(string));
                         formatTable.Columns.Add(processingResponse, typeof(string));
                         DataRow row = formatTable.NewRow();
                         row.ItemArray = dt.Rows[0].ItemArray;
                         row[dt.Columns.Count] = "Error";
-                        row[dt.Columns.Count+1] = processingResponse;
-                        
+                        row[dt.Columns.Count + 1] = processingResponse;
+
                         formatTable.Rows.Add(row);
                         // return BadRequestReply($"Error in File.");
                     }
@@ -372,17 +373,18 @@ namespace PSW.ITT.Service.Strategies
                 var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType).OrderBy(x => x.Index).ToList();
 
 
-                int rowIndex=0;
+                int rowIndex = 0;
                 foreach (DataRow drow in dt.Rows)
                 {
-                    rowIndex +=1;
+                    rowIndex += 1;
                     IDictionary<string, object> expandoDict = new ExpandoObject();
                     foreach (var x in propertyNameList)
                     {
-                        expandoDict.Add(x.NameShort, drow[x.Index-1]);
+                        expandoDict.Add(x.NameShort, drow[x.Index - 1]);
 
                     }
-                    if(RequestDTO.ActionID==(short)ActionID.VALIDATE){
+                    if (RequestDTO.ActionID == (short)ActionID.VALIDATE)
+                    {
                         expandoDict.Add("error", drow[propertyNameList.Count]);
                         expandoDict.Add("rowIndex", rowIndex + 1);
                     }
@@ -399,7 +401,7 @@ namespace PSW.ITT.Service.Strategies
             }
         }
 
-private List<GridColumns> GetGridFormatColumns(List<object> columnNames, string processingResponse)
+        private List<GridColumns> GetGridFormatColumns(List<object> columnNames, string processingResponse)
         {
             try
             {
@@ -416,13 +418,15 @@ private List<GridColumns> GetGridFormatColumns(List<object> columnNames, string 
                     gridColumns.Add(column);
                 }
 
-                    var columnError = new GridColumns{
+                var columnError = new GridColumns
+                {
                     Field = "error",
                     Title = processingResponse,
                     Editor = "string",
-                    Width = "400px"};
-                    gridColumns.Add(columnError);
-               
+                    Width = "400px"
+                };
+                gridColumns.Add(columnError);
+
 
                 return gridColumns;
 
@@ -449,22 +453,26 @@ private List<GridColumns> GetGridFormatColumns(List<object> columnNames, string 
                     gridColumns.Add(column);
                 }
 
-              
-                    var columnError = new GridColumns{
+
+                var columnError = new GridColumns
+                {
                     Field = "error",
                     Title = "Error",
                     Editor = "string",
-                    Width = "400px"};
-                    gridColumns.Add(columnError);
+                    Width = "400px"
+                };
+                gridColumns.Add(columnError);
 
-                    var columnErrorRowIndex = new GridColumns{
+                var columnErrorRowIndex = new GridColumns
+                {
                     Field = "rowIndex",
                     Title = "Row Index",
                     Editor = "string",
-                    Width = "20px"};
-                    gridColumns.Add(columnErrorRowIndex);
-              
-                
+                    Width = "20px"
+                };
+                gridColumns.Add(columnErrorRowIndex);
+
+
 
                 return gridColumns;
 
@@ -704,33 +712,35 @@ private List<GridColumns> GetGridFormatColumns(List<object> columnNames, string 
             Hashtable hTable = new Hashtable();
             ArrayList duplicateList = new ArrayList();
 
-            var duplicateCheckIndexList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType).Where(x=>x.CheckDuplicate==true).Select(x=>x.Index).ToList();
+            var duplicateCheckIndexList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType).Where(x => x.CheckDuplicate == true).Select(x => x.Index).ToList();
             //Add list of all the unique item value to hashtable, which stores combination of key, value pair.
             //And add duplicate item value in arraylist.
-            var indexString ="";
-            
+            var indexString = "";
+
             foreach (DataRow drow in dt.Rows)
             {
-                foreach(int a in duplicateCheckIndexList){
-                indexString+=drow[a-1].ToString();
+                foreach (int a in duplicateCheckIndexList)
+                {
+                    indexString += drow[a - 1].ToString();
 
-            }
-                if (hTable.Contains(indexString ))
+                }
+                if (hTable.Contains(indexString))
                     duplicateList.Add(drow);
                 else
-                    hTable.Add(indexString , string.Empty);
-                indexString="";
+                    hTable.Add(indexString, string.Empty);
+                indexString = "";
             }
-            int rowIndex=0;
+            int rowIndex = 0;
 
             //Removing a list of duplicate items from datatable.
             foreach (DataRow dRow in duplicateList)
-            {   rowIndex +=1;
+            {
+                rowIndex += 1;
                 DataRow row = duplicateTable.NewRow();
                 row.ItemArray = dRow.ItemArray;
 
                 row[errorColumnPosition] = "Duplicate Row";
-                row[errorColumnPosition+1] = rowIndex + 1;
+                row[errorColumnPosition + 1] = rowIndex + 1;
                 duplicateTable.Rows.Add(row);
             }
 
@@ -770,9 +780,10 @@ private List<GridColumns> GetGridFormatColumns(List<object> columnNames, string 
         private IDictionary<string, string> IsFileColumnsCorrect(List<string> headerRow)
         {
             List<string> dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType).OrderBy(x => x.Index).Select(x => x.NameLong).ToList();//.Where(new { TradeTranTypeID = RequestDTO.TradeTranTypeID, AgencyID = RequestDTO.AgencyID, SheetType = RequestDTO.FileType, isActive = true }).OrderBy(x => x.Index).Select(x => x.NameLong).ToList();
-            var res =new Dictionary<string, string>();
+            var res = new Dictionary<string, string>();
             var arraysAreEqual = Enumerable.SequenceEqual(dbColumns, headerRow);
-            if(dbColumns.Count != headerRow.Count){
+            if (dbColumns.Count != headerRow.Count)
+            {
                 res.Add("column count mismatch", "");
                 return res;
             }
@@ -780,16 +791,16 @@ private List<GridColumns> GetGridFormatColumns(List<object> columnNames, string 
             {
                 if (dbColumns[i] != headerRow[i].Trim())
                 {
-                    res.Add (headerRow[i], dbColumns[i]);
+                    res.Add(headerRow[i], dbColumns[i]);
                 }
             }
-            return  res;
+            return res;
 
         }
 
         private string CheckIsMandatoryColumnsAvailable(DataTable dt)
         {
-            var dbColumns  = this.Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType).Where(x=>x.IsMandatory = true ).ToList();
+            var dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType).Where(x => x.IsMandatory = true).ToList();
 
 
             for (int i = 0; i < dt.Rows.Count; i++)
@@ -798,7 +809,7 @@ private List<GridColumns> GetGridFormatColumns(List<object> columnNames, string 
                 foreach (var allItems in dbColumns)
                 {
 
-                    if (row[allItems.Index-1].ToString() == "")
+                    if (row[allItems.Index - 1].ToString() == "")
                     { return $"'{allItems.NameLong}' at Row Number {i + 1}"; }
                 }
             }

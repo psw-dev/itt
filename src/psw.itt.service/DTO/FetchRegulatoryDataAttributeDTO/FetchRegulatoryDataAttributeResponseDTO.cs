@@ -29,5 +29,7 @@ namespace PSW.ITT.Service.DTO
         public string ColumnName { get; set; }
         [JsonPropertyName("isEditable")]
         public bool IsEditable { get; set; }
+        [JsonPropertyName("serviceName")]
+        public string ServiceName { get; set; }
     }
 }

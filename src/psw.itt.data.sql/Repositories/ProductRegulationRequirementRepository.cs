@@ -36,7 +36,8 @@ namespace PSW.ITT.Data.Sql.Repositories
        INNER JOIN [ITT].[dbo].[LPCORegulation] R ON R.ID = P.LPCORegulationID
        WHERE AgencyID = @AGENCYID AND TradeTranTypeID = @TRADETRANTYPEID
          AND ((P.EffectiveFromDt <= GetDate() AND P.EffectiveThruDt >= GetDate())
-           OR (P.EffectiveFromDt >= GetDate() AND P.EffectiveThruDt >= GetDate())) ";
+           OR (P.EffectiveFromDt >= GetDate() AND P.EffectiveThruDt >= GetDate())) 
+           order by id DESC ";
 
             return _connection.Query<GetRegulatoryDataDTO>(
                     query, param: new { TRADETRANTYPEID = TradeTranTypeID, AGENCYID = AgencyID },
