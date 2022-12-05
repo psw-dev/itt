@@ -40,6 +40,8 @@ namespace PSW.ITT.Service.Strategies
                 case "2210": return new GetRegulatoryDataStrategy(request);
                 case "2211": return new FetchLOVDataStrategy(request);
                 case "2212": return new AddSingleRegulationStrategy(request);
+                case "2213": return new UpdateSingleRegulationStrategy(request);
+                case "2214": return new DownloadJSONExcelStrategy(request);
                 case "2220": return new GetColumnNamesForExcelStrategy(request);
                 case "2221": return new FetchUploadedSheetsListStrategy(request);
                 case "2222": return new UploadFileStrategy(request);
