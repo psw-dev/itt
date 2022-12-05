@@ -9,7 +9,7 @@ namespace PSW.ITT.Data.IRepositories
         List<ProductCodeEntity> GetActiveProductCode();
         List<ProductCodeEntity> GetActiveAgencyProductCode(int agencyID, short tradeTranTypeID);
         List<LOVItem> GetActiveAgencyProductCodeLOV(int agencyID, short tradeTranTypeID, string lovTableName, string lovColumnName);
-        List<LOVItem> GetDocumentLOV(int agencyID, string lovTableName, string lovColumnName);
+        List<LOVItem> GetDocumentLOV(int agencyID, string lovTableName, string lovColumnName, int TradeTranTypeID);
 
         List<ProductCodeEntity> GetOverlappingProductCode(string hscode, string ProductCode, DateTime effectiveFromDt, DateTime effectiveThruDt, short tradeType);
         bool GetProductCodeValidity(string ProductCode, int AgencyID, short tradeType);

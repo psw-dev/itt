@@ -58,9 +58,9 @@ namespace PSW.ITT.Data.Sql.Repositories
         {
             return _connection.Query<LOVItem>(string.Format("SELECT ProductCode.ID  as ItemKey, {0} as ItemValue FROM [ITT].[dbo].[{1}] INNER JOIN [ProductCodeAgencyLink] ON [ProductCodeAgencyLink].[ProductCodeID] = [{1}].[ID]  WHERE ProductCodeAgencyLink.AgencyID = {2} and (TradeTranTypeID = 4 or TradeTranTypeID = {3}) AND ((ProductCodeAgencyLink.EffectiveFromDt <= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate()) OR (ProductCodeAgencyLink.EffectiveFromDt >= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate())) ", lovColumnName, lovTableName, agencyID, tradeTranTypeID)).ToList();
         }
-        public List<LOVItem> GetDocumentLOV(int agencyID, string lovTableName, string lovColumnName)
+        public List<LOVItem> GetDocumentLOV(int agencyID, string lovTableName, string lovColumnName, int TradeTranTypeID)
         {
-            return _connection.Query<LOVItem>(string.Format("SELECT Code as ItemKey, {0} as ItemValue FROM [SHRD].[dbo].[{1}] WHERE AgencyID = {2} ", lovColumnName, lovTableName, agencyID)).ToList();
+            return _connection.Query<LOVItem>(string.Format("SELECT  Code as ItemKey, {0} as ItemValue FROM [ITT].[dbo].[ITTAgencyDocuments] AD INNER JOIN [SHRD].[dbo].[DocumentType] DT ON AD.DocumentTypeCode = DT.Code WHERE IsActive = 1 AND (AD.AgencyID = {2} or AD.AgencyID is null) AND (TradeTranTypeID = {3} or TradeTranTypeID is null)", lovColumnName, lovTableName, agencyID, TradeTranTypeID)).ToList();
         }
         public List<ProductCodeEntity> GetOverlappingProductCode(string hscode, string ProductCode, DateTime effectiveFromDt, DateTime effectiveThruDt, short tradeType)
         {
@@ -88,11 +88,11 @@ namespace PSW.ITT.Data.Sql.Repositories
 
             return _connection.Query<ProductCodeEntity>(sql, param: parameters, transaction: _transaction).ToList();
         }
-        public bool GetProductCodeValidity(string ProductCode, int AgencyID,short tradeType)
+        public bool GetProductCodeValidity(string ProductCode, int AgencyID, short tradeType)
         {
             var query = new Query("ProductCode")
               .Join("ProductCodeAgencyLink", "ProductCodeAgencyLink.ProductCodeID", "ProductCode.ID")
-              .WhereRaw("ProductCode.HSCodeExt = '" + ProductCode+"'")
+              .WhereRaw("ProductCode.HSCodeExt = '" + ProductCode + "'")
               .WhereRaw("ProductCodeAgencyLink.AgencyID = " + AgencyID)
               .WhereRaw("(TradeTranTypeID != 4 or TradeTranTypeID = " + tradeType + ")")
               .WhereRaw("((ProductCodeAgencyLink.EffectiveFromDt <= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate())")
@@ -104,7 +104,7 @@ namespace PSW.ITT.Data.Sql.Repositories
             var parameters = new DynamicParameters(result.NamedBindings);
 
             var returnValue = _connection.Query<string>(sql, param: parameters, transaction: _transaction).ToList();
-            return  returnValue.Count < 1 ? false : true;
+            return returnValue.Count < 1 ? false : true;
         }
         #endregion
     }
