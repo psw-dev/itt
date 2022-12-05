@@ -1,6 +1,11 @@
 using System.Data;
+using System;
+using Dapper;
+using System.Linq;
 using PSW.ITT.Data.Entities;
-using PSW.ITT.Data.IRepositories;
+using  PSW.ITT.Data.IRepositories;
+using System.Collections.Generic;
+using PSW.ITT.Data.DTO;
 
 namespace PSW.ITT.Data.Sql.Repositories
 {
