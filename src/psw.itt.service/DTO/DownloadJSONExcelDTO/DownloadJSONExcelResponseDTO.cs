@@ -1,14 +1,15 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace PSW.ITT.Service.DTO
 {
     public class DownloadJSONExcelResponseDTO
     {
-        [JsonPropertyName("id")]
-        public long ID { get; set; }
+        [JsonPropertyName("gridColumns")]
+        public List<GridColumns> GridColumns { get; set; }
 
         [JsonPropertyName("data")]
-        public dynamic Data { get; set; }
+        public List<dynamic> Data { get; set; }
 
     }
 }
