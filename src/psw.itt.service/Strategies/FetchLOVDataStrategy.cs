@@ -40,10 +40,10 @@ namespace PSW.ITT.Service.Strategies
                 lovItem.LOVTableName = "ProductCode";
 
                 lovDataFromDBList.Add(lovItem);
-                var documentList = Command.UnitOfWork.ProductCodeEntityRepository.GetDocumentLOV(RequestDTO.AgencyID, "DocumentType", "Name");
+                var documentList = Command.UnitOfWork.ProductCodeEntityRepository.GetDocumentLOV(RequestDTO.AgencyID, "DocumentType", "Name",RequestDTO.TradeTranTypeID);
                 lovItem = new FetchLOVDataResponseDTO();
                 lovItem.LOVItems = documentList;
-                lovItem.LOVTableName = "DocumentType";
+                lovItem.LOVTableName = "ITTAgencyDocuments";
 
                 lovDataFromDBList.Add(lovItem);
                 ResponseDTO = lovDataFromDBList;
