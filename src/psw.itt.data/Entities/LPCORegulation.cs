@@ -26,10 +26,6 @@ namespace PSW.ITT.Data.Entities
         private string _hsCode;
         private string _hsCodeExt;
         private string _factor;
-        private long _productCodeAgencyLinkID;
-        private DateTime _effectiveThruDt;
-        private DateTime _effectiveFromDt;
-        private short _tradeTranTypeID;
 
         #endregion
 
@@ -52,10 +48,6 @@ namespace PSW.ITT.Data.Entities
         public string HsCode { get { return _hsCode; } set { _hsCode = value; } }
         public string HsCodeExt { get { return _hsCodeExt; } set { _hsCodeExt = value; } }
         public string Factor { get { return _factor; } set { _factor = value; } }
-        public long ProductCodeAgencyLinkID { get { return _productCodeAgencyLinkID; } set { _productCodeAgencyLinkID = value; } }
-        public DateTime EffectiveThruDt { get { return _effectiveFromDt; } set { _effectiveFromDt = value; } }
-        public DateTime EffectiveFromDt { get { return _effectiveThruDt; } set { _effectiveThruDt = value; } }
-        public short TradeTranTypeID { get { return _tradeTranTypeID; } set { _tradeTranTypeID = value; } }
 
 
         #endregion
@@ -86,10 +78,6 @@ namespace PSW.ITT.Data.Entities
                 {"HsCode", HsCode},
                 {"HsCodeExt", HsCodeExt},
                 {"Factor", Factor},
-                {"ProductCodeAgencyLinkID", ProductCodeAgencyLinkID},
-                {"EffectiveThruDt", EffectiveThruDt},
-                {"EffectiveFromDt", EffectiveFromDt},
-                {"TradeTranTypeID", TradeTranTypeID},
             };
         }
         public override object GetInsertUpdateParams()
@@ -111,10 +99,6 @@ namespace PSW.ITT.Data.Entities
                 HsCode,
                 HsCodeExt,
                 Factor,
-                ProductCodeAgencyLinkID,
-                EffectiveThruDt,
-                EffectiveFromDt,
-                TradeTranTypeID,
             };
         }
 

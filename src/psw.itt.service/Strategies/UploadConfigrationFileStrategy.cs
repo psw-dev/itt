@@ -203,11 +203,11 @@ namespace PSW.ITT.Service.Strategies
                         var duplicateCheckList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType).Where(x=>x.CheckDuplicate==true).ToList();
                         duplicateCheckList.RemoveAll(x=>x.NameLong.Contains("HSCode"));
                         duplicateCheckList.RemoveAll(x=>x.NameLong.Contains("Product Code"));
-                        var recordAlreadyExistInTheSystem = Command.UnitOfWork.LPCORegulationRepository.CheckIfRecordAlreadyExistInTheSystem( hsCode, productCode,  RequestDTO.TradeTranTypeID,  RequestDTO.AgencyID,  d[duplicateCheckList.FirstOrDefault().NameLong].ToString());
+                        // var recordAlreadyExistInTheSystem = Command.UnitOfWork.LPCORegulationRepository.CheckIfRecordAlreadyExistInTheSystem( hsCode, productCode,  RequestDTO.TradeTranTypeID,  RequestDTO.AgencyID,  d[duplicateCheckList.FirstOrDefault().NameLong].ToString());
                         string error= "";
-                        if (recordAlreadyExistInTheSystem.Count>0){
-                            error= "Record already exist in the system"
-                        }
+                        // if (recordAlreadyExistInTheSystem.Count>0){
+                        //     error= "Record already exist in the system";
+                        // }
                         DataRow row = dispuedTable.NewRow();  
                         for( var i=0;i< d.ItemArray.Count();i++){
                                 List<Data.DTO.ProductCodeValidationList> validation = validationList.Where(x=>x.Index ==i+1).ToList();
