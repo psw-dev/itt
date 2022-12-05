@@ -32,6 +32,7 @@ namespace PSW.ITT.Data.Sql.UnitOfWork
         private ILPCORegulationRepository _lPCORegulationRepository;
         private IProductRegulationRequirementRepository _productRegulationRequirementRepository;
 		private IValidationRepository _validationRepository;
+		private ILPCOFeeStructureRepository _lPCOFeeStructureRepository;
 
         private IEventBus _eventBus;
         public IEventBus eventBus => _eventBus;
@@ -77,6 +78,7 @@ namespace PSW.ITT.Data.Sql.UnitOfWork
         public ILPCORegulationRepository LPCORegulationRepository => _lPCORegulationRepository ?? (_lPCORegulationRepository = new LPCORegulationRepository(_connection));
         public IProductRegulationRequirementRepository ProductRegulationRequirementRepository => _productRegulationRequirementRepository ?? (_productRegulationRequirementRepository = new ProductRegulationRequirementRepository(_connection));
         public IValidationRepository ValidationRepository => _validationRepository ?? (_validationRepository = new ValidationRepository(_connection));
+        public ILPCOFeeStructureRepository LPCOFeeStructureRepository => _lPCOFeeStructureRepository ?? (_lPCOFeeStructureRepository = new LPCOFeeStructureRepository(_connection));
 
         #endregion
 

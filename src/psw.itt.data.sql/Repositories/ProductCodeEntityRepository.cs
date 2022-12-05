@@ -88,7 +88,7 @@ namespace PSW.ITT.Data.Sql.Repositories
 
             return _connection.Query<ProductCodeEntity>(sql, param: parameters, transaction: _transaction).ToList();
         }
-        public bool GetProductCodeValidity(string ProductCode, int AgencyID, short tradeType)
+        public List<ProductCodeAgencyLink> GetProductCodeValidity(string ProductCode, int AgencyID,short tradeType)
         {
             var query = new Query("ProductCode")
               .Join("ProductCodeAgencyLink", "ProductCodeAgencyLink.ProductCodeID", "ProductCode.ID")
@@ -97,14 +97,14 @@ namespace PSW.ITT.Data.Sql.Repositories
               .WhereRaw("(TradeTranTypeID != 4 or TradeTranTypeID = " + tradeType + ")")
               .WhereRaw("((ProductCodeAgencyLink.EffectiveFromDt <= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate())")
               .OrWhereRaw("(ProductCodeAgencyLink.EffectiveFromDt >= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate()))")
-              .SelectRaw("ProductCode.HSCodeExt");
+              .SelectRaw("ProductCodeAgencyLink.*");
 
             var result = _sqlCompiler.Compile(query);
             var sql = result.Sql;
             var parameters = new DynamicParameters(result.NamedBindings);
 
-            var returnValue = _connection.Query<string>(sql, param: parameters, transaction: _transaction).ToList();
-            return returnValue.Count < 1 ? false : true;
+            var returnValue = _connection.Query<ProductCodeAgencyLink>(sql, param: parameters, transaction: _transaction).ToList();
+            return  returnValue;
         }
         #endregion
     }

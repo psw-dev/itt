@@ -13,6 +13,12 @@ namespace PSW.ITT.Data.Entities
         private long _iD;
         private short _agencyID;
         private string _regulationJson;
+        private string _hSCode;
+        private string _hSCodeExt;
+        private long _productCodeAgencyLinkID;
+        private DateTime _effectiveFromDt;
+        private DateTime _effectiveThruDt;
+        private short _tradeTranTypeID;
         private int _createdBy;
         private DateTime _createdOn;
         private int _updatedBy;
@@ -32,7 +38,13 @@ namespace PSW.ITT.Data.Entities
 
         public long ID { get { return _iD; } set { _iD = value; PrimaryKey = value; } }
         public short AgencyID { get { return _agencyID; } set { _agencyID = value; } }
+        public string HSCode { get { return _hSCode; } set { _hSCode = value; } }
+        public string HSCodeExt { get { return _hSCodeExt; } set { _hSCodeExt = value; } }
         public string RegulationJson { get { return _regulationJson; } set { _regulationJson = value; } }
+        public long ProductCodeAgencyLinkID { get { return _productCodeAgencyLinkID; } set { _productCodeAgencyLinkID = value; } }
+        public DateTime EffectiveFromDt { get { return _effectiveFromDt; } set { _effectiveFromDt = value; } }
+        public DateTime EffectiveThruDt { get { return _effectiveThruDt; } set { _effectiveThruDt = value; } }
+        public short TradeTranTypeID { get { return _tradeTranTypeID; } set { _tradeTranTypeID = value; } }
         public int CreatedBy { get { return _createdBy; } set { _createdBy = value; } }
         public DateTime CreatedOn { get { return _createdOn; } set { _createdOn = value; } }
         public int UpdatedBy { get { return _updatedBy; } set { _updatedBy = value; } }
@@ -59,8 +71,14 @@ namespace PSW.ITT.Data.Entities
             return new Dictionary<string, object>
             {
                 {"ID", ID},
+                {"HSCode", HSCode},
+                {"HSCodeExt", HSCodeExt},
                 {"AgencyID", AgencyID},
                 {"RegulationJson", RegulationJson},
+                {"ProductCodeAgencyLinkID", ProductCodeAgencyLinkID},
+                {"EffectiveFromDt", EffectiveFromDt},
+                {"EffectiveThruDt", EffectiveThruDt},
+                {"TradeTranTypeID",TradeTranTypeID},
                 {"CreatedBy", CreatedBy},
                 {"CreatedOn", CreatedOn},
                 {"UpdatedBy", UpdatedBy},
@@ -78,8 +96,14 @@ namespace PSW.ITT.Data.Entities
         {
             return new
             {
+                HSCode,
+                HSCodeExt,
                 AgencyID,
                 RegulationJson,
+                ProductCodeAgencyLinkID,
+                EffectiveFromDt,
+                EffectiveThruDt,
+                TradeTranTypeID,
                 CreatedBy,
                 CreatedOn,
                 UpdatedBy,
