@@ -23,20 +23,18 @@ namespace PSW.ITT.Data.Sql.Repositories
         #region Public methods
         public List<GetRegulatoryDataDTO> GetRegulatoryDataByTradeTypeAndAgency(short TradeTranTypeID, short AgencyID)
         {
-            var query = @"  SELECT P.[ID]
+            var query = @"  SELECT R.[ID]
       ,[ProductCodeAgencyLinkID]
-      ,[LPCORegulationID]
-      ,[LPCOFeeStructureID]
-      ,[EffectiveFromDt]
-      ,[EffectiveThruDt]
+      ,[RegulationEffectiveFromDt]
+      ,[RegulationEffectiveThruDt]
       ,[TradeTranTypeID]
-      ,[AgencyID]
+      ,R.[AgencyID]
       ,[RegulationJson]
-       FROM [ITT].[dbo].[ProductRegulationRequirement] P
-       INNER JOIN [ITT].[dbo].[LPCORegulation] R ON R.ID = P.LPCORegulationID
-       WHERE AgencyID = @AGENCYID AND TradeTranTypeID = @TRADETRANTYPEID
-         AND ((P.EffectiveFromDt <= GetDate() AND P.EffectiveThruDt >= GetDate())
-           OR (P.EffectiveFromDt >= GetDate() AND P.EffectiveThruDt >= GetDate())) 
+       FROM [ITT].[dbo].[ProductCodeAgencyLink] P
+       INNER JOIN [ITT].[dbo].[LPCORegulation] R ON R.ProductCodeAgencyLinkID = P.ID
+       WHERE R.AgencyID = @AGENCYID AND TradeTranTypeID = @TRADETRANTYPEID
+         AND ((P.RegulationEffectiveFromDt <= GetDate() AND P.RegulationEffectiveThruDt >= GetDate())
+           OR (P.RegulationEffectiveFromDt >= GetDate() AND P.RegulationEffectiveThruDt >= GetDate())) 
            order by id DESC ";
 
             return _connection.Query<GetRegulatoryDataDTO>(

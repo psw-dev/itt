@@ -38,8 +38,8 @@ namespace PSW.ITT.Data.Entities
         public string HSCodeExt { get { return _hSCodeExt; } set { _hSCodeExt = value; } }
         public string RegulationJson { get { return _regulationJson; } set { _regulationJson = value; } }
         public long ProductCodeAgencyLinkID { get { return _productCodeAgencyLinkID; } set { _productCodeAgencyLinkID = value; } }
-        public DateTime EffectiveFromDt { get { return _effectiveFromDt; } set { _effectiveFromDt = value; } }
-        public DateTime EffectiveThruDt { get { return _effectiveThruDt; } set { _effectiveThruDt = value; } }
+        // public DateTime EffectiveFromDt { get { return _effectiveFromDt; } set { _effectiveFromDt = value; } }
+        // public DateTime EffectiveThruDt { get { return _effectiveThruDt; } set { _effectiveThruDt = value; } }
         public short TradeTranTypeID { get { return _tradeTranTypeID; } set { _tradeTranTypeID = value; } }
         public int CreatedBy { get { return _createdBy; } set { _createdBy = value; } }
         public DateTime CreatedOn { get { return _createdOn; } set { _createdOn = value; } }
@@ -68,8 +68,8 @@ namespace PSW.ITT.Data.Entities
                 {"AgencyID", AgencyID},
                 {"RegulationJson", RegulationJson},
                 {"ProductCodeAgencyLinkID", ProductCodeAgencyLinkID},
-                {"EffectiveFromDt", EffectiveFromDt},
-                {"EffectiveThruDt", EffectiveThruDt},
+                // {"EffectiveFromDt", EffectiveFromDt},
+                // {"EffectiveThruDt", EffectiveThruDt},
                 {"TradeTranTypeID",TradeTranTypeID},
                 {"CreatedBy", CreatedBy},
                 {"CreatedOn", CreatedOn},
@@ -89,8 +89,8 @@ namespace PSW.ITT.Data.Entities
                 AgencyID,
                 RegulationJson,
                 ProductCodeAgencyLinkID,
-                EffectiveFromDt,
-                EffectiveThruDt,
+                // EffectiveFromDt,
+                // EffectiveThruDt,
                 TradeTranTypeID,
                 CreatedBy,
                 CreatedOn,

@@ -24,16 +24,16 @@ namespace PSW.ITT.Service.Strategies
             try
             {
                 Log.Information("|{0}|{1}| Request DTO {@RequestDTO}", StrategyName, MethodID, RequestDTO);
-                var ProductRegulationEntity = Command.UnitOfWork.ProductRegulationRequirementRepository.Get(RequestDTO.ID);
-                if (ProductRegulationEntity.EffectiveThruDt <= currentDateTime)
+                var ProductRegulationEntity = Command.UnitOfWork.ProductCodeAgencyLinkRepository.Get(RequestDTO.ID);
+                if (ProductRegulationEntity.RegulationEffectiveFromDt <= currentDateTime)
                 {
                     return BadRequestReply("Regulation already deactivated");
                 }
                 Command.UnitOfWork.BeginTransaction();
-                ProductRegulationEntity.EffectiveThruDt = currentDateTime;
+                ProductRegulationEntity.RegulationEffectiveThruDt = currentDateTime;
                 ProductRegulationEntity.UpdatedBy = Command.LoggedInUserRoleID;
                 ProductRegulationEntity.UpdatedOn = currentDateTime;
-                Command.UnitOfWork.ProductRegulationRequirementRepository.Update(ProductRegulationEntity);
+                Command.UnitOfWork.ProductCodeAgencyLinkRepository.Update(ProductRegulationEntity);
                 Command.UnitOfWork.Commit();
                 // Prepare and return command reply
                 return OKReply("Regulation Deleted Successfully");

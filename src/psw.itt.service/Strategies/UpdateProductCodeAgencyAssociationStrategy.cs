@@ -58,11 +58,14 @@ namespace PSW.ITT.Service.Strategies
                     AgencyID = RequestDTO.AgencyID,
                     EffectiveFromDt = DateTime.Now,
                     EffectiveThruDt = productEntity.EffectiveThruDt,
+                    RegulationEffectiveFromDt = productEntity.EffectiveFromDt,
+                    RegulationEffectiveThruDt = productEntity.EffectiveThruDt,
                     CreatedBy = Command.LoggedInUserRoleID,
                     UpdatedBy = Command.LoggedInUserRoleID,
                     CreatedOn = DateTime.Now,
                     UpdatedOn = DateTime.Now,
-                    IsActive = true
+                    IsActive = true,
+                    SoftDelete = false
                 };
                 Command.UnitOfWork.ProductCodeAgencyLinkRepository.Add(productCodeAgencyLinkEntity);
             }
