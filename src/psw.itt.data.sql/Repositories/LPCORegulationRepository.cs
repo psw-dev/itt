@@ -22,18 +22,17 @@ namespace PSW.ITT.Data.Sql.Repositories
         #endregion
 
         #region Public methods
-        public LPCORegulation CheckIfRecordAlreadyExistInTheSystem(string hsCode, string productCode, string tradeTranTypeID,  int agencyID, string factor){
-        var query = @"Select * FROM LPCORegulation l
-                        JOIN ProductCode p ON p.HsCode = l.HsCode and p.HsCodeExt= l HsCodeExt and  ( p.tradeTranTypeID= 3 or p.tradeTranTypeID=l.tradeTranTypeID)
-                        JOIN [ProductCodeAgencyLink] a ON a.ProductCodeID = p.ID AND a.AgencyID = l.AgencyID AND 
- SELECT [ProductCodeID] ,[AgencyID],[EffectiveFromDt] ,[EffectiveThruDt],[SHRD]..[agency].Code,[SHRD]..[agency].Name
-                         FROM [ITT].[dbo].[ProductCodeAgencyLink]
-                         Left Join [SHRD]..[agency] on [SHRD]..[agency].[ID] = [ProductCodeAgencyLink].[AgencyID]
-                         WHERE (EffectiveFromDt <= GetDate() AND EffectiveThruDt >= GetDate()) 
-                         or (EffectiveFromDt >= GetDate() AND EffectiveThruDt >= GetDate())";
-
+        public LPCORegulation CheckIfRecordAlreadyExistInTheSystem(string hsCode, string productCode, short tradeTranTypeID,  int agencyID, string factor){ //, DateTime EffectiveFromDt, DateTime EffectiveThruDt
+        var query = @"Select l.* FROM LPCORegulation l
+                        JOIN ProductCode p ON p.HsCode = l.HsCode and p.HsCodeExt= l.HsCodeExt and  ( p.tradeTranTypeID = 4 or p.tradeTranTypeID=l.tradeTranTypeID)
+                        JOIN [ProductCodeAgencyLink] a ON a.ProductCodeID = p.ID AND a.AgencyID = l.AgencyID 
+                        WHERE ((a.EffectiveFromDt <= GetDate() AND a.EffectiveThruDt >= GetDate()) 
+                        OR (a.EffectiveFromDt >= GetDate() AND a.EffectiveThruDt >= GetDate()))
+                        AND (l.EffectiveFromDt <= GetDate()  AND l.EffectiveThruDt >= GetDate())
+                        AND l.HsCode = @HSCODE AND l.HsCodeExt = @PRODUCTCODE AND l.TradeTranTypeID = @TRADETRANTYPEID AND l.AgencyID = @AGENCYID AND LOWER(l.Factor) = @FACTOR";
+                       //AND a.SoftDelete = 0 //(@EFFECTIVEFROMDATE >= l.EffectiveFromDt AND @EFFECTIVETHRUDATE <= l.EffectiveThruDt)
             return _connection.Query<LPCORegulation>(
-                    query,
+                    query , param: new {HSCODE = hsCode, @PRODUCTCODE = productCode, @TRADETRANTYPEID = tradeTranTypeID, @AGENCYID = agencyID,@FACTOR = factor}, //, @EFFECTIVEFROMDATE = EffectiveFromDt, @EFFECTIVETHRUDATE = EffectiveThruDt
                     transaction: _transaction
                    ).FirstOrDefault();
         }

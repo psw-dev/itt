@@ -34,7 +34,8 @@ namespace PSW.ITT.Data.Sql.Repositories
                         or (TradeTranTypeID is null
                         AND AgencyID is null))
                         AND SheetType = @SHEETTYPE
-                        AND IsActive = 1";
+                        AND IsActive = 1 
+                        ORDER BY [Index]";
 
             return _connection.Query<SheetAttributeMapping>(
                     query, param: new { TRADETRANTYPEID = TradeTranTypeID, AGENCYID = AgencyID , SHEETTYPE = SheetType },
