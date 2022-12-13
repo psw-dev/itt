@@ -23,8 +23,6 @@ namespace PSW.ITT.Data.Entities
         private DateTime _createdOn;
         private int _updatedBy;
         private DateTime _updatedOn;
-        private string _hsCode;
-        private string _hsCodeExt;
         private string _factor;
 
         #endregion
@@ -45,8 +43,6 @@ namespace PSW.ITT.Data.Entities
         public DateTime CreatedOn { get { return _createdOn; } set { _createdOn = value; } }
         public int UpdatedBy { get { return _updatedBy; } set { _updatedBy = value; } }
         public DateTime UpdatedOn { get { return _updatedOn; } set { _updatedOn = value; } }
-        public string HsCode { get { return _hsCode; } set { _hsCode = value; } }
-        public string HsCodeExt { get { return _hsCodeExt; } set { _hsCodeExt = value; } }
         public string Factor { get { return _factor; } set { _factor = value; } }
 
 
@@ -75,8 +71,6 @@ namespace PSW.ITT.Data.Entities
                 {"CreatedOn", CreatedOn},
                 {"UpdatedBy", UpdatedBy},
                 {"UpdatedOn", UpdatedOn},
-                {"HsCode", HsCode},
-                {"HsCodeExt", HsCodeExt},
                 {"Factor", Factor},
             };
         }
@@ -96,8 +90,6 @@ namespace PSW.ITT.Data.Entities
                 CreatedOn,
                 UpdatedBy,
                 UpdatedOn,
-                HsCode,
-                HsCodeExt,
                 Factor,
             };
         }

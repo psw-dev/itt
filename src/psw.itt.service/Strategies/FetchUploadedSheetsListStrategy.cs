@@ -49,12 +49,12 @@ namespace PSW.ITT.Service.Strategies
                     if(!RequestDTO.Event){
                     Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.SetIsCurrent(RequestDTO.AgencyID);
                     }
-                    listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.Where(new { AgencyID = RequestDTO.AgencyID, IsCurrent=1}).OrderByDescending(x => x.ID).ToList();
+                    listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.Where(new { AgencyID = RequestDTO.AgencyID, IsCurrent=1}).ToList();
                 }
-                if (listFileUploadHistory == null || listFileUploadHistory.Count == 0)
-                {
-                    return BadRequestReply("No file uploaded");
-                }
+                // if (listFileUploadHistory == null || listFileUploadHistory.Count == 0)
+                // {
+                //     return BadRequestReply("No file uploaded");
+                // }
 
                 // Get File Ids from FSS
                 // List<string> fileIds = new List<string>();
@@ -62,7 +62,7 @@ namespace PSW.ITT.Service.Strategies
 
                 // var listFileDetails = FileHelper.GetFilesDetails(Command, fileIds);
 
-                var last = listFileUploadHistory.First();
+                var last = listFileUploadHistory.FirstOrDefault();
                 foreach (var item in listFileUploadHistory)
                 {
                     var fileUploadItem = new UploadFileHistoryResponseDTO();
