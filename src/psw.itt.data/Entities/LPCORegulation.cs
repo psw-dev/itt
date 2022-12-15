@@ -23,8 +23,6 @@ namespace PSW.ITT.Data.Entities
         private DateTime _createdOn;
         private int _updatedBy;
         private DateTime _updatedOn;
-        private string _hsCode;
-        private string _hsCodeExt;
         private string _factor;
 
         #endregion
