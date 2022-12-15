@@ -23,18 +23,40 @@ namespace PSW.ITT.Data.Sql.Repositories
         #region Public methods
         public List<GetRegulatoryDataDTO> GetRegulatoryDataByTradeTypeAndAgency(short TradeTranTypeID, short AgencyID)
         {
+            //         var query = @"  SELECT R.[ID]
+            //   ,[ProductCodeAgencyLinkID]
+            //   ,[RegulationEffectiveFromDt]
+            //   ,[RegulationEffectiveThruDt]
+            //   ,[TradeTranTypeID]
+            //   ,R.[AgencyID]
+            //   ,[RegulationJson]
+            //    FROM [ITT].[dbo].[ProductCodeAgencyLink] P
+            //    INNER JOIN [ITT].[dbo].[LPCORegulation] R ON R.ProductCodeAgencyLinkID = P.ID
+            //    WHERE R.AgencyID = @AGENCYID AND TradeTranTypeID = @TRADETRANTYPEID
+            //      AND ((P.RegulationEffectiveFromDt <= GetDate() AND P.RegulationEffectiveThruDt >= GetDate())
+            //        OR (P.RegulationEffectiveFromDt >= GetDate() AND P.RegulationEffectiveThruDt >= GetDate())) 
+            //        order by id DESC ";
             var query = @"  SELECT R.[ID]
       ,[ProductCodeAgencyLinkID]
       ,[RegulationEffectiveFromDt]
       ,[RegulationEffectiveThruDt]
-      ,[TradeTranTypeID]
+      ,R.[EffectiveFromDt]
+      ,R.[EffectiveThruDt]
+      ,R.[TradeTranTypeID]
       ,R.[AgencyID]
       ,[RegulationJson]
+      ,R.[HsCode]
+      ,R.[HsCodeExt]
+      ,[Factor]
+      ,[Description]
        FROM [ITT].[dbo].[ProductCodeAgencyLink] P
        INNER JOIN [ITT].[dbo].[LPCORegulation] R ON R.ProductCodeAgencyLinkID = P.ID
-       WHERE R.AgencyID = @AGENCYID AND TradeTranTypeID = @TRADETRANTYPEID
+       INNER JOIN [ITT].[dbo].[ProductCode] PC ON P.ProductCodeID = PC.ID
+       WHERE R.AgencyID = @AGENCYID AND R.TradeTranTypeID = @TRADETRANTYPEID
          AND ((P.RegulationEffectiveFromDt <= GetDate() AND P.RegulationEffectiveThruDt >= GetDate())
            OR (P.RegulationEffectiveFromDt >= GetDate() AND P.RegulationEffectiveThruDt >= GetDate())) 
+           AND ((R.EffectiveFromDt <= GetDate() AND R.EffectiveThruDt >= GetDate())
+           OR (R.EffectiveFromDt >= GetDate() AND R.EffectiveThruDt >= GetDate())) 
            order by id DESC ";
 
             return _connection.Query<GetRegulatoryDataDTO>(

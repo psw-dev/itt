@@ -38,15 +38,13 @@ namespace PSW.ITT.Data.Entities
         public string HSCodeExt { get { return _hSCodeExt; } set { _hSCodeExt = value; } }
         public string RegulationJson { get { return _regulationJson; } set { _regulationJson = value; } }
         public long ProductCodeAgencyLinkID { get { return _productCodeAgencyLinkID; } set { _productCodeAgencyLinkID = value; } }
-        // public DateTime EffectiveFromDt { get { return _effectiveFromDt; } set { _effectiveFromDt = value; } }
-        // public DateTime EffectiveThruDt { get { return _effectiveThruDt; } set { _effectiveThruDt = value; } }
+        public DateTime EffectiveFromDt { get { return _effectiveFromDt; } set { _effectiveFromDt = value; } }
+        public DateTime EffectiveThruDt { get { return _effectiveThruDt; } set { _effectiveThruDt = value; } }
         public short TradeTranTypeID { get { return _tradeTranTypeID; } set { _tradeTranTypeID = value; } }
         public int CreatedBy { get { return _createdBy; } set { _createdBy = value; } }
         public DateTime CreatedOn { get { return _createdOn; } set { _createdOn = value; } }
         public int UpdatedBy { get { return _updatedBy; } set { _updatedBy = value; } }
         public DateTime UpdatedOn { get { return _updatedOn; } set { _updatedOn = value; } }
-        public string HsCode { get { return _hsCode; } set { _hsCode = value; } }
-        public string HsCodeExt { get { return _hsCodeExt; } set { _hsCodeExt = value; } }
         public string Factor { get { return _factor; } set { _factor = value; } }
 
 
@@ -68,15 +66,13 @@ namespace PSW.ITT.Data.Entities
                 {"AgencyID", AgencyID},
                 {"RegulationJson", RegulationJson},
                 {"ProductCodeAgencyLinkID", ProductCodeAgencyLinkID},
-                // {"EffectiveFromDt", EffectiveFromDt},
-                // {"EffectiveThruDt", EffectiveThruDt},
+                {"EffectiveFromDt", EffectiveFromDt},
+                {"EffectiveThruDt", EffectiveThruDt},
                 {"TradeTranTypeID",TradeTranTypeID},
                 {"CreatedBy", CreatedBy},
                 {"CreatedOn", CreatedOn},
                 {"UpdatedBy", UpdatedBy},
                 {"UpdatedOn", UpdatedOn},
-                {"HsCode", HsCode},
-                {"HsCodeExt", HsCodeExt},
                 {"Factor", Factor},
             };
         }
@@ -89,15 +85,13 @@ namespace PSW.ITT.Data.Entities
                 AgencyID,
                 RegulationJson,
                 ProductCodeAgencyLinkID,
-                // EffectiveFromDt,
-                // EffectiveThruDt,
+                EffectiveFromDt,
+                EffectiveThruDt,
                 TradeTranTypeID,
                 CreatedBy,
                 CreatedOn,
                 UpdatedBy,
                 UpdatedOn,
-                HsCode,
-                HsCodeExt,
                 Factor,
             };
         }

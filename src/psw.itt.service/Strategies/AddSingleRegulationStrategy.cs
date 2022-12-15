@@ -6,6 +6,9 @@ using PSW.Lib.Logs;
 using PSW.ITT.Data.Entities;
 using System.Text.Json;
 using System.Linq;
+using System.Reflection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace PSW.ITT.Service.Strategies
 {
@@ -25,26 +28,30 @@ namespace PSW.ITT.Service.Strategies
             try
             {
                 Log.Information("|{0}|{1}| Request DTO {@RequestDTO}", StrategyName, MethodID, RequestDTO);
-                var productcode = RequestDTO.Data["hsCode"].ToString() + "." + RequestDTO.Data["productCode"].ToString();
+                // var json = JsonConvert.DeserializeObject<JObject>(RequestDTO.Data);
+                var json = JObject.Parse(RequestDTO.Data.ToString());
+
+                var productcode = json.hsCode + "." + json.productCode;
                 var duplicateCheckList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, 1).Where(x => x.CheckDuplicate == true).ToList();
                 duplicateCheckList.RemoveAll(x => x.NameLong.Contains("HSCode"));
                 duplicateCheckList.RemoveAll(x => x.NameLong.Contains("Product Code"));
-                var factor = RequestDTO.Data[duplicateCheckList[0].NameShort];
-                RequestDTO.Data["productCode"] = productcode;
+                var factor = RequestDTO.Data.GetProperty(duplicateCheckList[0].NameShort).ToString();
+                json.productCode = productcode;
                 Command.UnitOfWork.BeginTransaction();
                 var regulation = new LPCORegulation();
                 regulation.AgencyID = RequestDTO.AgencyID;
-                regulation.RegulationJson = JsonSerializer.Serialize<dynamic>(RequestDTO.Data);
+                // regulation.RegulationJson = System.Text.Json.JsonSerializer.Serialize<dynamic>(json);
+                regulation.RegulationJson = json.ToString(Formatting.None);
                 regulation.CreatedOn = currentDateTime;
                 regulation.UpdatedOn = currentDateTime;
                 regulation.CreatedBy = Command.LoggedInUserRoleID;
                 regulation.UpdatedBy = Command.LoggedInUserRoleID;
-                regulation.HsCode = RequestDTO.Data["hsCode"].ToString();
-                regulation.HsCodeExt = RequestDTO.Data["productCode"].ToString();
+                regulation.HSCode = json.hsCode;
+                regulation.HSCodeExt = json.productCode;
                 regulation.ProductCodeAgencyLinkID = RequestDTO.ProductCodeAgencyLinkID;
                 regulation.Factor = factor;
-                // regulation.EffectiveFromDt = currentDateTime;
-                // regulation.EffectiveThruDt = new DateTime(9999, 12, 30);
+                regulation.EffectiveFromDt = currentDateTime;
+                regulation.EffectiveThruDt = new DateTime(9999, 12, 30);
                 regulation.TradeTranTypeID = RequestDTO.TradeTranTypeID;
                 var LPCOid = Command.UnitOfWork.LPCORegulationRepository.Add(regulation);
 
