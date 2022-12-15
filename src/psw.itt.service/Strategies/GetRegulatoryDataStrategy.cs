@@ -38,6 +38,14 @@ namespace PSW.ITT.Service.Strategies
                     // var obj1 = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(x.RegulationJson);
                     responseData.Data = obj1;
                     responseData.ID = x.ID;
+                    responseData.HSCode = x.HSCode;
+                    responseData.HSCodeExt = x.HSCodeExt;
+                    responseData.Factor = x.Factor;
+                    responseData.Description = x.Description;
+                    responseData.ProductCodeAgencyLinkID = x.ProductCodeAgencyLinkID;
+                    responseData.EffectiveFromDt = x.EffectiveFromDt.ToString("dd-MM-yyyy");
+                    responseData.EffectiveThruDt = x.EffectiveThruDt.ToString("dd-MM-yyyy");
+
                     ResponseDTO.Add(responseData);
                 }
 
@@ -61,7 +69,7 @@ namespace PSW.ITT.Service.Strategies
                 return InternalServerErrorReply(ex);
             }
         }
-        
+
         #endregion
     }
 }
