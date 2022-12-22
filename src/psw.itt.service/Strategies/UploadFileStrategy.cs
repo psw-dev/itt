@@ -133,10 +133,11 @@ namespace PSW.ITT.Service.Strategies
                 }
                 var activeProductCodes = Command.UnitOfWork.ProductCodeEntityRepository.GetActiveProductCode();
                 var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = 1 }).ToList();
-                int rowIndex=0;
+                int rowIndex = 0;
 
                 foreach (DataRow d in dt.Rows)
-                {   rowIndex +=1;
+                {
+                    rowIndex += 1;
                     var hsCode = propertyNameList.Where(x => x.NameLong == "HSCode").FirstOrDefault();
                     var productCode = propertyNameList.Where(x => x.NameLong == "Product Code").FirstOrDefault();
                     var effectiveDateFrom = propertyNameList.Where(x => x.NameLong == "Effective Date").FirstOrDefault();
@@ -177,17 +178,18 @@ namespace PSW.ITT.Service.Strategies
 
                     }
                     // var date=(DateTime.TryParseExact(d[effectiveDateThru.Index].ToString(),"dd/mm/yyyy", _culture, DateTimeStyles.None, out DateTime resugfgdgltDate));
-                    if(!(
-                        (String.IsNullOrEmpty(d[effectiveDateThru.Index].ToString())) || 
-                            (String.IsNullOrWhiteSpace(d[effectiveDateThru.Index].ToString()))||
-                            (DateTime.TryParseExact(d[effectiveDateThru.Index].ToString(),"dd/mm/yyyy", _culture, DateTimeStyles.None, out DateTime resultDate)))){
-                        
+                    if (!(
+                        (String.IsNullOrEmpty(d[effectiveDateThru.Index].ToString())) ||
+                            (String.IsNullOrWhiteSpace(d[effectiveDateThru.Index].ToString())) ||
+                            (DateTime.TryParseExact(d[effectiveDateThru.Index].ToString(), "dd/mm/yyyy", _culture, DateTimeStyles.None, out DateTime resultDate))))
+                    {
+
                         row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
                         error = error == "" ? string.Concat(error, "Invalid End Date") : string.Concat(error, ", Invalid End Date");
 
                     }
                     // Product code end date can not be set as a previous date. It should always be today's or future date.
-                    else if ((DateTime.TryParseExact(d[effectiveDateThru.Index].ToString(),"dd/mm/yyyy", _culture, DateTimeStyles.None, out DateTime resultsDate)) &&Convert.ToDateTime(d[effectiveDateThru.Index].ToString()) < DateTime.Now)
+                    else if ((DateTime.TryParseExact(d[effectiveDateThru.Index].ToString(), "dd/mm/yyyy", _culture, DateTimeStyles.None, out DateTime resultsDate)) && Convert.ToDateTime(d[effectiveDateThru.Index].ToString()) < DateTime.Now)
                     {
                         row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
                         error = error == "" ? string.Concat(error, "Product code end date can not be set as a previous date.") : string.Concat(error, ", Product code end date can not be set as a previous date.");
@@ -308,13 +310,13 @@ namespace PSW.ITT.Service.Strategies
                 List<dynamic> gridData = new List<dynamic>();
 
 
-                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = 1 }).OrderBy(x => x.Index).ToList();
+                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = 1 }).OrderBy(x => x.Index).Where(x => x.SheetType == null).ToList();
 
 
-                int rowIndex=0;
+                int rowIndex = 0;
                 foreach (DataRow drow in dt.Rows)
                 {
-                    rowIndex +=1;
+                    rowIndex += 1;
                     IDictionary<string, object> expandoDict = new ExpandoObject();
                     foreach (var x in propertyNameList)
                     {
@@ -343,7 +345,7 @@ namespace PSW.ITT.Service.Strategies
             {
                 List<GridColumns> gridColumns = new List<GridColumns>();
 
-                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = 1 }).OrderBy(x=>x.Index).ToList();
+                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = 1 }).OrderBy(x => x.Index).Where(x => x.SheetType == null).ToList();
                 foreach (var x in propertyNameList)
                 {
                     var column = new GridColumns();
@@ -355,18 +357,22 @@ namespace PSW.ITT.Service.Strategies
                 }
 
 
-                var columnError = new GridColumns{
-                Field = "error",
-                Title = "Error",
-                Editor = "string",
-                Width = "400px"};
+                var columnError = new GridColumns
+                {
+                    Field = "error",
+                    Title = "Error",
+                    Editor = "string",
+                    Width = "400px"
+                };
                 gridColumns.Add(columnError);
 
-                var columnErrorRowIndex = new GridColumns{
-                Field = "rowIndex",
-                Title = "Row Index",
-                Editor = "string",
-                Width = "20px"};
+                var columnErrorRowIndex = new GridColumns
+                {
+                    Field = "rowIndex",
+                    Title = "Row Index",
+                    Editor = "string",
+                    Width = "20px"
+                };
                 gridColumns.Add(columnErrorRowIndex);
 
                 return gridColumns;
@@ -503,7 +509,7 @@ namespace PSW.ITT.Service.Strategies
             {
                 var ChapterCode = Row[0].ToString().Substring(0, 2);
                 var ProductCodeChapter = uow.ProductCodeChapterRepository.Where(new { Code = ChapterCode }).FirstOrDefault();
-                if(ProductCodeChapter!= null)
+                if (ProductCodeChapter != null)
                 {
                     productCodeEntity.HSCode = Row[0].ToString();
                     productCodeEntity.HSCodeExt = Row[0].ToString() + "." + Row[1].ToString();
@@ -514,8 +520,8 @@ namespace PSW.ITT.Service.Strategies
                     productCodeEntity.Description = Row[2].ToString();
                     productCodeEntity.ProductCodeSheetUploadHistoryID = fileUploadHistoryID;
                     productCodeEntity.EffectiveFromDt = Convert.ToDateTime(Row[4].ToString());
-                    productCodeEntity.EffectiveThruDt = (String.IsNullOrEmpty(Row[5].ToString()) || 
-                                                         String.IsNullOrWhiteSpace(Row[5].ToString())) ? DateTime.MaxValue : Convert.ToDateTime(Row[5].ToString()).AddHours(23).AddMinutes(59).AddSeconds(59) ;
+                    productCodeEntity.EffectiveThruDt = (String.IsNullOrEmpty(Row[5].ToString()) ||
+                                                         String.IsNullOrWhiteSpace(Row[5].ToString())) ? DateTime.MaxValue : Convert.ToDateTime(Row[5].ToString()).AddHours(23).AddMinutes(59).AddSeconds(59);
 
                     productCodeEntity.CreatedOn = DateTime.Now;
                     productCodeEntity.UpdatedOn = DateTime.Now;
@@ -525,10 +531,11 @@ namespace PSW.ITT.Service.Strategies
 
                     var productCodeEntityId = uow.ProductCodeEntityRepository.Add(productCodeEntity);
                 }
-                else{
+                else
+                {
                     Log.Information("[{0}.{1}] Product Code Chapter Not Found {2} ", this.GetType().Name, MethodBase.GetCurrentMethod().Name, ProductCodeChapter);
                     throw new NullReferenceException(" Product Code Chapter Not Found ");
-           
+
                 }
             }
             catch (System.Exception ex)
@@ -570,21 +577,22 @@ namespace PSW.ITT.Service.Strategies
             //And add duplicate item value in arraylist.
             foreach (DataRow drow in dt.Rows)
             {
-                if (hTable.Contains(drow[0] + "" + drow[1] + "" + drow[2] + "" + drow[3] + "" + drow[4] + "" + drow[5] + "" ))
+                if (hTable.Contains(drow[0] + "" + drow[1] + "" + drow[2] + "" + drow[3] + "" + drow[4] + "" + drow[5] + ""))
                     duplicateList.Add(drow);
                 else
-                    hTable.Add(drow[0] + "" + drow[1] + "" + drow[2] + "" + drow[3] + "" + drow[4] + "" + drow[5] + "" , string.Empty);
+                    hTable.Add(drow[0] + "" + drow[1] + "" + drow[2] + "" + drow[3] + "" + drow[4] + "" + drow[5] + "", string.Empty);
             }
-            int rowIndex=0;
+            int rowIndex = 0;
 
             //Removing a list of duplicate items from datatable.
             foreach (DataRow dRow in duplicateList)
-            {   rowIndex +=1;
+            {
+                rowIndex += 1;
                 DataRow row = duplicateTable.NewRow();
                 row.ItemArray = dRow.ItemArray;
 
                 row[errorColumnPosition] = "Duplicate Row";
-                row[errorColumnPosition+1] = rowIndex + 1;
+                row[errorColumnPosition + 1] = rowIndex + 1;
                 duplicateTable.Rows.Add(row);
             }
 
@@ -623,10 +631,11 @@ namespace PSW.ITT.Service.Strategies
 
         private (string, string) IsFileColumnsCorrect(List<string> headerRow)
         {
-            List<string> dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = true }).OrderBy(x => x.Index).Select(x => x.NameLong).ToList();
+            List<string> dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = true }).OrderBy(x => x.Index).Where(x => x.SheetType == null).Select(x => x.NameLong).ToList();
 
             var arraysAreEqual = Enumerable.SequenceEqual(dbColumns, headerRow);
-            if(dbColumns.Count != headerRow.Count){
+            if (dbColumns.Count != headerRow.Count)
+            {
                 return ("column count mismatch", "");
             }
             for (int i = 0; i < dbColumns.Count; i++)
@@ -642,7 +651,7 @@ namespace PSW.ITT.Service.Strategies
 
         private string CheckIsMandatoryColumnsAvailable(DataTable dt)
         {
-            var dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = true, isMandatory = true }).ToList();
+            var dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = true, isMandatory = true }).Where(x => x.SheetType == null).ToList();
 
 
             for (int i = 0; i < dt.Rows.Count; i++)
