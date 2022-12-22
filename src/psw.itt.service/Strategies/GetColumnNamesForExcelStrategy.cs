@@ -38,18 +38,19 @@ namespace PSW.ITT.Service.Strategies
 
                 Log.Information($"| Strategy Name : {StrategyName} | Method ID : {MethodID} | Reterieve Agency");
 
-                var columnNames =  new List<ColumnNamesForExcelResponseDTO>();
+                var columnNames = new List<ColumnNamesForExcelResponseDTO>();
 
-                if(RequestDTO==null)
+                if (RequestDTO.AgencyID == 0)
                 {
-                    columnNames= this.Command.UnitOfWork.SheetAttributeMappingRepository
-                    .Where(new { isActive = true })
+                    columnNames = this.Command.UnitOfWork.SheetAttributeMappingRepository
+                    .Where(new { isActive = true }).Where(x => x.SheetType == null)
                     .Select(x => new ColumnNamesForExcelResponseDTO { ColumnName = x.NameLong, Index = x.Index }).OrderBy(x => x.Index).ToList();
                 }
-                else{
-                    columnNames= this.Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID,RequestDTO.AgencyID, RequestDTO.ActionID==2?(short)1:RequestDTO.ActionID).Select(x => new ColumnNamesForExcelResponseDTO { ColumnName = x.NameLong, Index = x.Index }).ToList();
+                else
+                {
+                    columnNames = this.Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.ActionID == 2 ? (short)1 : RequestDTO.ActionID).Select(x => new ColumnNamesForExcelResponseDTO { ColumnName = x.NameLong, Index = x.Index }).ToList();
                 }
-                
+
                 if (columnNames.Count == 0)
                 {
                     Log.Information($"| Strategy Name : {StrategyName} | Method ID : {MethodID} | No Record Found");
@@ -57,7 +58,7 @@ namespace PSW.ITT.Service.Strategies
                 }
                 // STEP 3 : Prepare Response => Entity To DTO Mapping & Set Response DTO 
                 Log.Information($"| Strategy Name : {StrategyName} | Method ID : {MethodID} | Mapping to responseDTO");
-                ResponseDTO =  columnNames;
+                ResponseDTO = columnNames;
 
 
                 // STEP 4 : Send Command Reply
