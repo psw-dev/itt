@@ -58,7 +58,7 @@ namespace PSW.ITT.Service.Strategies
                     AgencyID = RequestDTO.AgencyID,
                     EffectiveFromDt = DateTime.Now,
                     EffectiveThruDt = productEntity.EffectiveThruDt,
-                    RegulationEffectiveFromDt = productEntity.EffectiveFromDt,
+                    RegulationEffectiveFromDt = DateTime.Now,
                     RegulationEffectiveThruDt = productEntity.EffectiveThruDt,
                     CreatedBy = Command.LoggedInUserRoleID,
                     UpdatedBy = Command.LoggedInUserRoleID,
