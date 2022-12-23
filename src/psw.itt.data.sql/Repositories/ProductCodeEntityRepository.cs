@@ -45,6 +45,7 @@ namespace PSW.ITT.Data.Sql.Repositories
               .WhereRaw("((ProductCodeAgencyLink.EffectiveFromDt <= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate())")
               .OrWhereRaw("(ProductCodeAgencyLink.EffectiveFromDt >= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate()))")
               .SelectRaw(" ROW_NUMBER() OVER(Order By(Select 1)) as SerialID, ProductCodeAgencyLink.ID,ChapterCode,HSCode,HSCodeExt,ProductCode.ProductCode,ProductCode.[Description],ProductCode.TradeTranTypeID,ProductCodeAgencyLink.EffectiveFromDt, ProductCodeAgencyLink.EffectiveThruDt, ProductCodeAgencyLink.IsActive")
+              .SelectRaw("CASE WHEN EXISTS( SELECT * FROM[LPCORegulation] L WHERE L.ProductCodeAgencyLinkID =  [ProductCodeAgencyLink].ID) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END as Regulated")
               .OrderBy("ProductCodeAgencyLink.EffectiveThruDt");
 
             var result = _sqlCompiler.Compile(query);

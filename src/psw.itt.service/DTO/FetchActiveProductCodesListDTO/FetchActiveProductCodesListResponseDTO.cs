@@ -38,5 +38,8 @@ namespace PSW.ITT.Service.DTO
         public string EffectiveThruDt { get; set; }
         [JsonPropertyName("isActive")]
         public bool? IsActive { get; set; }
+
+        [JsonPropertyName("regulated")]
+        public string Regulated { get; set; }
     }
 }
