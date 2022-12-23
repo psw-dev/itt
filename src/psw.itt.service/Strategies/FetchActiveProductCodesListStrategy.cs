@@ -72,6 +72,10 @@ namespace PSW.ITT.Service.Strategies
                     if (RequestDTO.userRole == "OTO")
                     {
                         productCodeItem.IsActive = item.IsActive;
+                        if ((bool)item.Regulated)
+                        {
+                            productCodeItem.Regulated = "R";
+                        }
                     }
 
                     ResponseDTO.Add(productCodeItem);
