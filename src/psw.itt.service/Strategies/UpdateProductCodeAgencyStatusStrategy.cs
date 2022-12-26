@@ -32,22 +32,34 @@ namespace PSW.ITT.Service.Strategies
                     {
                         ProductCodeID = productAgencyLinkEntity.ProductCodeID,
                         AgencyID = productAgencyLinkEntity.AgencyID,
-                        EffectiveFromDt = currentTime,
+                        EffectiveFromDt = productAgencyLinkEntity.EffectiveFromDt,
                         EffectiveThruDt = productAgencyLinkEntity.EffectiveThruDt,
+                        RegulationEffectiveFromDt = currentTime,
+                        RegulationEffectiveThruDt = productAgencyLinkEntity.EffectiveThruDt,
                         CreatedBy = Command.LoggedInUserRoleID,
                         CreatedOn = currentTime,
                         UpdatedBy = Command.LoggedInUserRoleID,
                         UpdatedOn = currentTime,
-                        IsActive = RequestDTO.status
+                        IsActive = RequestDTO.status,
+                        SoftDelete = false
 
                     };
 
-                    productAgencyLinkEntity.EffectiveThruDt = currentTime;
                     productAgencyLinkEntity.UpdatedBy = Command.LoggedInUserRoleID;
                     productAgencyLinkEntity.UpdatedOn = currentTime;
+                    productAgencyLinkEntity.SoftDelete = true;
                     Command.UnitOfWork.BeginTransaction();
                     Command.UnitOfWork.ProductCodeAgencyLinkRepository.Update(productAgencyLinkEntity);
-                    Command.UnitOfWork.ProductCodeAgencyLinkRepository.Add(productAgencyLinkEntityNew);
+                    var productAgencyID = Command.UnitOfWork.ProductCodeAgencyLinkRepository.Add(productAgencyLinkEntityNew);
+                    var regulationList = Command.UnitOfWork.LPCORegulationRepository.Where(new { ProductCodeAgencyLinkID = RequestDTO.ID });
+                    foreach (var regulation in regulationList)
+                    {
+                        regulation.ProductCodeAgencyLinkID = productAgencyID;
+                        regulation.UpdatedBy = Command.LoggedInUserRoleID;
+                        regulation.UpdatedOn = currentTime;
+                        Command.UnitOfWork.LPCORegulationRepository.Update(regulation);
+                    }
+
                     Command.UnitOfWork.Commit();
                 }
                 else
@@ -55,6 +67,7 @@ namespace PSW.ITT.Service.Strategies
                     productAgencyLinkEntity.IsActive = RequestDTO.status;
                     productAgencyLinkEntity.UpdatedBy = Command.LoggedInUserRoleID;
                     productAgencyLinkEntity.UpdatedOn = currentTime;
+                    productAgencyLinkEntity.RegulationEffectiveThruDt = currentTime;
                     Command.UnitOfWork.ProductCodeAgencyLinkRepository.Update(productAgencyLinkEntity);
                 }
 
