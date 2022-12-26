@@ -24,17 +24,26 @@ namespace PSW.ITT.Service.Strategies
             try
             {
                 Log.Information("|{0}|{1}| Request DTO {@RequestDTO}", StrategyName, MethodID, RequestDTO);
-                var ProductRegulationEntity = Command.UnitOfWork.ProductCodeAgencyLinkRepository.Get(RequestDTO.ID);
-                if (ProductRegulationEntity.RegulationEffectiveFromDt <= currentDateTime)
+                var RegulationEntity = Command.UnitOfWork.LPCORegulationRepository.Get(RequestDTO.ID);
+                if (RequestDTO.Immediately)
                 {
-                    return BadRequestReply("Regulation already deactivated");
+                    Command.UnitOfWork.BeginTransaction();
+                    RegulationEntity.EffectiveThruDt = currentDateTime;
+                    RegulationEntity.UpdatedBy = Command.LoggedInUserRoleID;
+                    RegulationEntity.UpdatedOn = currentDateTime;
+                    Command.UnitOfWork.LPCORegulationRepository.Update(RegulationEntity);
+                    Command.UnitOfWork.Commit();
                 }
-                Command.UnitOfWork.BeginTransaction();
-                ProductRegulationEntity.RegulationEffectiveThruDt = currentDateTime;
-                ProductRegulationEntity.UpdatedBy = Command.LoggedInUserRoleID;
-                ProductRegulationEntity.UpdatedOn = currentDateTime;
-                Command.UnitOfWork.ProductCodeAgencyLinkRepository.Update(ProductRegulationEntity);
-                Command.UnitOfWork.Commit();
+                else
+                {
+                    Command.UnitOfWork.BeginTransaction();
+                    RegulationEntity.EffectiveThruDt = RequestDTO.EndDate;
+                    RegulationEntity.UpdatedBy = Command.LoggedInUserRoleID;
+                    RegulationEntity.UpdatedOn = currentDateTime;
+                    Command.UnitOfWork.LPCORegulationRepository.Update(RegulationEntity);
+                    Command.UnitOfWork.Commit();
+                }
+
                 // Prepare and return command reply
                 return OKReply("Regulation Deleted Successfully");
             }

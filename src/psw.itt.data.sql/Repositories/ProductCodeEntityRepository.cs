@@ -40,12 +40,12 @@ namespace PSW.ITT.Data.Sql.Repositories
         {
             var query = new Query("ProductCode")
               .Join("ProductCodeAgencyLink", "ProductCodeAgencyLink.ProductCodeID", "ProductCode.ID")
-              .WhereRaw("ProductCodeAgencyLink.AgencyID = " + agencyID)
+              .WhereRaw("SoftDelete = 0 AND ProductCodeAgencyLink.AgencyID = " + agencyID)
               .WhereRaw("(ProductCode.TradeTranTypeID = " + tradeTranTypeID + " OR ProductCode.TradeTranTypeID = 4)")
               .WhereRaw("((ProductCodeAgencyLink.EffectiveFromDt <= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate())")
               .OrWhereRaw("(ProductCodeAgencyLink.EffectiveFromDt >= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate()))")
               .SelectRaw(" ROW_NUMBER() OVER(Order By(Select 1)) as SerialID, ProductCodeAgencyLink.ID,ChapterCode,HSCode,HSCodeExt,ProductCode.ProductCode,ProductCode.[Description],ProductCode.TradeTranTypeID,ProductCodeAgencyLink.EffectiveFromDt, ProductCodeAgencyLink.EffectiveThruDt, ProductCodeAgencyLink.IsActive")
-              .SelectRaw("CASE WHEN EXISTS( SELECT * FROM[LPCORegulation] L WHERE L.ProductCodeAgencyLinkID =  [ProductCodeAgencyLink].ID) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END as Regulated")
+              .SelectRaw("CASE WHEN EXISTS( SELECT * FROM[LPCORegulation] L WHERE L.ProductCodeAgencyLinkID =  [ProductCodeAgencyLink].ID  And (L.EffectiveFromDt <= GetDate() AND L.EffectiveThruDt >= GetDate())) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END as Regulated")
               .OrderBy("ProductCodeAgencyLink.EffectiveThruDt");
 
             var result = _sqlCompiler.Compile(query);
@@ -89,7 +89,7 @@ namespace PSW.ITT.Data.Sql.Repositories
 
             return _connection.Query<ProductCodeEntity>(sql, param: parameters, transaction: _transaction).ToList();
         }
-        public List<ProductCodeAgencyLink> GetProductCodeValidity(string ProductCode, int AgencyID,short tradeType)
+        public List<ProductCodeAgencyLink> GetProductCodeValidity(string ProductCode, int AgencyID, short tradeType)
         {
             var query = new Query("ProductCode")
               .Join("ProductCodeAgencyLink", "ProductCodeAgencyLink.ProductCodeID", "ProductCode.ID")
@@ -105,7 +105,7 @@ namespace PSW.ITT.Data.Sql.Repositories
             var parameters = new DynamicParameters(result.NamedBindings);
 
             var returnValue = _connection.Query<ProductCodeAgencyLink>(sql, param: parameters, transaction: _transaction).ToList();
-            return  returnValue;
+            return returnValue;
         }
         #endregion
     }

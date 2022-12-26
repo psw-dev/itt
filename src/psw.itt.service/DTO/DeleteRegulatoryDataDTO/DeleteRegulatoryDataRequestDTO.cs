@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json.Serialization;
 
 namespace PSW.ITT.Service.DTO
@@ -6,6 +7,12 @@ namespace PSW.ITT.Service.DTO
     {
         [JsonPropertyName("id")]
         public long ID { get; set; }
+
+        [JsonPropertyName("immediately")]
+        public bool Immediately { get; set; }
+
+        [JsonPropertyName("endDate")]
+        public DateTime EndDate { get; set; }
 
     }
 }
