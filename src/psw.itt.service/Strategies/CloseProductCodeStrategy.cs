@@ -45,10 +45,15 @@ namespace PSW.ITT.Service.Strategies
                     agencyLink.UpdatedOn = currentDateTime;
                     agencyLink.EffectiveThruDt = currentDateTime.AddDays(1).Date.AddSeconds(-1);
                     Command.UnitOfWork.ProductCodeAgencyLinkRepository.Update(agencyLink);
+                    var agencyLinkRegulation = Command.UnitOfWork.LPCORegulationRepository.GetRegulationByProductAgencyLinkID(agencyLink.ID);
+                    foreach (var regulation in agencyLinkRegulation)
+                    {
+                        regulation.UpdatedBy = Command.LoggedInUserRoleID;
+                        regulation.UpdatedOn = currentDateTime;
+                        regulation.EffectiveThruDt = currentDateTime.AddDays(1).Date.AddSeconds(-1);
+                        Command.UnitOfWork.LPCORegulationRepository.Update(regulation);
+                    }
                 }
-
-
-
 
                 Command.UnitOfWork.Commit();
                 // Prepare and return command reply

@@ -51,7 +51,7 @@ namespace PSW.ITT.Service.Strategies
                     Command.UnitOfWork.BeginTransaction();
                     Command.UnitOfWork.ProductCodeAgencyLinkRepository.Update(productAgencyLinkEntity);
                     var productAgencyID = Command.UnitOfWork.ProductCodeAgencyLinkRepository.Add(productAgencyLinkEntityNew);
-                    var regulationList = Command.UnitOfWork.LPCORegulationRepository.Where(new { ProductCodeAgencyLinkID = RequestDTO.ID });
+                    var regulationList = Command.UnitOfWork.LPCORegulationRepository.GetRegulationByProductAgencyLinkID(RequestDTO.ID);
                     foreach (var regulation in regulationList)
                     {
                         regulation.ProductCodeAgencyLinkID = productAgencyID;
