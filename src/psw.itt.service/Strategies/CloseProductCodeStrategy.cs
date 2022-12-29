@@ -5,12 +5,18 @@ using PSW.ITT.Service.Exception;
 using PSW.Lib.Logs;
 using System.Linq;
 using PSW.ITT.Service.ModelValidators;
+using psw.itt.service.Helpers;
+using System.Collections.Generic;
+using System.Reflection;
+using PSW.itt.Common.Enums;
+using PSW.ITT.Data.Entities;
 
 namespace PSW.ITT.Service.Strategies
 {
     public class CloseProductCodeStrategy : ApiStrategy<CloseProductCodeRequestDTO, Unspecified>
     {
         private DateTime currentDateTime = DateTime.Now;
+        private bool sendInboxMsg = false;
         #region Constructors
         public CloseProductCodeStrategy(CommandRequest commandRequest) : base(commandRequest)
         {
@@ -41,16 +47,26 @@ namespace PSW.ITT.Service.Strategies
                 .Where(new { ProductCodeID = ProductCodeEntity.ID });
                 foreach (var agencyLink in agencyLinkList)
                 {
+                    sendInboxMsg = true;
                     agencyLink.UpdatedBy = Command.LoggedInUserRoleID;
                     agencyLink.UpdatedOn = currentDateTime;
                     agencyLink.EffectiveThruDt = currentDateTime.AddDays(1).Date.AddSeconds(-1);
                     Command.UnitOfWork.ProductCodeAgencyLinkRepository.Update(agencyLink);
+                    var agencyLinkRegulation = Command.UnitOfWork.LPCORegulationRepository.GetRegulationByProductAgencyLinkID(agencyLink.ID);
+                    foreach (var regulation in agencyLinkRegulation)
+                    {
+                        regulation.UpdatedBy = Command.LoggedInUserRoleID;
+                        regulation.UpdatedOn = currentDateTime;
+                        regulation.EffectiveThruDt = currentDateTime.AddDays(1).Date.AddSeconds(-1);
+                        Command.UnitOfWork.LPCORegulationRepository.Update(regulation);
+                    }
                 }
 
-
-
-
                 Command.UnitOfWork.Commit();
+                if (sendInboxMsg)
+                {
+                    SendMessage(ProductCodeEntity, InboxRequestType.REGULATION_DEACTIVATE);
+                }
                 // Prepare and return command reply
                 return OKReply("Product Code Closed Successfully");
             }
@@ -68,5 +84,33 @@ namespace PSW.ITT.Service.Strategies
             }
         }
         #endregion
+
+
+
+        private void SendMessage(ProductCodeEntity productCode, InboxRequestType requestType)
+        {
+            Log.Information($"| Strategy Name : {StrategyName} || Method ID : {MethodID} | Method Name : {MethodBase.GetCurrentMethod().Name} | Starting Method ");
+            List<int> userRoleIds = new List<int>();
+            userRoleIds = Command.UnitOfWork.ProductCodeAgencyLinkRepository.GetAllOTORoleIDAssociatedWithProductCode(productCode.ID);
+            Dictionary<string, string> placeHolders = SetPlaceHolders(productCode);
+            var requestDto = new SendInboxMessageRequestDTO
+            {
+                FromUserRoleId = 0,
+                ToUserRoleIds = userRoleIds,
+                InboxRequestTypeId = (byte)requestType,
+                Placeholders = placeHolders
+            };
+            Log.Information($"| Strategy Name : {StrategyName} || Method ID : {MethodID} | Method Name : {MethodBase.GetCurrentMethod().Name} | Sending Notification Message.");
+            Messenger.SendMessage(Command, requestDto);
+            Log.Information("|{StrategyName}|{MethodID}| Notification Request DTO: {@RequestDTO}", StrategyName, MethodID, requestDto);
+            Log.Information($"| Strategy Name : {StrategyName} || Method ID : {MethodID} | Method Name : {MethodBase.GetCurrentMethod().Name} | Ending Method ");
+        }
+        public Dictionary<string, string> SetPlaceHolders(ProductCodeEntity productCode)
+        {
+            var placeholders = new Dictionary<string, string>();
+            placeholders.Add("@productCode", productCode.HSCodeExt);
+            placeholders.Add("@productDescription", productCode.Description);
+            return placeholders;
+        }
     }
 }

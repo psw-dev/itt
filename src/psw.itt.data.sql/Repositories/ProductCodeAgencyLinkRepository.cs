@@ -36,6 +36,18 @@ namespace PSW.ITT.Data.Sql.Repositories
                     transaction: _transaction
                    ).ToList();
         }
+        public List<int> GetAllOTORoleIDAssociatedWithProductCode(long productCodeID)
+        {
+            var query = @"Select R.ID FROM [AUTH].[dbo].[UserRole] R
+INNER JOIN [AUTH].[dbo].[AspNetUser] U ON R.AspNetUserID = U.ID
+WHERE R.RoleCode = 'OTO'
+AND AgencyID in (SELECT [AgencyID] FROM [ITT].[dbo].[ProductCodeAgencyLink] WHERE ProductCodeID = @PRODUCTCODEID AND (EffectiveFromDt <= GETDATE() AND EffectiveThruDt >= GETDATE()) )";
+
+            return _connection.Query<int>(
+              query, param: new { @PRODUCTCODEID = productCodeID },
+              transaction: _transaction
+             ).ToList();
+        }
         #endregion
     }
 }
