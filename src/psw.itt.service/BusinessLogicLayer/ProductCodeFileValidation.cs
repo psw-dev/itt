@@ -75,15 +75,17 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                     {  
                         var countryList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetList(item.TableName, item.ColumnName);
                         var value = new List<string>();
-                        foreach(var i in  columnValue. Split(',') ){
-                            var country = countryList.Find( x=>x.ToLower().Trim()==i.ToLower().Trim());
-                            if(String.IsNullOrEmpty(country)){
-                                value.Add(i);
-                            };
-                        }
-                        if(value.Count>0)
-                        {
-                            Error = Error == "" ? columnName+" value "+(String.Join(",",value))+" does not exist in the system" : Error + ", " + columnName+" value "+(String.Join(",",value))+" does not exist in the system";
+                         if (!String.IsNullOrEmpty(columnValue)){
+                            foreach(var i in  columnValue. Split(',') ){
+                                var country = countryList.Find( x=>x.ToLower().Trim()==i.ToLower().Trim());
+                                if(String.IsNullOrEmpty(country)){
+                                    value.Add(i);
+                                };
+                            }
+                            if(value.Count>0)
+                            {
+                                Error = Error == "" ? columnName+" value "+(String.Join(",",value))+" does not exist in the system" : Error + ", " + columnName+" value "+(String.Join(",",value))+" does not exist in the system";
+                            }
                         }
                         break;
                     }
