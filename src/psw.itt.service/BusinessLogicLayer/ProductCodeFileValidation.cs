@@ -193,10 +193,16 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                     }
                     case 13:
                     {
-                         if (!String.IsNullOrEmpty(columnValue) && Convert.ToInt32(columnValue) != 1)
-                        {
-                            Error = Error == "" ? columnName+" should be null or 1 if it is Required" : Error + ", " + columnName+" should be null or 1 if it is Required";
+                        var bitList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetLOV(item.TableName, item.ColumnName);
+                        if (!String.IsNullOrEmpty(columnValue)){
+                           
+                            string value = bitList.Find( x=>x.Item2.ToLower()==columnValue.ToLower()).Item2;
+                            if (String.IsNullOrEmpty(value) )
+                            {
+                                Error = Error == "" ? columnName+" should be null or Yes/No" : Error + ", " + columnName+" should be null or Yes/No";
+                            }
                         }
+                        
                         break;
                     }
                     case 14:
