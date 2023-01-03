@@ -22,6 +22,7 @@ using PSW.ITT.Data.Sql.UnitOfWork;
 using PSW.Common.Crypto;
 using System.Security.Cryptography;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace PSW.ITT.Service.Strategies
 {
@@ -148,19 +149,33 @@ namespace PSW.ITT.Service.Strategies
                     //HSCode Validation
 
                     DataRow row = dispuedTable.NewRow();
-                    if (d[hsCode.Index].ToString().Length > 9) //example
+                    
+                    
+                    if  (d[hsCode.Index].ToString().Length != 9) //example
                     {
-                        // error
                         error = "Invalid Hscode";
+                        Match matchHsCode = Regex.Match(d[hsCode.Index].ToString(), @"([0-9]{4})\.([0-9]{4})", RegexOptions.IgnoreCase);
+                        if  (!matchHsCode.Success)
+                        // error
+                       { error = "Hscode is not in correct Format";}
                         // dispuedTable.Rows.Add(row);
+                        
+                        row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
                     }
 
                     //Product Code Validation
-                    else if (d[productCode.Index].ToString().Length != 4) //example
+                    else if(d[productCode.Index].ToString().Length != 4)
                     {
-                        row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
+                        
                         error = error == "" ? string.Concat(error, "Invalid Product Code") : string.Concat(error, ", Invalid Product Code");
+                        Match matchProductCode=Regex.Match(d[productCode.Index].ToString(), @"([0-9]{4}))", RegexOptions.IgnoreCase);
+                         if (!matchProductCode.Success) //example
+                         {
+                            error = error == "" ? string.Concat(error, "Product Code is not in correct format") : string.Concat(error, ", Product Code is not in correct format");
 
+                         }
+                        row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
+                        
                     }
                     // There should be no active same HsCode + Product Code combination having overlapping effective date and end date.
                     var existingActiveProductCode = activeProductCodes.Where(x => x.HSCode == d[hsCode.Index].ToString() && x.ProductCode == d[productCode.Index].ToString()).ToList();
