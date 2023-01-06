@@ -178,7 +178,6 @@ namespace PSW.ITT.Service.Strategies
 
                     dt.Rows.Remove(dt.Rows[0]);
 
-
                     //TODO will uncomment
                     // var columnsCheck = CheckIsMandatoryColumnsAvailable(dt);
 
@@ -284,7 +283,11 @@ namespace PSW.ITT.Service.Strategies
                     processingResponse = "Data Successfully Validated.";
                     // Update National RegisterFileHistory
                     var fileUploadHistory = new ProductCodeSheetUploadHistory();
-                    if (duplicateTable.Rows.Count > 0 || dispuedTable.Rows.Count > 0)
+                    if(dt.Rows.Count==0){
+                        processingResponse = "No Record Found in the Sheet.";
+                        status = (short)ProductCodeSheetUploadStatusEnum.DATA_VALIDATION_FAILED;
+                    }
+                    else if (dt.Rows.Count>0&&(duplicateTable.Rows.Count > 0 || dispuedTable.Rows.Count > 0))
                     {
                         processingResponse = "Data Validation Failed.";
                         status = (short)ProductCodeSheetUploadStatusEnum.DATA_VALIDATION_FAILED;
@@ -313,7 +316,8 @@ namespace PSW.ITT.Service.Strategies
                         Log.Information("[{0}.{1}] Error in File uploading.", this.GetType().Name, MethodBase.GetCurrentMethod().Name); //columnsCheck
                         return BadRequestReply($"Error in File uploading, Please try again later.");
                     }
-                    if (dispuedTable.Rows.Count <= 0)
+                        ResponseDTO.StatusID = status;
+                    if (dispuedTable.Rows.Count <= 0 && dt.Rows.Count>0)
                     {
 
 
@@ -339,7 +343,7 @@ namespace PSW.ITT.Service.Strategies
                     ResponseDTO.TotalRecordCount = dt.Rows.Count;
                     ResponseDTO.ProcessedRecordsCount = fileUploadHistoryRecord.ProcessedRecordsCount == null ? 0 : fileUploadHistoryRecord.ProcessedRecordsCount; ;
 
-                    if (dispuedTable.Rows.Count > 0)
+                    if (dispuedTable.Rows.Count > 0 || dt.Rows.Count==0)
                     {
                         return BadRequestReply("Validation Failed.");
                     }
