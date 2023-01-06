@@ -64,7 +64,7 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                         
                         var FactorList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetLOV(item.TableName, item.ColumnName);
 
-                         string value = FactorList.Find( x=>x.Item2.ToLower()==columnValue.ToLower()).ToString();
+                        string value = FactorList.Find( x=>x.Item2.ToLower()==columnValue.ToLower()).Item2;
                         if(String.IsNullOrEmpty(value))
                         {
                             Error = Error == "" ? columnName+" value "+value+" does not exist in the system" : Error + ", " + columnName+" value "+value+" does not exist in the system";
