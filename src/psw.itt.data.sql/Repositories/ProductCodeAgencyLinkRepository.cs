@@ -26,10 +26,11 @@ namespace PSW.ITT.Data.Sql.Repositories
         public List<GetProductCodeListWithAgenciesResponseDTO> GetProductCodeIDWithOGA()
         {
             var query = @"SELECT [ProductCodeID] ,[AgencyID],[EffectiveFromDt] ,[EffectiveThruDt],[SHRD]..[agency].Code,[SHRD]..[agency].Name
-                         FROM [ITT].[dbo].[ProductCodeAgencyLink]
+                         FROM [ITT].[dbo].[ProductCodeAgencyLink] 
                          Left Join [SHRD]..[agency] on [SHRD]..[agency].[ID] = [ProductCodeAgencyLink].[AgencyID]
-                         WHERE (EffectiveFromDt <= GetDate() AND EffectiveThruDt >= GetDate()) 
-                         or (EffectiveFromDt >= GetDate() AND EffectiveThruDt >= GetDate())";
+                         WHERE ((EffectiveFromDt <= GetDate() AND EffectiveThruDt >= GetDate()) 
+                         or (EffectiveFromDt >= GetDate() AND EffectiveThruDt >= GetDate()))
+                         AND SoftDelete = 0";
 
             return _connection.Query<GetProductCodeListWithAgenciesResponseDTO>(
                     query,

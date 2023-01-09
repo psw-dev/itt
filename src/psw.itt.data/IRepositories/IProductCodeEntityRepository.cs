@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using PSW.ITT.Data.DTO;
 using PSW.ITT.Data.Entities;
 
 namespace PSW.ITT.Data.IRepositories
@@ -13,5 +14,6 @@ namespace PSW.ITT.Data.IRepositories
 
         List<ProductCodeEntity> GetOverlappingProductCode(string hscode, string ProductCode, DateTime effectiveFromDt, DateTime effectiveThruDt, short tradeType);
         List<ProductCodeAgencyLink> GetProductCodeValidity(string ProductCode, int AgencyID, short tradeType);
+        List<GetProductExcelDataDTO> GetProductExcelData();
     }
 }
