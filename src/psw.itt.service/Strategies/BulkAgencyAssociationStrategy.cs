@@ -87,7 +87,8 @@ namespace PSW.ITT.Service.Strategies
                                       new
                                       {
                                           ProductCodeID = item,
-                                          AgencyID = RequestDTO.AgencyID
+                                          AgencyID = RequestDTO.AgencyID,
+                                          SoftDelete = false
                                       }
                                   ).LastOrDefault();
                     if (productAgencyLinkEntity != null)
@@ -95,6 +96,9 @@ namespace PSW.ITT.Service.Strategies
                         productAgencyLinkEntity.UpdatedBy = Command.LoggedInUserRoleID;
                         productAgencyLinkEntity.UpdatedOn = DateTime.Now;
                         productAgencyLinkEntity.EffectiveThruDt = DateTime.Now;
+                        productAgencyLinkEntity.SoftDelete = true;
+                        productAgencyLinkEntity.IsActive = false;
+                        productAgencyLinkEntity.RegulationEffectiveThruDt = DateTime.Now;
                         Command.UnitOfWork.ProductCodeAgencyLinkRepository.Update(productAgencyLinkEntity);
                     }
 
