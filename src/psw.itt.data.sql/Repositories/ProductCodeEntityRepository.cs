@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Dapper;
+using PSW.ITT.Data.DTO;
 using PSW.ITT.Data.Entities;
 using PSW.ITT.Data.IRepositories;
 using SqlKata;
@@ -106,6 +107,26 @@ namespace PSW.ITT.Data.Sql.Repositories
 
             var returnValue = _connection.Query<ProductCodeAgencyLink>(sql, param: parameters, transaction: _transaction).ToList();
             return returnValue;
+        }
+
+        public List<GetProductExcelDataDTO> GetProductExcelData()
+        {
+
+            var query = @" SELECT ID, [ChapterCode]
+      ,[HSCode]
+      ,[ProductCode]
+      ,[Description]
+      ,  (SELECT STRING_AGG(A.Code, ', ') FROM [ITT].[dbo].[ProductCodeAgencyLink] P INNER join SHRD..Agency A on A.ID = P.AgencyID WHERE P.ProductCodeID = PC.ID ) as Agencies
+
+      ,[TradeTranTypeID]
+      ,'Active' as Status
+  FROM [ITT].[dbo].[ProductCode] PC
+ WHERE (EffectiveFromDt <= GetDate() AND EffectiveThruDt >= GetDate()) OR (EffectiveFromDt >= GetDate() AND EffectiveThruDt >= GetDate()) ";
+
+            return _connection.Query<GetProductExcelDataDTO>(
+                    query,
+                    transaction: _transaction
+                   ).ToList();
         }
         #endregion
     }

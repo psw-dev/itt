@@ -10,10 +10,10 @@ using PSW.Lib.Logs;
 
 namespace PSW.ITT.Service.Strategies
 {
-    public class DownloadJSONExcelStrategy : ApiStrategy<DownloadJSONExcelRequestDTO, DownloadJSONExcelResponseDTO>
+    public class DownloadProductCodeExcelStrategy : ApiStrategy<Unspecified, DownloadProductCodeExcelResponseDTO>
     {
         #region Constructors
-        public DownloadJSONExcelStrategy(CommandRequest commandRequest) : base(commandRequest)
+        public DownloadProductCodeExcelStrategy(CommandRequest commandRequest) : base(commandRequest)
         {
 
         }
@@ -25,24 +25,10 @@ namespace PSW.ITT.Service.Strategies
             try
             {
                 Log.Information("|{0}|{1}| Request DTO {@RequestDTO}", StrategyName, MethodID, RequestDTO);
-
-                ResponseDTO = new DownloadJSONExcelResponseDTO();
-                List<dynamic> Data = new List<dynamic>();
-                var regulatoryData = Command.UnitOfWork.ProductRegulationRequirementRepository.GetRegulatoryDataByTradeTypeAndAgency(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID);
-
-                foreach (var x in regulatoryData)
-                {
-                    var obj1 = JsonSerializer.Deserialize<dynamic>(x.RegulationJson);
-                    Data.Add(obj1);
-                }
-                ResponseDTO.Data = Data;
-
-
-                var dispuedTable = new DataTable();
-
+                ResponseDTO = new DownloadProductCodeExcelResponseDTO();
+                var productData = Command.UnitOfWork.ProductCodeEntityRepository.GetProductExcelData();
+                ResponseDTO.Data = productData;
                 ResponseDTO.GridColumns = GetGridColumns(1);
-
-
                 // Prepare and return command reply
                 return OKReply("Regulatory Data Fetched Successfully");
             }
@@ -66,7 +52,7 @@ namespace PSW.ITT.Service.Strategies
             {
                 List<GridColumns> gridColumns = new List<GridColumns>();
 
-                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, 1).OrderBy(x => x.Index).ToList();
+                var propertyNameList = this.Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = true, SheetType = 4 }).OrderBy(x => x.Index).ToList();
                 foreach (var x in propertyNameList)
                 {
                     var column = new GridColumns();
