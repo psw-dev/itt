@@ -42,9 +42,9 @@ namespace PSW.ITT.Service.Strategies
                 ResponseDTO = new List<UploadFileHistoryResponseDTO>();
                 var listFileUploadHistory = new List<ProductCodeSheetUploadHistory>();
                 var statusList = Command.UnitOfWork.ProductCodeSheetUploadStatusRepository.All().ToList();
-                if(RequestDTO==null)
+                if(RequestDTO.AgencyID==0)
                 {
-                    listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.All().OrderByDescending(x => x.UpdatedOn).ToList();
+                    listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.Where(new { AgencyID = RequestDTO.AgencyID}).OrderByDescending(x => x.UpdatedOn).ToList();
                 }else{
                     if(!RequestDTO.Event){
                     Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.SetIsCurrent(RequestDTO.AgencyID);
