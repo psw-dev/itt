@@ -116,12 +116,12 @@ namespace PSW.ITT.Data.Sql.Repositories
       ,[HSCode]
       ,[ProductCode]
       ,[Description]
-      ,  (SELECT STRING_AGG(A.Code, ', ') FROM [ITT].[dbo].[ProductCodeAgencyLink] P INNER join SHRD..Agency A on A.ID = P.AgencyID WHERE P.ProductCodeID = PC.ID ) as Agencies
+      ,  (SELECT STRING_AGG(A.Code, ', ') FROM [ITT].[dbo].[ProductCodeAgencyLink] P INNER join SHRD..Agency A on A.ID = P.AgencyID WHERE P.ProductCodeID = PC.ID and ((EffectiveFromDt <= GetDate() AND EffectiveThruDt >= GetDate()) OR (EffectiveFromDt >= GetDate() AND EffectiveThruDt >= GetDate())) and SoftDelete = 0 ) as Agencies
 
       ,[TradeTranTypeID]
       ,'Active' as Status
   FROM [ITT].[dbo].[ProductCode] PC
- WHERE (EffectiveFromDt <= GetDate() AND EffectiveThruDt >= GetDate()) OR (EffectiveFromDt >= GetDate() AND EffectiveThruDt >= GetDate()) ";
+ WHERE ((EffectiveFromDt <= GetDate() AND EffectiveThruDt >= GetDate()) OR (EffectiveFromDt >= GetDate() AND EffectiveThruDt >= GetDate()))";
 
             return _connection.Query<GetProductExcelDataDTO>(
                     query,
