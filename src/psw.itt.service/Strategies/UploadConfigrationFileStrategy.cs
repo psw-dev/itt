@@ -115,12 +115,13 @@ namespace PSW.ITT.Service.Strategies
                 }
 
 
-                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE ? (short)FileTypeEnum.ADD : RequestDTO.FileType).ToList();
+                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE ? (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE : RequestDTO.FileType).ToList();
 
                 if (RequestDTO.ActionID == (short)ActionID.VALIDATE)
                 {
-
-                    Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.SetIsCurrent(RequestDTO.AgencyID);
+                    var aa = new List<int>();
+                    aa.Add(RequestDTO.FileType);
+                    Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.SetIsCurrent(aa);
                     var fileCheck = IsFileColumnsCorrect((dt.Rows[0].ItemArray).Select(x => x.ToString()).ToList());
                     short validationStatus = (short)ProductCodeSheetUploadStatusEnum.VALIDATED;
                     string processingResponse = "Successfully Validated.";
@@ -150,6 +151,7 @@ namespace PSW.ITT.Service.Strategies
                         DuplicateRecordsCount = 0,
                         IsCurrent = true,
                         DisputedRecordsCount = 0,
+                        SheetType = RequestDTO.FileType,
                         ProcessedRecordsCount = 0,
                         ProductCodeSheetUploadStatusID = validationStatus,
                         ProcessingResponse = processingResponse,
@@ -206,10 +208,10 @@ namespace PSW.ITT.Service.Strategies
                         // string effectiveFromDt = d["Effective From Date"].ToString();
                         // string effectiveThruDt = d["Effective Thru Date"].ToString();
 
-                        var duplicateCheckList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE ? (short)FileTypeEnum.ADD : RequestDTO.FileType).Where(x => x.CheckDuplicate == true).ToList();
+                        var duplicateCheckList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE ? (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE : RequestDTO.FileType).Where(x => x.CheckDuplicate == true).ToList();
                         duplicateCheckList.RemoveAll(x => x.NameLong.Contains("HSCode"));
                         duplicateCheckList.RemoveAll(x => x.NameLong.Contains("Product Code"));
-                        if (RequestDTO.FileType == (short)FileTypeEnum.ADD)
+                        if (RequestDTO.FileType == (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE)
                         {
                             var recordAlreadyExistInTheSystem = Command.UnitOfWork.LPCORegulationRepository.CheckIfRecordAlreadyExistInTheSystem(hsCode, productCode, RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, d[duplicateCheckList.FirstOrDefault().NameLong].ToString()); //, Convert.ToDateTime(effectiveFromDt), Convert.ToDateTime(effectiveThruDt)
                             if (recordAlreadyExistInTheSystem != null)
@@ -217,7 +219,7 @@ namespace PSW.ITT.Service.Strategies
                                 error = "Record already exist in the system.";
                             }
                         }
-                        else if (RequestDTO.FileType == (short)FileTypeEnum.UPDATE || RequestDTO.FileType == (short)FileTypeEnum.INACTIVATE)
+                        else if (RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE || RequestDTO.FileType == (short)FileTypeEnum.INACTIVATE_REGULATIONS_TEMPLATE)
                         {
 
                             var recordAlreadyExistInTheSystem = Command.UnitOfWork.LPCORegulationRepository.CheckIfRecordAlreadyExistInTheSystem(hsCode, productCode, RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, d[duplicateCheckList.FirstOrDefault().NameLong].ToString());
@@ -236,7 +238,7 @@ namespace PSW.ITT.Service.Strategies
                                 List<Data.DTO.ProductCodeValidationList> validation = validationList.Where(x => x.Index == i + 1).ToList();
                                 if (validation.Count > 0)
                                 {
-                                    ProductCodeFileValidation PCValidator = new ProductCodeFileValidation(d.ItemArray[i].ToString(), dt.Columns[i].ToString(), validation, Command, RequestDTO.AgencyID, RequestDTO.TradeTranTypeID);
+                                    ProductCodeFileValidation PCValidator = new ProductCodeFileValidation(hsCode, d.ItemArray[i].ToString(), dt.Columns[i].ToString(), validation, Command, RequestDTO.AgencyID, RequestDTO.TradeTranTypeID);
                                     var validated = PCValidator.validate();
 
                                     if (validated != "")
@@ -251,7 +253,7 @@ namespace PSW.ITT.Service.Strategies
                             }
                         }
 
-                        var duplicateCheckIndexList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE ? (short)FileTypeEnum.ADD : RequestDTO.FileType).Where(x => x.CheckDuplicate == true).Select(x => x.Index).ToList();
+                        var duplicateCheckIndexList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE ? (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE : RequestDTO.FileType).Where(x => x.CheckDuplicate == true).Select(x => x.Index).ToList();
 
                         foreach (DataRow drow in duplicateTable.Rows)
                         {
@@ -300,6 +302,7 @@ namespace PSW.ITT.Service.Strategies
                     fileUploadHistory.DuplicateRecordsCount = duplicateTable.Rows.Count;
                     fileUploadHistory.ProcessingResponse = processingResponse;
                     fileUploadHistory.TradeTranTypeID = RequestDTO.TradeTranTypeID;
+                    fileUploadHistory.SheetType = RequestDTO.FileType;
                     fileUploadHistory.IsCurrent = true;
                     fileUploadHistory.DisputedRecordsCount = dispuedTable.Rows.Count;
                     fileUploadHistory.ProductCodeSheetUploadStatusID = status;
@@ -416,7 +419,7 @@ namespace PSW.ITT.Service.Strategies
                 List<dynamic> gridData = new List<dynamic>();
 
 
-                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE ? (short)FileTypeEnum.ADD : RequestDTO.FileType).OrderBy(x => x.Index).ToList();
+                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE ? (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE : RequestDTO.FileType).OrderBy(x => x.Index).ToList();
 
 
                 int rowIndex = 0;
@@ -453,7 +456,7 @@ namespace PSW.ITT.Service.Strategies
             {
                 List<GridColumns> gridColumns = new List<GridColumns>();
 
-                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE ? (short)FileTypeEnum.ADD : RequestDTO.FileType).OrderBy(x => x.Index).ToList();
+                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE ? (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE : RequestDTO.FileType).OrderBy(x => x.Index).ToList();
                 foreach (var x in columnNames)
                 {
                     var column = new GridColumns();
@@ -488,7 +491,7 @@ namespace PSW.ITT.Service.Strategies
             {
                 List<GridColumns> gridColumns = new List<GridColumns>();
 
-                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE ? (short)FileTypeEnum.ADD : RequestDTO.FileType).OrderBy(x => x.Index).ToList();
+                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE ? (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE : RequestDTO.FileType).OrderBy(x => x.Index).ToList();
                 foreach (var x in propertyNameList)
                 {
                     var column = new GridColumns();
@@ -692,7 +695,7 @@ namespace PSW.ITT.Service.Strategies
         {
             string productCode = Row["Product Code"].ToString();
             string hsCode = Row["HSCode"].ToString();
-            var getFactor = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE ? (short)FileTypeEnum.ADD : RequestDTO.FileType).Where(x => x.CheckDuplicate == true).ToList();
+            var getFactor = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE ? (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE : RequestDTO.FileType).Where(x => x.CheckDuplicate == true).ToList();
             getFactor.RemoveAll(x => x.NameLong.Contains("HSCode"));
             getFactor.RemoveAll(x => x.NameLong.Contains("Product Code"));
             string factor = Row[getFactor.FirstOrDefault().NameLong].ToString();
@@ -706,13 +709,13 @@ namespace PSW.ITT.Service.Strategies
                 AddProperty(obj, column.NameShort, Row[column.Index - 1].ToString() ?? "");
 
             }
-            if (RequestDTO.FileType == (short)FileTypeEnum.UPDATE)
+            if (RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE)
             {
                 var lpcoRegulationUpdate = uow.LPCORegulationRepository.Where(new { AgencyID = request.AgencyID, TradeTranTypeID = request.TradeTranTypeID, HSCode = hsCode, HSCodeExt = productCode, Factor = factor }).LastOrDefault();
                 lpcoRegulationUpdate.EffectiveThruDt = DateTime.Now;
                 uow.LPCORegulationRepository.Update(lpcoRegulationUpdate);
             }
-            else if (RequestDTO.FileType == (short)FileTypeEnum.INACTIVATE)
+            else if (RequestDTO.FileType == (short)FileTypeEnum.INACTIVATE_REGULATIONS_TEMPLATE)
             {
                 string expiryDate = Row["Expiry Date"].ToString();
 
@@ -720,7 +723,7 @@ namespace PSW.ITT.Service.Strategies
                 lpcoRegulationUpdate.EffectiveThruDt = String.IsNullOrEmpty(expiryDate) ? DateTime.Now : Convert.ToDateTime(expiryDate);
                 uow.LPCORegulationRepository.Update(lpcoRegulationUpdate);
             }
-            if (RequestDTO.FileType != (short)FileTypeEnum.INACTIVATE)
+            if (RequestDTO.FileType != (short)FileTypeEnum.INACTIVATE_REGULATIONS_TEMPLATE)
             {
                 LPCORegulation lpcoRegulation = new LPCORegulation
                 {
@@ -812,7 +815,7 @@ namespace PSW.ITT.Service.Strategies
             Hashtable hTable = new Hashtable();
             ArrayList duplicateList = new ArrayList();
 
-            var duplicateCheckIndexList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE ? (short)FileTypeEnum.ADD : RequestDTO.FileType).Where(x => x.CheckDuplicate == true).Select(x => x.Index).ToList();
+            var duplicateCheckIndexList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE ? (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE : RequestDTO.FileType).Where(x => x.CheckDuplicate == true).Select(x => x.Index).ToList();
             //Add list of all the unique item value to hashtable, which stores combination of key, value pair.
             //And add duplicate item value in arraylist.
             var indexString = "";
@@ -879,7 +882,7 @@ namespace PSW.ITT.Service.Strategies
 
         private IDictionary<string, string> IsFileColumnsCorrect(List<string> headerRow)
         {
-            List<string> dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE ? (short)FileTypeEnum.ADD : RequestDTO.FileType).OrderBy(x => x.Index).Select(x => x.NameLong).ToList();//.Where(new { TradeTranTypeID = RequestDTO.TradeTranTypeID, AgencyID = RequestDTO.AgencyID, SheetType = RequestDTO.FileType, isActive = true }).OrderBy(x => x.Index).Select(x => x.NameLong).ToList();
+            List<string> dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE ? (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE : RequestDTO.FileType).OrderBy(x => x.Index).Select(x => x.NameLong).ToList();//.Where(new { TradeTranTypeID = RequestDTO.TradeTranTypeID, AgencyID = RequestDTO.AgencyID, SheetType = RequestDTO.FileType, isActive = true }).OrderBy(x => x.Index).Select(x => x.NameLong).ToList();
             var res = new Dictionary<string, string>();
             var arraysAreEqual = Enumerable.SequenceEqual(dbColumns, headerRow);
             if (dbColumns.Count != headerRow.Count)
@@ -900,7 +903,7 @@ namespace PSW.ITT.Service.Strategies
 
         private string CheckIsMandatoryColumnsAvailable(DataTable dt)
         {
-            var dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE ? (short)FileTypeEnum.ADD : RequestDTO.FileType).Where(x => x.IsMandatory = true).ToList();
+            var dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE ? (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE : RequestDTO.FileType).Where(x => x.IsMandatory = true).ToList();
 
 
             for (int i = 0; i < dt.Rows.Count; i++)

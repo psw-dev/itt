@@ -1,4 +1,6 @@
 using System.Text.Json.Serialization;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace PSW.ITT.Service.DTO
 {
@@ -9,6 +11,9 @@ namespace PSW.ITT.Service.DTO
 
         [JsonPropertyName("event")]
         public bool Event { get; set; } 
+
+        [JsonPropertyName("sheetType")]
+        public List<int> SheetType { get; set; } 
 
     }
 }

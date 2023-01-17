@@ -3,21 +3,27 @@ using System.Text.RegularExpressions;
 using PSW.ITT.Service.Command;
 using PSW.Lib.Logs;
 using System.Collections.Generic;
+using System.Linq;
 
 
 namespace PSW.ITT.Service.BusinessLogicLayer
 {
     public class ProductCodeFileValidation
     {
+        private string HsCode;
         private string columnValue;
         private string columnName;
         private short tradeTranTypeID;
         private int agencyID;
+        public string tradeTranType;
+        public string availability ;
+        public string status;
         private List<Data.DTO.ProductCodeValidationList> validation;
         private CommandRequest command; 
         
-        public ProductCodeFileValidation(string columnValue, string columnName, List<Data.DTO.ProductCodeValidationList> validation, CommandRequest command, int agencyID, short tradeTranTypeID )
+        public ProductCodeFileValidation(string hsCode, string columnValue, string columnName, List<Data.DTO.ProductCodeValidationList> validation, CommandRequest command, int agencyID, short tradeTranTypeID )
         {
+            this.HsCode = hsCode;
             this.columnValue = columnValue;
             this.columnName = columnName;
             this.validation = validation;
@@ -255,6 +261,39 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                         // }
                         break;
                         
+                    }
+                    case 21:
+                    {  
+                        
+                        var HsCodeList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetListConsideringDate(item.TableName, item.ColumnName);
+                        if (!String.IsNullOrEmpty(columnValue)){
+                           
+                            string value = HsCodeList.Find( x=>x.ToLower()==columnValue.ToLower());
+                            if (String.IsNullOrEmpty(value) )
+                            {
+                                Error = Error == "" ? columnName+" does not exist in the system" : Error + ", " + columnName+" does not exist in the system";
+                            }
+                        }
+                        
+                        break;
+                    }
+                    case 22:
+                    {  
+                        
+                        var activeProductCodeList = command.UnitOfWork.ProductCodeEntityRepository.GetActiveProductCode();
+                        var productCodeList = command.UnitOfWork.ProductCodeEntityRepository.Get();
+                        if (!String.IsNullOrEmpty(columnValue)){
+                           
+                            // var value = productCodeList.Any( x=>x.HSCode.ToLower()==HsCode && x.HSCodeExt==columnValue.ToLower());
+                            if(!productCodeList.Any( x=>x.HSCode.ToLower()==HsCode && x.HSCodeExt==columnValue.ToLower()))// if (String.IsNullOrEmpty(value.ProductCode) )
+                            {   
+                                // availability = "No";
+                                Error = Error == "" ? columnName+" does not exist in the system" : Error + ", " + columnName+" does not exist in the system";
+                            }
+                            
+                        }
+                        
+                        break;
                     }
                 }
             }  

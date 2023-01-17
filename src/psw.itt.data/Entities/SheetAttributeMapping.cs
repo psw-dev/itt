@@ -31,7 +31,7 @@ namespace PSW.ITT.Data.Entities
         private short _fieldControlTypeID;
         private string _hint;
         private short _maxLength;
-        private string _sheetType;
+        private int _sheetType;
         private string _tableName;
         private string _columnName;
         private bool _isEditable;
@@ -57,7 +57,7 @@ namespace PSW.ITT.Data.Entities
         public short FieldControlTypeID { get { return _fieldControlTypeID; } set { _fieldControlTypeID = value; } }
         public string Hint { get { return _hint; } set { _hint = value; } }
         public short MaxLength { get { return _maxLength; } set { _maxLength = value; } }
-        public string SheetType { get { return _sheetType; } set { _sheetType = value; } }
+        public int SheetType { get { return _sheetType; } set { _sheetType = value; } }
         public string TableName { get { return _tableName; } set { _tableName = value; } }
         public string ColumnName { get { return _columnName; } set { _columnName = value; } }
         public bool IsEditable { get { return _isEditable; } set { _isEditable = value; } }

@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace PSW.ITT.Service.DTO
 {
-    public class UploadFileRequestDTO
+    public class UploadValidateProductCodeFileRequestDTO
     {
 
         [JsonPropertyName("filepath")]
@@ -16,8 +16,15 @@ namespace PSW.ITT.Service.DTO
         
         [JsonPropertyName("roleCode")]
         public string RoleCode { get; set; }
-        
-        [JsonPropertyName("FileType")]
+
+        [JsonPropertyName("actionID")]
+        public short ActionID { get; set; }
+
+        [JsonPropertyName("agencyId")]
+        public int AgencyId { get; set; }
+
+        [JsonPropertyName("fileType")]
         public int FileType { get; set; }
+
     }
 }

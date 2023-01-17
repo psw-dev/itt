@@ -12,5 +12,8 @@ namespace PSW.ITT.Service.DTO
         
         [JsonPropertyName("agencyID")]
         public short AgencyID { get; set; }
+        
+        [JsonPropertyName("sheetType")]
+        public short SheetType { get; set; }
     }
 }
