@@ -42,14 +42,14 @@ namespace PSW.ITT.Service.Strategies
                 ResponseDTO = new List<UploadFileHistoryResponseDTO>();
                 var listFileUploadHistory = new List<ProductCodeSheetUploadHistory>();
                 var statusList = Command.UnitOfWork.ProductCodeSheetUploadStatusRepository.All().ToList();
-                if(RequestDTO.AgencyID==0)
+                if(RequestDTO.SheetType.Contains((int)FileTypeEnum.ADD_PRODUCTCODE_TEMPLATE))
                 {
-                    listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.Where(new { AgencyID = RequestDTO.AgencyID}).OrderByDescending(x => x.UpdatedOn).ToList();
+                    listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.GetFilesHistoryBySheetType(RequestDTO.SheetType).OrderByDescending(x => x.UpdatedOn).ToList();
                 }else{
                     if(!RequestDTO.Event){
-                    Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.SetIsCurrent(RequestDTO.AgencyID);
+                    Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.SetIsCurrent(RequestDTO.SheetType);
                     }
-                    listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.Where(new { AgencyID = RequestDTO.AgencyID, IsCurrent=1}).ToList();
+                    listFileUploadHistory = Command.UnitOfWork.ProductCodeSheetUploadHistoryRepository.GetFilesBySheetType(RequestDTO.AgencyID, RequestDTO.SheetType).ToList();
                 }
                 // if (listFileUploadHistory == null || listFileUploadHistory.Count == 0)
                 // {

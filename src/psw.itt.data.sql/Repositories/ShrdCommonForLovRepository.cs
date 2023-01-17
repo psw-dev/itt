@@ -40,6 +40,15 @@ namespace PSW.ITT.Data.Sql.Repositories
                    ).ToList();
                    return returnValue;
         }
+    public List<string> GetListConsideringDate(string TableName, string ColumnName )
+    {
+        Log.Information("[{0}] ConnectionString", _connection.ConnectionString);
+        var query = @"SELECT "+ColumnName+"  FROM "+ TableName + " WHERE Effective_Date <=GetDate() AND End_Date>=GetDate() ;";
+            var returnValue = _connection.Query<string>(
+                query 
+                ).ToList();
+                return returnValue;
+    }
 
     
     public List<string> GetDocumentLOV(string TableName, string ColumnName, string DocumentType, int AgencyID)
