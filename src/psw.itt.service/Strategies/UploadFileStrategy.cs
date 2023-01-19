@@ -246,6 +246,7 @@ namespace PSW.ITT.Service.Strategies
                 fileUploadHistory.DuplicateRecordsCount = duplicateTable.Rows.Count;
                 fileUploadHistory.DisputedRecordsCount = dispuedTable.Rows.Count;
                 fileUploadHistory.ProductCodeSheetUploadStatusID = status;
+                fileUploadHistory.SheetType = RequestDTO.FileType;
                 fileUploadHistory.CreatedBy = UserRoleId;
                 fileUploadHistory.UpdatedBy = UserRoleId;
                 fileUploadHistory.CreatedOn = DateTime.Now;

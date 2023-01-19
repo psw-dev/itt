@@ -6,6 +6,7 @@ using PSW.Lib.Logs;
 using System.Security.Claims;
 using System.Linq;
 using PSW.ITT.Data.Entities;
+using PSW.ITT.Common.Enums;
 
 namespace PSW.ITT.Service.Strategies
 {
@@ -40,15 +41,23 @@ namespace PSW.ITT.Service.Strategies
 
                 var columnNames = new List<ColumnNamesForExcelResponseDTO>();
 
-                if (RequestDTO.AgencyID == 0)
+                if (RequestDTO.SheetType == (short)FileTypeEnum.ADD_PRODUCTCODE_TEMPLATE)
                 {
+                    // var FileType=(short)FileTypeEnum.ADD_PRODUCTCODE_TEMPLATE;
                     columnNames = this.Command.UnitOfWork.SheetAttributeMappingRepository
-                    .Where(new { isActive = true }).Where(x => x.SheetType == null)
+                    .Where(new { isActive = true }).Where(x => x.SheetType == RequestDTO.SheetType)
                     .Select(x => new ColumnNamesForExcelResponseDTO { ColumnName = x.NameLong, Index = x.Index }).OrderBy(x => x.Index).ToList();
                 }
-                else
+                else if(RequestDTO.SheetType == (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE || RequestDTO.SheetType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE || RequestDTO.SheetType == (short)FileTypeEnum.INACTIVATE_REGULATIONS_TEMPLATE)
                 {
-                    columnNames = this.Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.ActionID == 2 ? (short)1 : RequestDTO.ActionID).Select(x => new ColumnNamesForExcelResponseDTO { ColumnName = x.NameLong, Index = x.Index }).ToList();
+                    columnNames = this.Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.ActionID ==  (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE ? (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE : RequestDTO.ActionID).Select(x => new ColumnNamesForExcelResponseDTO { ColumnName = x.NameLong, Index = x.Index }).ToList();
+                }
+                else if(RequestDTO.SheetType == (short)FileTypeEnum.VALIDATE_PRODUCTCODE_TEMPLETE)
+                {
+                    // var FileType=(short)FileTypeEnum.VALIDATE_PRODUCTCODE_TEMPLETE;
+                    columnNames = this.Command.UnitOfWork.SheetAttributeMappingRepository
+                    .Where(new { isActive = true }).Where(x => x.SheetType == RequestDTO.SheetType)
+                    .Select(x => new ColumnNamesForExcelResponseDTO { ColumnName = x.NameLong, Index = x.Index }).OrderBy(x => x.Index).ToList();
                 }
 
                 if (columnNames.Count == 0)

@@ -159,6 +159,7 @@ namespace PSW.ITT.Common.Constants
     public enum ActionID {
     CANCEL = 1,
     SUBMIT = 2,
-    VALIDATE = 3,
+    VALIDATE = 3
 }
+
 }

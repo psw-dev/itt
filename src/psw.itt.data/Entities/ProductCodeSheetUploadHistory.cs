@@ -18,6 +18,7 @@ namespace PSW.ITT.Data.Entities
         private int _disputedRecordsCount;
         private int _processedRecordsCount;
         private int _duplicateRecordsCount;
+        private int _sheetType;
         private short _agencyID;
         private short _tradeTranTypeID;
         private bool _isCurrent;
@@ -38,6 +39,7 @@ namespace PSW.ITT.Data.Entities
         public int TotalRecordsCount { get { return _totalRecordsCount; } set { _totalRecordsCount = value; } }
         public int ProcessedRecordsCount  { get { return _processedRecordsCount ; } set { _processedRecordsCount  = value; } }
         public int DisputedRecordsCount  { get { return _disputedRecordsCount ; } set { _disputedRecordsCount  = value; } }
+        public int SheetType  { get { return _sheetType ; } set { _sheetType  = value; } }
         public bool IsCurrent { get { return _isCurrent; } set { _isCurrent = value; } }
         public int DuplicateRecordsCount { get { return _duplicateRecordsCount; } set { _duplicateRecordsCount = value; } }
         public short AgencyID  { get { return _agencyID ; } set { _agencyID  = value; } }
@@ -69,6 +71,7 @@ namespace PSW.ITT.Data.Entities
                 {"ProcessedRecordsCount",ProcessedRecordsCount },
                 {"IsCurrent",IsCurrent },
                 {"DuplicateRecordsCount", DuplicateRecordsCount},
+                {"SheetType", SheetType},
                 {"AgencyID",AgencyID },
                 {"TradeTranTypeID", TradeTranTypeID},
                 {"ProcessingResponse", ProcessingResponse},
@@ -91,6 +94,7 @@ namespace PSW.ITT.Data.Entities
                 IsCurrent,
                 DuplicateRecordsCount,
                 ProcessedRecordsCount,
+                SheetType,
                 AgencyID,
                 TradeTranTypeID,
                 ProcessingResponse,

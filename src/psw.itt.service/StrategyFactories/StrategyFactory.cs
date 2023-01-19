@@ -43,13 +43,13 @@ namespace PSW.ITT.Service.Strategies
                 case "2213": return new UpdateSingleRegulationStrategy(request);
                 case "2214": return new DownloadJSONExcelStrategy(request);
                 case "2215": return new DownloadProductCodeExcelStrategy(request);
-                case "2220": return new GetColumnNamesForExcelStrategy(request);
+                case "2220": return new GetColumnNamesForExcelStrategy(request);    
                 case "2221": return new FetchUploadedSheetsListStrategy(request);
                 case "2222": return new UploadFileStrategy(request);
                 case "2225": return new UploadConfigrationFileStrategy(request);
                 case "2223": return new GetUploadFileProgressStrategy(request);
                 case "2224": return new UpdateFileHistoryStatusStrategy(request);
-
+                case "2226": return new UploadValidateProductCodeFileStrategy(request);
                 default: break;
             }
 
