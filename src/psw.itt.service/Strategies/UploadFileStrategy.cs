@@ -268,6 +268,8 @@ namespace PSW.ITT.Service.Strategies
 
                     try
                     {
+                        // ProcessRequestAsyc(dt, filePath, fileUploadHistoryID, RequestDTO, propertyNameList, Command.CurrentUserName, UserRoleId, token, cts);
+                            
                         Task.Factory.StartNew(
                             async () => await ProcessRequestAsyc(dt, filePath, fileUploadHistoryID, RequestDTO, propertyNameList, Command.CurrentUserName, UserRoleId, token, cts)
                             , token
@@ -326,7 +328,7 @@ namespace PSW.ITT.Service.Strategies
                 List<dynamic> gridData = new List<dynamic>();
 
 
-                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = 1 }).OrderBy(x => x.Index).Where(x => x.SheetType == null).ToList();
+                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = 1 }).OrderBy(x => x.Index).Where(x => x.SheetType == (short)FileTypeEnum.ADD_PRODUCTCODE_TEMPLATE).ToList();
 
 
                 int rowIndex = 0;
@@ -361,7 +363,7 @@ namespace PSW.ITT.Service.Strategies
             {
                 List<GridColumns> gridColumns = new List<GridColumns>();
 
-                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = 1 }).OrderBy(x => x.Index).Where(x => x.SheetType == null).ToList();
+                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = 1 }).OrderBy(x => x.Index).Where(x => x.SheetType == (short)FileTypeEnum.ADD_PRODUCTCODE_TEMPLATE).ToList();
                 foreach (var x in propertyNameList)
                 {
                     var column = new GridColumns();
@@ -647,7 +649,7 @@ namespace PSW.ITT.Service.Strategies
 
         private (string, string) IsFileColumnsCorrect(List<string> headerRow)
         {
-            List<string> dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = true }).OrderBy(x => x.Index).Where(x => x.SheetType == null).Select(x => x.NameLong).ToList();
+            List<string> dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = true }).OrderBy(x => x.Index).Where(x => x.SheetType == (short)FileTypeEnum.ADD_PRODUCTCODE_TEMPLATE).Select(x => x.NameLong).ToList();
 
             var arraysAreEqual = Enumerable.SequenceEqual(dbColumns, headerRow);
             if (dbColumns.Count != headerRow.Count)
@@ -667,7 +669,7 @@ namespace PSW.ITT.Service.Strategies
 
         private string CheckIsMandatoryColumnsAvailable(DataTable dt)
         {
-            var dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = true, isMandatory = true }).Where(x => x.SheetType == null).ToList();
+            var dbColumns = this.Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = true, isMandatory = true }).Where(x => x.SheetType == (short)FileTypeEnum.ADD_PRODUCTCODE_TEMPLATE).ToList();
 
 
             for (int i = 0; i < dt.Rows.Count; i++)

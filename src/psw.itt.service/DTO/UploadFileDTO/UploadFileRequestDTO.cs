@@ -17,7 +17,7 @@ namespace PSW.ITT.Service.DTO
         [JsonPropertyName("roleCode")]
         public string RoleCode { get; set; }
         
-        [JsonPropertyName("FileType")]
+        [JsonPropertyName("fileType")]
         public int FileType { get; set; }
     }
 }
