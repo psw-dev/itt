@@ -282,11 +282,14 @@ namespace PSW.ITT.Service.Strategies
                             foreach(var item in record){
                                 if (item.EffectiveFromDt<=DateTime.Now && item.EffectiveThruDt>=DateTime.Now ){
                                     rowStatus = "Active";
-                                    tradeTranType = String.Join(", " , item.TradeTranTypeID == 1 ? "Import": item.TradeTranTypeID == 2 ? "Export" : item.TradeTranTypeID == 3 ? "Trasit" : "Both" );
-                                }
+                                    }
                                 else{
                                     rowStatus = rowStatus ==""? "In Active":rowStatus;
                                 }
+                                var tradeType=item.TradeTranTypeID == 1 ? "Import": item.TradeTranTypeID == 2 ? "Export" : item.TradeTranTypeID == 3 ? "Trasit" : "Both";
+                                tradeTranType = tradeTranType.Contains(tradeType) ? tradeTranType : String.Join(", " ,tradeType ) ;
+                                
+                                
                             }
                             
                         }
