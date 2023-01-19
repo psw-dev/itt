@@ -287,7 +287,7 @@ namespace PSW.ITT.Service.Strategies
                                     rowStatus = rowStatus ==""? "In Active":rowStatus;
                                 }
                                 var tradeType=item.TradeTranTypeID == 1 ? "Import": item.TradeTranTypeID == 2 ? "Export" : item.TradeTranTypeID == 3 ? "Trasit" : "Both";
-                                tradeTranType = tradeTranType.Contains(tradeType) ? String.Join(", " ,tradeType )  :tradeTranType;
+                                tradeTranType = tradeTranType.Contains(tradeType) ? tradeTranType : String.Join(", " ,tradeType ) ;
                                 
                                 
                             }
