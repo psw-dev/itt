@@ -15,9 +15,6 @@ namespace PSW.ITT.Service.BusinessLogicLayer
         private string columnName;
         private short tradeTranTypeID;
         private int agencyID;
-        public string tradeTranType;
-        public string availability ;
-        public string status;
         private List<Data.DTO.ProductCodeValidationList> validation;
         private CommandRequest command; 
         
@@ -86,12 +83,14 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                                 var country = countryList.Find( x=>x.ToLower().Trim()==i.ToLower().Trim());
                                 if(String.IsNullOrEmpty(country)){
                                     value.Add(i);
-                                };
+                                }
+                               
                             }
                             if(value.Count>0)
                             {
                                 Error = Error == "" ? columnName+" value "+(String.Join(",",value))+" does not exist in the system" : Error + ", " + columnName+" value "+(String.Join(",",value))+" does not exist in the system";
                             }
+                            
                         }
                         break;
                     }
@@ -134,23 +133,24 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                     case 16:
                     case 9:
                     {  
+                        var DocumentList = command.UnitOfWork.ProductCodeEntityRepository.GetDocumentLOV(agencyID, "DocumentType", "Name", tradeTranTypeID);
                         // var DocumentList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetDocumentLOV(item.TableName, item.ColumnName, item.Validation, agencyID);
-                        // var value = new List<string>();
-                        // if (String.IsNullOrEmpty(columnValue)){
-                        //     Error = Error == "" ? columnName+" is null" : Error + ", " + columnName+" is null";
-                        // }
-                        // else{
-                        //     foreach(var i in  columnValue. Split(',') ){
-                        //     var document = DocumentList.Find( x=>x.ToLower().Trim()==i.ToLower().Trim());
-                        //         if(String.IsNullOrEmpty(document)){
-                        //             value.Add(i);
-                        //         };
-                        //     }
-                        //     if(value.Count>0)
-                        //     {
-                        //         Error = Error == "" ? columnName+" value "+(String.Join(",",value))+" does not exist in the system" : Error + ", " + columnName+" value "+(String.Join(",",value))+" does not exist in the system";
-                        //     }
-                        // }
+                        var value = new List<string>();
+                        if (String.IsNullOrEmpty(columnValue)){
+                            Error = Error == "" ? columnName+" is null" : Error + ", " + columnName+" is null";
+                        }
+                        else{
+                            foreach(var i in  columnValue. Split(',') ){
+                            var document = DocumentList.Find( x=>x.ItemValue.ToLower().Trim()==i.ToLower().Trim()).ItemValue;
+                                if(String.IsNullOrEmpty(document)){
+                                    value.Add(i);
+                                };
+                            }
+                            if(value.Count>0)
+                            {
+                                Error = Error == "" ? columnName+" value "+(String.Join(",",value))+" does not exist in the system" : Error + ", " + columnName+" value "+(String.Join(",",value))+" does not exist in the system";
+                            }
+                        }
                         
                         break;
                     }
@@ -241,24 +241,25 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                     case 19:
                     case 18:
                     {  
-                        // if(String.IsNullOrEmpty(columnValue)){
-                        //     break;
-                        // }
-                        // else{
-                        //     var DocumentList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetDocumentLOV(item.TableName, item.ColumnName, item.Validation, agencyID);
-                        //     var value = new List<string>();
-                        //     foreach(var i in  columnValue. Split(',') ){
-                        //     var document = DocumentList.Find( x=>x.ToLower().Trim()==i.ToLower().Trim());
-                        //         if(String.IsNullOrEmpty(document)){
-                        //             value.Add(i);
-                        //         };
-                        //     }
-                        //     if(value.Count>0)
-                        //     {
-                        //         Error = Error == "" ? columnName+" value "+(String.Join(",",value))+" does not exist in the system" : Error + ", " + columnName+" value "+(String.Join(",",value))+" does not exist in the system";
-                        //     }
+                        if(String.IsNullOrEmpty(columnValue)){
+                            break;
+                        }
+                        else{
+                            var DocumentList = command.UnitOfWork.ProductCodeEntityRepository.GetDocumentLOV(agencyID, "DocumentType", "Name", tradeTranTypeID);
+                            // var DocumentList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetDocumentLOV(item.TableName, item.ColumnName, item.Validation, agencyID);
+                            var value = new List<string>();
+                            foreach(var i in  columnValue. Split(',') ){
+                            var document = DocumentList.Find( x=>x.ItemValue.ToLower().Trim()==i.ToLower().Trim()).ItemValue;
+                                if(String.IsNullOrEmpty(document)){
+                                    value.Add(i);
+                                };
+                            }
+                            if(value.Count>0)
+                            {
+                                Error = Error == "" ? columnName+" value "+(String.Join(",",value))+" does not exist in the system" : Error + ", " + columnName+" value "+(String.Join(",",value))+" does not exist in the system";
+                            }
                             
-                        // }
+                        }
                         break;
                         
                     }

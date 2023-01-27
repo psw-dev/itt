@@ -590,7 +590,7 @@ namespace PSW.ITT.Service.Strategies
                         TotalRecordsCount = dt.Rows.Count,
                         ProcessedRecordsCount = dt.Rows.Count,
                         DuplicateRecordsCount = 0,
-
+                        SheetType = RequestDTO.FileType,
                         TradeTranTypeID = RequestDTO.TradeTranTypeID,
                         IsCurrent = true,
                         DisputedRecordsCount = 0,
@@ -682,14 +682,23 @@ namespace PSW.ITT.Service.Strategies
             placeholders.Add("@ProcessedRecordsCount", fileUploadHistory.ProcessedRecordsCount.ToString());
             return placeholders;
         }
-        public static void AddProperty(ExpandoObject expando, string propertyName, object propertyValue)
+        public static void AddProperty(ExpandoObject expando, SheetAttributeMapping property, string propertyValue)
         {
             // ExpandoObject supports IDictionary so we can extend it like this
+                var arrayReturnObject = new List<string>();
+                TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            if(property.FieldControlTypeID==(int)FieldControlTypeEnum.MULTI_SELECT_DROPDOWN){
+                foreach(var i in  propertyValue.Split(',') ){
+                     arrayReturnObject.Add(textInfo.ToTitleCase(i));
+                }
+            }
             var expandoDict = expando as IDictionary<string, object>;
-            if (expandoDict.ContainsKey(propertyName))
-                expandoDict[propertyName] = propertyValue;
+            if (expandoDict.ContainsKey(property.NameShort))
+            //    expandoDict[propertyName] =propertyValue;
+                expandoDict[property.NameShort] = arrayReturnObject.Count>0?arrayReturnObject: (object)textInfo.ToTitleCase(propertyValue);
             else
-                expandoDict.Add(propertyName, propertyValue);
+                // expandoDict.Add(propertyName,propertyValue);
+                expandoDict.Add(property.NameShort,arrayReturnObject.Count>0?arrayReturnObject: (object)textInfo.ToTitleCase(propertyValue));
         }
         private void InsertProductCodeRecord(UnitOfWork uow, DataRow Row, short status, UploadConfigrationFileRequestDTO request, long fileUploadHistoryID, List<SheetAttributeMapping> propertyNameList, int userRoleId)
         {
@@ -706,7 +715,7 @@ namespace PSW.ITT.Service.Strategies
 
             foreach (var column in propertyNameList)
             {
-                AddProperty(obj, column.NameShort, Row[column.Index - 1].ToString() ?? "");
+                AddProperty(obj, column, Row[column.Index - 1].ToString() ?? "");
 
             }
             if (RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE)
