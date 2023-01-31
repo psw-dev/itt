@@ -707,7 +707,8 @@ namespace PSW.ITT.Service.Strategies
             var getFactor = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE ? (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE : RequestDTO.FileType).Where(x => x.CheckDuplicate == true).ToList();
             getFactor.RemoveAll(x => x.NameLong.Contains("HSCode"));
             getFactor.RemoveAll(x => x.NameLong.Contains("Product Code"));
-            string factor = Row[getFactor.FirstOrDefault().NameLong].ToString();
+            var factorObject = Command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetLOV(getFactor.FirstOrDefault().TableName,getFactor.FirstOrDefault().ColumnName).Find(x=>x.Item2.ToLower()==Row[getFactor.FirstOrDefault().NameLong].ToString().ToLower());
+            // string factor = Row[getFactor.FirstOrDefault().NameLong].ToString();
 
 
             dynamic obj = new ExpandoObject();
@@ -720,7 +721,7 @@ namespace PSW.ITT.Service.Strategies
             }
             if (RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE)
             {
-                var lpcoRegulationUpdate = uow.LPCORegulationRepository.Where(new { AgencyID = request.AgencyID, TradeTranTypeID = request.TradeTranTypeID, HSCode = hsCode, HSCodeExt = productCode, Factor = factor }).LastOrDefault();
+                var lpcoRegulationUpdate = uow.LPCORegulationRepository.Where(new { AgencyID = request.AgencyID, TradeTranTypeID = request.TradeTranTypeID, HSCode = hsCode, HSCodeExt = productCode, Factor = factorObject.Item2 }).LastOrDefault();
                 lpcoRegulationUpdate.EffectiveThruDt = DateTime.Now;
                 uow.LPCORegulationRepository.Update(lpcoRegulationUpdate);
             }
@@ -728,7 +729,7 @@ namespace PSW.ITT.Service.Strategies
             {
                 string expiryDate = Row["Expiry Date"].ToString();
 
-                var lpcoRegulationUpdate = uow.LPCORegulationRepository.Where(new { AgencyID = request.AgencyID, TradeTranTypeID = request.TradeTranTypeID, HSCode = hsCode, HSCodeExt = productCode, Factor = factor }).LastOrDefault();
+                var lpcoRegulationUpdate = uow.LPCORegulationRepository.Where(new { AgencyID = request.AgencyID, TradeTranTypeID = request.TradeTranTypeID, HSCode = hsCode, HSCodeExt = productCode, Factor = factorObject.Item2 }).LastOrDefault();
                 lpcoRegulationUpdate.EffectiveThruDt = String.IsNullOrEmpty(expiryDate) ? DateTime.Now : Convert.ToDateTime(expiryDate);
                 uow.LPCORegulationRepository.Update(lpcoRegulationUpdate);
             }
@@ -748,7 +749,8 @@ namespace PSW.ITT.Service.Strategies
                     EffectiveThruDt = productCodeAgencyLink.LastOrDefault().EffectiveThruDt,
                     HSCode = hsCode,
                     HSCodeExt = productCode,
-                    Factor = factor
+                    Factor = factorObject.Item2,
+                    FactorID=factorObject.Item1
                 };
                 var lpcoRegulationId = uow.LPCORegulationRepository.Add(lpcoRegulation);
             }
