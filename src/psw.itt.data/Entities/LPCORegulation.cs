@@ -24,6 +24,7 @@ namespace PSW.ITT.Data.Entities
         private int _updatedBy;
         private DateTime _updatedOn;
         private string _factor;
+        private int _factorID;
 
         #endregion
 
@@ -44,6 +45,7 @@ namespace PSW.ITT.Data.Entities
         public int UpdatedBy { get { return _updatedBy; } set { _updatedBy = value; } }
         public DateTime UpdatedOn { get { return _updatedOn; } set { _updatedOn = value; } }
         public string Factor { get { return _factor; } set { _factor = value; } }
+        public int FactorID { get { return _factorID; } set { _factorID = value; } }
 
 
         #endregion
@@ -72,6 +74,7 @@ namespace PSW.ITT.Data.Entities
                 {"UpdatedBy", UpdatedBy},
                 {"UpdatedOn", UpdatedOn},
                 {"Factor", Factor},
+                {"FactorID", FactorID},
             };
         }
         public override object GetInsertUpdateParams()
@@ -91,6 +94,7 @@ namespace PSW.ITT.Data.Entities
                 UpdatedBy,
                 UpdatedOn,
                 Factor,
+                FactorID,
             };
         }
 
