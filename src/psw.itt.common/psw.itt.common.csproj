@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputPath>..\..\build\psw.itt.common\</OutputPath>
+    <!-- Remove this if you multi-target and need the created net*, netcoreapp* subdirs -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\libcommon\src\psw.security\psw.security.csproj" />
+    <PackageReference Include="FluentValidation" Version="9.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\psw.itt.data\psw.itt.data.csproj" />
+  </ItemGroup>
+
+</Project>

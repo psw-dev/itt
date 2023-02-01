@@ -1,0 +1,12 @@
+[submodule "lib/libconsul"]
+	path = lib/libconsul
+	url = https://git.psw.gov.pk/dev/libconsul.git
+[submodule "lib/librabbitmq"]
+	path = lib/librabbitmq
+	url = https://git.psw.gov.pk/dev/librabbitmq.git
+[submodule "lib/libcommon"]
+	path = lib/libcommon
+	url = https://git.psw.gov.pk/dev/libcommon.git
+[submodule "lib/liblogs"]
+	path = lib/liblogs
+	url = https://git.psw.gov.pk/dev/liblogs.git
