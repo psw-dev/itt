@@ -2,7 +2,7 @@
 
 namespace PSW.ITT.Service.IServices
 {
-    public interface IITTOpenService : IService
+    public interface IITTIntegrationService : IService
     {
         // CommandReply invokeMethod(CommandRequest request);
     }

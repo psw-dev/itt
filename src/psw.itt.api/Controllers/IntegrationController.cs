@@ -13,12 +13,12 @@ namespace PSW.ITT.Api.Controllers
 {
     [Route("api/v1/itt/[controller]")]
     [ApiController]
-    public class UploadController : BaseController
+    public class IntegrationController : BaseController
     {
         #region Constructors
 
-        public UploadController(IITTService secureService, IITTOpenService openService, IUnitOfWork uow, ISHRDUnitOfWork shrdUow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor) : 
-        base(secureService, openService, uow, shrdUow, strategyFactory, cryptoAlgorithm, httpContextAccessor)
+        public IntegrationController(IITTService secureService, IITTIntegrationService integrationService, IUnitOfWork uow, ISHRDUnitOfWork shrdUow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor) : 
+        base(secureService, integrationService, uow, shrdUow, strategyFactory, cryptoAlgorithm, httpContextAccessor)
         {
             // OpenService = openService;
             // OpenService.UnitOfWork = uow;
