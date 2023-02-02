@@ -5,7 +5,7 @@ using PSW.ITT.Service.Strategies;
 
 namespace PSW.ITT.Service.Strategies
 {
-    public class OpenStrategyFactory : IStrategyFactory
+    public class IntegrationStrategyFactory : IStrategyFactory
     {
         #region Private Variables
 
@@ -19,7 +19,7 @@ namespace PSW.ITT.Service.Strategies
 
         #region Constructor
 
-        public OpenStrategyFactory(IUnitOfWork uow, ISHRDUnitOfWork shrdUow)
+        public IntegrationStrategyFactory(IUnitOfWork uow, ISHRDUnitOfWork shrdUow)
         {
             UnitOfWork = uow;
             SHRDUnitOfWork = shrdUow;
