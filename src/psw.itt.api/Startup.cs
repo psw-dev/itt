@@ -54,7 +54,7 @@ namespace PSW.ITT.Api
             
             services.AddTransient<IITTService, ITTService>();
             services.AddTransient<IStrategyFactory, StrategyFactory>();
-            services.AddTransient<IITTOpenService, ITTOpenService>();
+            services.AddTransient<IITTIntegrationService, ITTIntegrationService>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<ISHRDUnitOfWork, SHRDUnitOfWork>();
 

@@ -17,8 +17,8 @@ namespace PSW.ITT.Api.Controllers
     {
         #region Constructors
 
-        public ITTController(IITTService service, IITTOpenService openService, IUnitOfWork uow, ISHRDUnitOfWork shrdUow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor)
-        : base(service, openService, uow, shrdUow, strategyFactory, cryptoAlgorithm, httpContextAccessor)
+        public ITTController(IITTService service, IITTIntegrationService integrationService, IUnitOfWork uow, ISHRDUnitOfWork shrdUow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor)
+        : base(service, integrationService, uow, shrdUow, strategyFactory, cryptoAlgorithm, httpContextAccessor)
         {
         //     Service = service;
         //     Service.UnitOfWork = uow;

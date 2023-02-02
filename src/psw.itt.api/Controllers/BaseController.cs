@@ -23,13 +23,13 @@ namespace PSW.ITT.Api.Controllers
         #region Properties
 
         public IService Service { get; set; }
-        public IService OpenService { get; set; }
+        public IService IntegrationService { get; set; }
 
         #endregion
 
         #region Controller
 
-        public BaseController(IService service, IITTOpenService openService, IUnitOfWork uow, ISHRDUnitOfWork shrdUow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor)
+        public BaseController(IService service, IITTIntegrationService integrationService, IUnitOfWork uow, ISHRDUnitOfWork shrdUow, IStrategyFactory strategyFactory, ICryptoAlgorithm cryptoAlgorithm, IHttpContextAccessor httpContextAccessor)
         {
             // Dependency Injection of services
             Service = service;
@@ -38,11 +38,11 @@ namespace PSW.ITT.Api.Controllers
             Service.StrategyFactory = new StrategyFactory(uow, shrdUow);
             Service.CryptoAlgorithm = cryptoAlgorithm;
 
-            OpenService = openService;
-            OpenService.UnitOfWork = uow;
-            OpenService.SHRDUnitOfWork = shrdUow;
-            OpenService.StrategyFactory = new OpenStrategyFactory(uow, shrdUow);
-            OpenService.CryptoAlgorithm = cryptoAlgorithm;
+            IntegrationService = integrationService;
+            IntegrationService.UnitOfWork = uow;
+            IntegrationService.SHRDUnitOfWork = shrdUow;
+            IntegrationService.StrategyFactory = new IntegrationStrategyFactory(uow, shrdUow);
+            IntegrationService.CryptoAlgorithm = cryptoAlgorithm;
             try
             {
                 httpContextAccessor.HttpContext.Request.Headers.TryGetValue("LoggedInUserRoleID", out var userRoleId);
@@ -167,7 +167,7 @@ namespace PSW.ITT.Api.Controllers
 
                 // Assuming Request is Authenticated
                 // Calling Service 
-                CommandReply commandReply = OpenService.invokeMethod(
+                CommandReply commandReply = IntegrationService.invokeMethod(
                     new CommandRequest
                     {
                         methodId = apiRequest.methodId,
@@ -218,7 +218,7 @@ namespace PSW.ITT.Api.Controllers
                 JsonElement element = JsonDocument.Parse(json).RootElement;
 
                 // Calling Service 
-                CommandReply commandReply = OpenService.invokeMethod(
+                CommandReply commandReply = IntegrationService.invokeMethod(
                     new CommandRequest
                     {
                         methodId = methodId,
