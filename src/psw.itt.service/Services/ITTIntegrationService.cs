@@ -7,7 +7,7 @@ using PSW.ITT.Service.Strategies;
 
 namespace PSW.ITT.Service.Services
 {
-    public class ITTOpenService : IITTOpenService
+    public class ITTIntegrationService : IITTIntegrationService
     {
         #region properties 
         public IUnitOfWork UnitOfWork { get; set; }
@@ -20,7 +20,7 @@ namespace PSW.ITT.Service.Services
 
         #region constuctors & destroctors
         
-        public ITTOpenService()
+        public ITTIntegrationService()
         {
         }
 
