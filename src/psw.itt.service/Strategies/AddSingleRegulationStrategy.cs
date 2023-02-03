@@ -36,6 +36,8 @@ namespace PSW.ITT.Service.Strategies
                 duplicateCheckList.RemoveAll(x => x.NameLong.Contains("HSCode"));
                 duplicateCheckList.RemoveAll(x => x.NameLong.Contains("Product Code"));
                 var factor = RequestDTO.Data.GetProperty(duplicateCheckList[0].NameShort).ToString();
+                var factorObject = Command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetLOV(duplicateCheckList.FirstOrDefault().TableName,duplicateCheckList.FirstOrDefault().ColumnName).Find(x=>x.Item2.ToLower()==RequestDTO.Data.GetProperty(duplicateCheckList[0].NameShort).ToString().ToLower());
+            
                 json.productCode = productcode;
                 Command.UnitOfWork.BeginTransaction();
                 var regulation = new LPCORegulation();
@@ -49,7 +51,9 @@ namespace PSW.ITT.Service.Strategies
                 regulation.HSCode = json.hsCode;
                 regulation.HSCodeExt = json.productCode;
                 regulation.ProductCodeAgencyLinkID = RequestDTO.ProductCodeAgencyLinkID;
-                regulation.Factor = factor;
+                regulation.Factor = factorObject.Item2;
+                regulation.FactorID=factorObject.Item1;
+                // regulation.Factor = factor;
                 regulation.EffectiveFromDt = currentDateTime;
                 regulation.EffectiveThruDt = new DateTime(9999, 12, 30);
                 regulation.TradeTranTypeID = RequestDTO.TradeTranTypeID;

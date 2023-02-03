@@ -590,7 +590,7 @@ namespace PSW.ITT.Service.Strategies
                         TotalRecordsCount = dt.Rows.Count,
                         ProcessedRecordsCount = dt.Rows.Count,
                         DuplicateRecordsCount = 0,
-
+                        SheetType = RequestDTO.FileType,
                         TradeTranTypeID = RequestDTO.TradeTranTypeID,
                         IsCurrent = true,
                         DisputedRecordsCount = 0,
@@ -682,14 +682,23 @@ namespace PSW.ITT.Service.Strategies
             placeholders.Add("@ProcessedRecordsCount", fileUploadHistory.ProcessedRecordsCount.ToString());
             return placeholders;
         }
-        public static void AddProperty(ExpandoObject expando, string propertyName, object propertyValue)
+        public static void AddProperty(ExpandoObject expando, SheetAttributeMapping property, string propertyValue)
         {
             // ExpandoObject supports IDictionary so we can extend it like this
+                var arrayReturnObject = new List<string>();
+                TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            if(property.FieldControlTypeID==(int)FieldControlTypeEnum.MULTI_SELECT_DROPDOWN){
+                foreach(var i in  propertyValue.Split(',') ){
+                     arrayReturnObject.Add(textInfo.ToTitleCase(i));
+                }
+            }
             var expandoDict = expando as IDictionary<string, object>;
-            if (expandoDict.ContainsKey(propertyName))
-                expandoDict[propertyName] = propertyValue;
+            if (expandoDict.ContainsKey(property.NameShort))
+            //    expandoDict[propertyName] =propertyValue;
+                expandoDict[property.NameShort] = arrayReturnObject.Count>0?arrayReturnObject: (object)textInfo.ToTitleCase(propertyValue);
             else
-                expandoDict.Add(propertyName, propertyValue);
+                // expandoDict.Add(propertyName,propertyValue);
+                expandoDict.Add(property.NameShort,arrayReturnObject.Count>0?arrayReturnObject: (object)textInfo.ToTitleCase(propertyValue));
         }
         private void InsertProductCodeRecord(UnitOfWork uow, DataRow Row, short status, UploadConfigrationFileRequestDTO request, long fileUploadHistoryID, List<SheetAttributeMapping> propertyNameList, int userRoleId)
         {
@@ -698,7 +707,8 @@ namespace PSW.ITT.Service.Strategies
             var getFactor = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE ? (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE : RequestDTO.FileType).Where(x => x.CheckDuplicate == true).ToList();
             getFactor.RemoveAll(x => x.NameLong.Contains("HSCode"));
             getFactor.RemoveAll(x => x.NameLong.Contains("Product Code"));
-            string factor = Row[getFactor.FirstOrDefault().NameLong].ToString();
+            var factorObject = Command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetLOV(getFactor.FirstOrDefault().TableName,getFactor.FirstOrDefault().ColumnName).Find(x=>x.Item2.ToLower()==Row[getFactor.FirstOrDefault().NameLong].ToString().ToLower());
+            // string factor = Row[getFactor.FirstOrDefault().NameLong].ToString();
 
 
             dynamic obj = new ExpandoObject();
@@ -706,12 +716,12 @@ namespace PSW.ITT.Service.Strategies
 
             foreach (var column in propertyNameList)
             {
-                AddProperty(obj, column.NameShort, Row[column.Index - 1].ToString() ?? "");
+                AddProperty(obj, column, Row[column.Index - 1].ToString() ?? "");
 
             }
             if (RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE)
             {
-                var lpcoRegulationUpdate = uow.LPCORegulationRepository.Where(new { AgencyID = request.AgencyID, TradeTranTypeID = request.TradeTranTypeID, HSCode = hsCode, HSCodeExt = productCode, Factor = factor }).LastOrDefault();
+                var lpcoRegulationUpdate = uow.LPCORegulationRepository.Where(new { AgencyID = request.AgencyID, TradeTranTypeID = request.TradeTranTypeID, HSCode = hsCode, HSCodeExt = productCode, Factor = factorObject.Item2 }).LastOrDefault();
                 lpcoRegulationUpdate.EffectiveThruDt = DateTime.Now;
                 uow.LPCORegulationRepository.Update(lpcoRegulationUpdate);
             }
@@ -719,7 +729,7 @@ namespace PSW.ITT.Service.Strategies
             {
                 string expiryDate = Row["Expiry Date"].ToString();
 
-                var lpcoRegulationUpdate = uow.LPCORegulationRepository.Where(new { AgencyID = request.AgencyID, TradeTranTypeID = request.TradeTranTypeID, HSCode = hsCode, HSCodeExt = productCode, Factor = factor }).LastOrDefault();
+                var lpcoRegulationUpdate = uow.LPCORegulationRepository.Where(new { AgencyID = request.AgencyID, TradeTranTypeID = request.TradeTranTypeID, HSCode = hsCode, HSCodeExt = productCode, Factor = factorObject.Item2 }).LastOrDefault();
                 lpcoRegulationUpdate.EffectiveThruDt = String.IsNullOrEmpty(expiryDate) ? DateTime.Now : Convert.ToDateTime(expiryDate);
                 uow.LPCORegulationRepository.Update(lpcoRegulationUpdate);
             }
@@ -739,7 +749,8 @@ namespace PSW.ITT.Service.Strategies
                     EffectiveThruDt = productCodeAgencyLink.LastOrDefault().EffectiveThruDt,
                     HSCode = hsCode,
                     HSCodeExt = productCode,
-                    Factor = factor
+                    Factor = factorObject.Item2,
+                    FactorID=factorObject.Item1
                 };
                 var lpcoRegulationId = uow.LPCORegulationRepository.Add(lpcoRegulation);
             }
