@@ -128,6 +128,19 @@ namespace PSW.ITT.Data.Sql.Repositories
                     transaction: _transaction
                    ).ToList();
         }
+        public List<ProductDetail> GetPCTCodeList(int tradeTranTypeID, string hsCode)
+        {
+
+            var query = @"SELECT ID, PRODUCTCODE, Concat(ProductCode, Description) as  ItemDescription  
+                        FROM ProductCode WHERE GETDATE() BETWEEN EFFECTIVEFROMDT AND EFFECTIVETHRUDT 
+                        AND  tradeTranTypeId = @TRADETRANTYPEID
+                        AND  HsCode = @HSCODE ";
+
+            return _connection.Query<ProductDetail>(
+                    query, param: new { TRADETRANTYPEID = tradeTranTypeID, HSCODE = hsCode},
+                    transaction: _transaction
+                   ).ToList();
+        }
         #endregion
     }
 }
