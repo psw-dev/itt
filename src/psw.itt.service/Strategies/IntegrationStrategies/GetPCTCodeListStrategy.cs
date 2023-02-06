@@ -36,7 +36,7 @@ namespace PSW.ITT.Service.Strategies
             {
                 Log.Information("|{0}|{1}| Request DTO {@RequestDTO}", StrategyName, MethodID, RequestDTO);
         
-                var tempPctCodeList = Command.UnitOfWork.RegulatedHSCodeRepository.GetPCTCodeList(RequestDTO.HsCode, RequestDTO.TradeTranTypeID);
+                var tempPctCodeList = Command.UnitOfWork.ProductCodeEntityRepository.GetPCTCodeList(RequestDTO.TradeTranTypeID, RequestDTO.HsCode);
 
                 if (tempPctCodeList == null || tempPctCodeList.Count == 0)
                 {

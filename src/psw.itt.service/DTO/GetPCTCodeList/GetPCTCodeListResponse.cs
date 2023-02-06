@@ -12,14 +12,6 @@ namespace PSW.ITT.Service.DTO
         [JsonPropertyName("pctCodeList")]
         public List<ProductDetail> PctCodeList { get; set; }
     }
-    
-    public class ProductDetail
-    {
-        [JsonPropertyName("productCode")]
-        public string ProductCode { get; set; }
 
-        [JsonPropertyName("itemDescription")]
-        public string ItemDescription { get; set; }
-
-    }
+   
 }

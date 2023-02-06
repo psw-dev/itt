@@ -17,7 +17,7 @@ namespace PSW.ITT.Service.ModelValidators
             .WithMessage("'{PropertyName}' should not be empty.");
             
             
-            RuleFor(model => model.HSCode)
+            RuleFor(model => model.HsCode)
             .NotNull()
             .WithMessage("'{PropertyName}' should not be null.")
             .Must(isValidHscode).WithMessage("HS Code is not in correct format.");
