@@ -15,5 +15,6 @@ namespace PSW.ITT.Data.IRepositories
         List<ProductCodeEntity> GetOverlappingProductCode(string hscode, string ProductCode, DateTime effectiveFromDt, DateTime effectiveThruDt, short tradeType);
         List<ProductCodeAgencyLink> GetProductCodeValidity(string ProductCode, int AgencyID, short tradeType);
         List<GetProductExcelDataDTO> GetProductExcelData();
+        List<ProductDetail> GetPCTCodeList(int tradeTranTypeID, string hsCode);
     }
 }

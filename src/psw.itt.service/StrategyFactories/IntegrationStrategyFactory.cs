@@ -39,6 +39,7 @@ namespace PSW.ITT.Service.Strategies
             switch (request.methodId)
             {
                 case "220A": return new GetFactorLOVItemsStrategy(request);
+                case "220B": return new GetPCTCodeListStrategy(request);
                 default: break;
             }
 
