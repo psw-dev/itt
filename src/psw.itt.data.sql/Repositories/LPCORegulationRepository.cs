@@ -50,6 +50,7 @@ namespace PSW.ITT.Data.Sql.Repositories
                                 ,[HsCode]
                                 ,[HsCodeExt]
                                 ,[Factor]
+                                ,[FactorID]
                                 ,[ProductCodeAgencyLinkID]
                                 ,[TradeTranTypeID]
                                 ,[EffectiveThruDt]

@@ -141,6 +141,25 @@ namespace PSW.ITT.Data.Sql.Repositories
                     transaction: _transaction
                    ).ToList();
         }
+        public List<ProductCodeWithAgencyLink> GetActiveProductCodeDetail(int agencyID, short tradeTranTypeID, string hsCodeExt)
+        {
+            var query = new Query("ProductCode")
+              .Join("ProductCodeAgencyLink", "ProductCodeAgencyLink.ProductCodeID", "ProductCode.ID")
+              .WhereRaw("SoftDelete = 0 AND ProductCodeAgencyLink.AgencyID = " + agencyID)
+              .WhereRaw("ProductCode.HSCodeExt= " + hsCodeExt)
+              .WhereRaw("(ProductCode.TradeTranTypeID = " + tradeTranTypeID + " OR ProductCode.TradeTranTypeID = 4) " )
+              .WhereRaw("((ProductCodeAgencyLink.EffectiveFromDt <= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate())")
+              .OrWhereRaw("(ProductCodeAgencyLink.EffectiveFromDt >= GetDate() AND ProductCodAgencyLink.EffectiveThruDt >= GetDate()))")
+              .WhereRaw("ProductCodeAgencyLink.IsActive= 1 AND ProductCodeAgencyLink.SoftDelete = 0")
+              .Select("ProductCode.*")
+              .Select("ProductCodeAgencyLink.ID AS ProductCodeAgencyLinkID, ProductCodeAgencyLink.AgencyID, ProductCodeAgencyLink.EffectiveFromDt AS ProductCodeAgencyLinkEffectiveFromDt, ProductCodeAgencyLink.EffectiveThruDt AS ProductCodeAgencyLinkEffectiveThruDt, ProductCodeAgencyLink.RegulationEffectiveFromDt, ProductCodeAgencyLink.RegulationEffectiveThruDt, ProductCodeAgencyLink.IsActive, ProductCodeAgencyLink.SoftDelete");
+
+            var result = _sqlCompiler.Compile(query);
+            var sql = result.Sql;
+            var parameters = new DynamicParameters(result.NamedBindings);
+
+            return _connection.Query<ProductCodeEntity>(sql, param: parameters, transaction: _transaction).ToList();
+        }
         #endregion
     }
 }
