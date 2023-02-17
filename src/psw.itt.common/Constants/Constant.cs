@@ -178,4 +178,8 @@ namespace PSW.ITT.Common.Constants
 
         #endregion Public Fields
     }
+
+    public static class TradePurpose{
+        public const string ScreeningResearchTrial = "screening / research/ trial";
+    }
 }

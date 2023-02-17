@@ -7,6 +7,7 @@ using System.Security.Claims;
 using PSW.ITT.Service.ModelValidators;
 using System.Linq;
 using PSW.ITT.Data.Entities;
+using PSW.ITT.Common.Enums;
 using PSW.ITT.Common.Constants;
 using PSW.ITT.Data.DTO;
 using System.Text.Json;
@@ -158,15 +159,18 @@ namespace PSW.ITT.Service.Strategies
 
                 var tempDocumentaryRequirementList = new List<DocumentaryRequirement>();
                 
-                //var response =
-                 GetRequirements(regulationJson, documentClassificationCode);
+                var response = GetRequirements(regulationJson, documentClassificationCode);
 
-                // ResponseDTO = new GetPCTCodeListResponse
-                // {
-                //     Message = "Product codes exist for provided hscode.",
-                //     PctCodeList = tempPctCodeList
-                // };
-
+                if (!response.IsError)
+                {
+                    ResponseDTO = response.Model;
+                }
+                else
+                {
+                    Log.Error("|{0}|{1}| Error ", StrategyName, MethodID, response.Error.InternalError.Message);
+                    throw new ArgumentException(response.Error.InternalError.Message);
+                }
+               
                 Log.Information("|{0}|{1}| Response DTO : {@ResponseDTO}", StrategyName, MethodID, ResponseDTO);
 
                 // Send Command Reply 
@@ -181,10 +185,10 @@ namespace PSW.ITT.Service.Strategies
         #endregion 
 
         #region Methods
-        public void GetRequirements(JObject mongoRecord, string documentClassification)
+        public SingleResponseModel<GetDocumentRequirementResponse> GetRequirements(JObject mongoRecord, string documentClassification)
         {
             //SingleResponseModel<GetDocumentRequirementResponse>
-             og.Information("[{0}.{1}] Started", GetType().Name, MethodBase.GetCurrentMethod().Name);
+            //  og.Information("[{0}.{1}] Started", GetType().Name, MethodBase.GetCurrentMethod().Name);
             GetDocumentRequirementResponse tarpRequirments = new GetDocumentRequirementResponse();
             var response = new SingleResponseModel<GetDocumentRequirementResponse>();
 
@@ -201,16 +205,103 @@ namespace PSW.ITT.Service.Strategies
                 var ipDocOptional = new List<string>();
                 var ipDocOptionalTrimmed = new List<string>();
 
-                if (RequestDTO.AgencyId == "4")
+                if (Convert.ToInt32(RequestDTO.AgencyId) == (int)AgencyEnum.FSCRD)
                 {
-                    ipDocRequirements = mongoRecord["ENLISTMENT OF SEED VARIETY MANDATORY DOCUMENTARY REQURIMENTS"].ToString().Split('|').ToList();
-                    ipDocOptional = mongoRecord["ENLISTMENT OF SEED VARIETY OPTIONAL DOCUMENTARY REQURIMENTS"].ToString().Split('|').ToList();
+                    ipDocRequirements =getListValue(mongoRecord["prdMandatoryDocumentryRequirements"]);
+                    ipDocOptional =getListValue( mongoRecord["prdOptionalDocumentryRequirements"]);
 
                     //Financial Requirements
-                    FinancialRequirement.PlainAmount = mongoRecord["ENLISTMENT OF SEED VARIETY  FEES"].ToString();
-                    FinancialRequirement.Amount = Command.CryptoAlgorithm.Encrypt(mongoRecord["ENLISTMENT OF SEED VARIETY  FEES"].ToString());
+                    FinancialRequirement.PlainAmount = getValue(mongoRecord["prdFees"]);
+                    FinancialRequirement.Amount = Command.CryptoAlgorithm.Encrypt(getValue(mongoRecord["prdFees"]));
+                }
+                else{
+                    ipDocRequirements = getListValue(mongoRecord["ipMandatoryDocumentryRequirements"]);
+                    ipDocOptional = getListValue(mongoRecord["ipOptionalDocumentryRequirements"]);
+
+                    //Financial Requirements
+                    FinancialRequirement.PlainAmount = getValue(mongoRecord["ipFees"]);
+                    FinancialRequirement.Amount = Command.CryptoAlgorithm.Encrypt( getValue(mongoRecord["ipFees"]));
+                    FinancialRequirement.PlainAmmendmentFee =  getValue(mongoRecord["ipAmendmentFees"]);
+                    FinancialRequirement.AmmendmentFee = Command.CryptoAlgorithm.Encrypt( getValue(mongoRecord["ipAmendmentFees"]));
+                    FinancialRequirement.PlainExtensionFee =  getValue(mongoRecord["ipExtensionFees"]);
+                    FinancialRequirement.ExtensionFee = Command.CryptoAlgorithm.Encrypt( getValue(mongoRecord["ipExtensionFees"]));
+
+                    
+                    //ValidityTerm Requirements
+                    ValidityRequirement.UomName = "Month";
+                    ValidityRequirement.Quantity = Convert.ToInt32(getValue(mongoRecord["ipValidity"]));
+                    ValidityRequirement.ExtensionAllowed = getLowerValue(mongoRecord["ipExtensionAllowed"]) == "yes" ? true : false;
+                    ValidityRequirement.ExtensionPeriod = Convert.ToInt32(getValue(mongoRecord["ipExtensionPeriod"]));
+                    ValidityRequirement.ExtensionPeriodUnitName = "Months";     // Hard coded till we have a separate column in sheet for this
+
+                    //Quantity Allowed
+                    if (RequestDTO.FactorCodeValuePair.Values.FirstOrDefault().FactorValue.ToString().Trim().ToLower() == Common.Constants.TradePurpose.ScreeningResearchTrial)
+                    {
+                        tarpRequirments.AllowedQuantity = getValue(mongoRecord["ipQuantityAllowed"]);
+                    }
+                }
+                if (ipDocOptional != null && !ipDocOptional.Contains("NaN"))
+                {
+                    foreach (var lpco in ipDocOptional)
+                    {
+                        ipDocOptionalTrimmed.Add(lpco.Trim());
+                    }
+
+                    foreach (var doc in ipDocOptionalTrimmed)
+                    {
+                        var tempReq = new DocumentaryRequirement();
+
+                        tempReq.Name = doc + " For Import Permit"; //replace DPP with collectionName 
+                        tempReq.DocumentName = doc;
+                        tempReq.IsMandatory = false;
+                        tempReq.RequirementType = "Documentary";
+
+                        tempReq.DocumentTypeCode = Command.SHRDUnitOfWork.DocumentTypeRepository.Where(new { Name = doc }).FirstOrDefault()?.Code;
+                        tempReq.AttachedObjectFormatID = 1;
+
+                        tarpDocumentRequirements.Add(tempReq);
+                    }
+                }
+
+                if (ipDocRequirements != null && !ipDocRequirements.Contains("NaN"))
+                {
+                    foreach (var lpco in ipDocRequirements)
+                    {
+                        ipDocRequirementsTrimmed.Add(lpco.Trim());
+                    }
+
+                    foreach (var doc in ipDocRequirementsTrimmed)
+                    {
+                        var tempReq = new DocumentaryRequirement();
+
+                        tempReq.Name = doc + " For Import Permit"; //replace DPP with collectionName 
+                        tempReq.DocumentName = doc;
+                        tempReq.IsMandatory = true;
+                        tempReq.RequirementType = "Documentary";
+
+                        tempReq.DocumentTypeCode = Command.SHRDUnitOfWork.DocumentTypeRepository.Where(new { Name = doc }).FirstOrDefault()?.Code;
+                        tempReq.AttachedObjectFormatID = 1;
+
+                        tarpDocumentRequirements.Add(tempReq);
+                    }
                 }
             }
+            tarpRequirments.DocumentaryRequirementList = tarpDocumentRequirements;
+            tarpRequirments.FinancialRequirement = FinancialRequirement;
+            tarpRequirments.ValidityRequirement = ValidityRequirement;
+
+            response.Model = tarpRequirments;
+            Log.Information("Tarp Requirments Response: {@response}", response);
+            return response;
+        }
+        private string getValue(JToken str){
+            return str.Value<string>();
+        }
+        private string getLowerValue(JToken str){
+            return str.Value<string>().ToLower();
+        }
+        private List<string> getListValue(JToken str){
+            return str.ToObject<List<string>>();
         }
         public bool CheckIfLPCORequired(JObject mongoRecord, string requiredDocumentParentCode, out bool IsParenCodeValid)
         {
@@ -219,19 +310,19 @@ namespace PSW.ITT.Service.Strategies
             {
                 case DocumentClassificationCode.IMPORT_PERMIT:
                     IsParenCodeValid = true;
-                    return mongoRecord["ipRequired"].Value<string>().ToLower() == "yes";
+                    return getLowerValue(mongoRecord["ipRequired"]) == "yes";
 
                 case DocumentClassificationCode.RELEASE_ORDER:
                     IsParenCodeValid = true;
-                    return mongoRecord["roRequired"].Value<string>().ToLower() == "yes";
+                    return getLowerValue(mongoRecord["roRequired"]) == "yes";
 
                 case DocumentClassificationCode.EXPORT_CERTIFICATE:
                     IsParenCodeValid = true;
-                   return mongoRecord["ecRequired"].Value<string>().ToLower() == "yes";
+                   return getLowerValue(mongoRecord["ecRequired"]) == "yes";
 
                 case DocumentClassificationCode.PRODUCT_REGISTRATION:
                 IsParenCodeValid = true;
-                return mongoRecord["isProductRegistrationRequired"].ToString().ToLower() == "yes";
+                return  getLowerValue(mongoRecord["isProductRegistrationRequired"]) == "yes";
 
 
                 default:
