@@ -72,6 +72,7 @@ namespace PSW.ITT.Service.Services
                 // request._mapper = this._mapper;
                 //check if UnitOfWork is set otherwise set the service's UoW as default
                 request.UnitOfWork = request.UnitOfWork ?? this.UnitOfWork;
+                request.SHRDUnitOfWork = request.SHRDUnitOfWork ?? this.SHRDUnitOfWork;
                 // Check if CryptoAlgorith is set otherwise set the service's Crypto Algorithm as default
                 request.CryptoAlgorithm = request.CryptoAlgorithm ?? this.CryptoAlgorithm;
                 //create strategy based on request. it can be dynamic

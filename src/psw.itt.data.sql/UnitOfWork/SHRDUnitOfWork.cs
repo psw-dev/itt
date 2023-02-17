@@ -21,7 +21,23 @@ namespace PSW.ITT.Data.Sql.UnitOfWork
         // private bool _disposed;
 
         // Repositories 
-
+        private IAgencyRepository _agencyRepository;
+        private IAppConfigRepository _appConfigRepository;
+        private IAttachedObjectFormatRepository _attachedObjectFormatRepository;
+        private IAttachmentStatusRepository _attachmentStatusRepository;
+        private ICityRepository _cityRepository;
+        private ICountryRepository _countryRepository;
+        private ICountrySubEntityRepository _countrySubEntityRepository;
+        private ICurrencyRepository _currencyRepository;
+        private IDialingCodeRepository _dialingCodeRepository;
+        private IDocumentTypeRepository _documentTypeRepository;
+        private IGenderRepository _genderRepository;
+        private IMinistryRepository _ministryRepository;
+        private IPortRepository _portRepository;
+        private ITradePurposeRepository _tradePurposeRepository;
+        private ITradeTranTypeRepository _tradeTranTypeRepository;
+        private IUoMRepository _uoMRepository;
+        private IZoneRepository _zoneRepository;
 		// private IAttributeValidationMappingRepository _attributeValidationMappingRepository;
         // private IProductCodeAgencyLinkRepository _productCodeAgencyLinkRepository;
         // private IProductCodeChapterRepository _productCodeChapterRepository;
@@ -68,6 +84,23 @@ namespace PSW.ITT.Data.Sql.UnitOfWork
 
 
         #region Public Properties
+        public IAgencyRepository AgencyRepository => _agencyRepository ?? (_agencyRepository = new AgencyRepository(_connection));
+        public IAppConfigRepository AppConfigRepository => _appConfigRepository ?? (_appConfigRepository = new AppConfigRepository(_connection));
+        public IAttachedObjectFormatRepository AttachedObjectFormatRepository => _attachedObjectFormatRepository ?? (_attachedObjectFormatRepository = new AttachedObjectFormatRepository(_connection));
+        public IAttachmentStatusRepository AttachmentStatusRepository => _attachmentStatusRepository ?? (_attachmentStatusRepository = new AttachmentStatusRepository(_connection));
+        public ICityRepository CityRepository => _cityRepository ?? (_cityRepository = new CityRepository(_connection));
+        public ICountryRepository CountryRepository => _countryRepository ?? (_countryRepository = new CountryRepository(_connection));
+        public ICountrySubEntityRepository CountrySubEntityRepository => _countrySubEntityRepository ?? (_countrySubEntityRepository = new CountrySubEntityRepository(_connection));
+        public ICurrencyRepository CurrencyRepository => _currencyRepository ?? (_currencyRepository = new CurrencyRepository(_connection));
+        public IDialingCodeRepository DialingCodeRepository => _dialingCodeRepository ?? (_dialingCodeRepository = new DialingCodeRepository(_connection));
+        public IDocumentTypeRepository DocumentTypeRepository => _documentTypeRepository ?? (_documentTypeRepository = new DocumentTypeRepository(_connection));
+        public IGenderRepository GenderRepository => _genderRepository ?? (_genderRepository = new GenderRepository(_connection));
+        public IMinistryRepository MinistryRepository => _ministryRepository ?? (_ministryRepository = new MinistryRepository(_connection));
+        public IPortRepository PortRepository => _portRepository ?? (_portRepository = new PortRepository(_connection));
+        public ITradePurposeRepository TradePurposeRepository => _tradePurposeRepository ?? (_tradePurposeRepository = new TradePurposeRepository(_connection));
+        public ITradeTranTypeRepository TradeTranTypeRepository => _tradeTranTypeRepository ?? (_tradeTranTypeRepository = new TradeTranTypeRepository(_connection));
+        public IUoMRepository UoMRepository => _uoMRepository ?? (_uoMRepository = new UoMRepository(_connection));
+        public IZoneRepository ZoneRepository => _zoneRepository ?? (_zoneRepository = new ZoneRepository(_connection));
         // public IAttributeValidationMappingRepository AttributeValidationMappingRepository => _attributeValidationMappingRepository ?? (_attributeValidationMappingRepository = new AttributeValidationMappingRepository(_connection));
 		// public IProductCodeAgencyLinkRepository ProductCodeAgencyLinkRepository => _productCodeAgencyLinkRepository ?? (_productCodeAgencyLinkRepository = new ProductCodeAgencyLinkRepository(_connection));
         // public IProductCodeChapterRepository ProductCodeChapterRepository => _productCodeChapterRepository ?? (_productCodeChapterRepository = new ProductCodeChapterRepository(_connection));

@@ -27,35 +27,35 @@ namespace PSW.ITT.Service.ModelValidators
             .WithName("tradeTranTypeID")
             .WithMessage("'{PropertyName}' should not be empty.");
 
-            RuleFor(c => c.Quantity)
-            .NotEmpty()
-            .NotNull()
-            .WithName("Quantity")
-            .WithMessage("'{PropertyName}' should not be empty.")
-            .PrecisionScale(9, 2, false)
-            .WithMessage("'{PropertyName}' should be two decimal places.");
+            // RuleFor(c => c.Quantity)
+            // .NotEmpty()
+            // .NotNull()
+            // .WithName("Quantity")
+            // .WithMessage("'{PropertyName}' should not be empty.")
+            // .PrecisionScale(9, 2, false)
+            // .WithMessage("'{PropertyName}' should be two decimal places.");
             
-            RuleFor(c => c.AgencyQuantity)
-            .NotEmpty()
-            .NotNull()
-            .WithName("AgencyQuantity")
-            .WithMessage("'{PropertyName}' should not be empty.")
-            .PrecisionScale(9, 2, false)
-            .WithMessage("'{PropertyName}' should be two decimal places.");
+            // RuleFor(c => c.AgencyQuantity)
+            // .NotEmpty()
+            // .NotNull()
+            // .WithName("AgencyQuantity")
+            // .WithMessage("'{PropertyName}' should not be empty.")
+            // .PrecisionScale(9, 2, false)
+            // .WithMessage("'{PropertyName}' should be two decimal places.");
             
             
-            RuleFor(model => model.IsFinancialRequirement)
-            .NotNull()
-            .NotEmpty()
-            .WithMessage("'{PropertyName}' should not be null.");
+            // RuleFor(model => model.IsFinancialRequirement)
+            // .NotNull()
+            // .NotEmpty()
+            // .WithMessage("'{PropertyName}' should not be null.");
             
-            RuleFor(c => c.ImportExportValue)
-            .NotEmpty()
-            .NotNull()
-            .WithName("importExportValue")
-            .WithMessage("'{PropertyName}' should not be empty.")
-            .PrecisionScale(9, 2, false)
-            .WithMessage("'{PropertyName}' should be two decimal places.");
+            // RuleFor(c => c.ImportExportValue)
+            // .NotEmpty()
+            // .NotNull()
+            // .WithName("importExportValue")
+            // .WithMessage("'{PropertyName}' should not be empty.")
+            // .PrecisionScale(9, 2, false)
+            // .WithMessage("'{PropertyName}' should be two decimal places.");
             
              RuleForEach(model => model.FactorCodeValuePair)
             .NotNull()

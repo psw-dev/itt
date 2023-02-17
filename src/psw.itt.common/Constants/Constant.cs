@@ -57,9 +57,11 @@ namespace PSW.ITT.Common.Constants
         public const string EXPORT_CERTIFICATE = "EC";
         public const string RELEASE_ORDER = "RO";
         public const string IMPORT_PERMIT = "IMP";
-        public const string IMPORT_PERMIT_AMENDMENT = "IPA";
         public const string SINGLE_DECLARATION = "SD";
-        public const string FSCRD_SEED_ENLISTMENT_DOCUMENT_CLASSIFICATION_CODE = "PRD";
+        public const string PRODUCT_REGISTRATION = "PRD";
+        public const string PREMISE_REGISTRATION = "PRM";
+        public const string BUSINESS_REGISTRATION = "BSS";
+        
     }
 
     public static class FileContentTypes
@@ -161,5 +163,19 @@ namespace PSW.ITT.Common.Constants
     SUBMIT = 2,
     VALIDATE = 3
 }
+ public static class ErrorCategories
+    {
+        #region Public Fields
 
+        public const string Authorization = "Authorization";
+        public const string BadRequest = "BadRequest";
+        public const string BusinessRule = "BusinessRule";
+        public const string Identification = "Identification";
+        public const string InternalServer = "InternalServer";
+        public const string NotFound = "NotFound";
+        public const string ServiceUnavailable = "ServiceUnavailable";
+        public const string Validation = "Validation";
+
+        #endregion Public Fields
+    }
 }

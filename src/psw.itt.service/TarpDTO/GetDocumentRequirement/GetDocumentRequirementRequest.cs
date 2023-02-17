@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using System.Collections.Generic;
 
-namespace PSW.ITT.Service.DTO
+namespace PSW.ITT.Service.TarpDTO
 {
     
     public class GetDocumentRequirementRequest
@@ -25,7 +25,20 @@ namespace PSW.ITT.Service.DTO
         [JsonPropertyName("tradeTranTypeId")]
         public int TradeTranTypeID { get; set; }
 
-        
+        [JsonPropertyName("Quantity")]
+        public decimal Quantity { get; set; }
+
+        [JsonPropertyName("AgencyQuantity")]
+        public decimal AgencyQuantity { get; set; }
+
+        [JsonPropertyName("isFinancialRequirement")]
+        public bool IsFinancialRequirement { get; set; }
+
+        [JsonPropertyName("importExportValue")]
+        public decimal ImportExportValue { get; set; }
+
+        [JsonPropertyName("destinationCountryCode")]
+        public string DestinationCountryCode { get; set; }
     }
 
     public class FactorData

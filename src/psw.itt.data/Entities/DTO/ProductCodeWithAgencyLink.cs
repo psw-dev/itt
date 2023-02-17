@@ -21,14 +21,12 @@ namespace PSW.ITT.Data.DTO
         public DateTime CreatedOn { get; set; }
         public int UpdatedBy { get; set; }
         public DateTime UpdatedOn { get; set; }
-        public bool? IsActive { get; set; }
-        public bool? Regulated { get; set; }
 
         //ProductCodeAgencyLink Table
         public long ProductCodeAgencyLinkID  { get; set; }
         public short AgencyID  { get; set; }
-        public DateTime ProductCodeAgencyLinkEffectiveFromDt  { get; set; }
-        public DateTime ProductCodeAgencyLinkEffectiveThruDt  { get; set; }
+        public DateTime PalEffectiveFromDt  { get; set; }
+        public DateTime PalEffectiveThruDt  { get; set; }
         public DateTime RegulationEffectiveFromDt  { get; set; }
         public DateTime RegulationEffectiveThruDt  { get; set; }
         public bool IsActive  { get; set; }
