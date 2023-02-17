@@ -401,6 +401,112 @@ namespace PSW.ITT.Service.Strategies
                     FinancialRequirement.PlainAmount = getValue(mongoRecord["roFees"]);
                     FinancialRequirement.Amount = Command.CryptoAlgorithm.Encrypt(getValue(mongoRecord["roFees"]));
                 }
+                if (roDocOptional != null && !roDocOptional.Contains("NaN"))
+                {
+                    foreach (var lpco in roDocOptional)
+                    {
+                        roDocOptionalTrimmed.Add(lpco.Trim());
+                    }
+
+                    foreach (var doc in roDocOptionalTrimmed)
+                    {
+                        var tempReq = new DocumentaryRequirement();
+
+                        tempReq.Name = doc + " For " + "Release Order"; //replace DPP with collectionName 
+                        tempReq.DocumentName = doc;
+                        tempReq.IsMandatory = false;
+                        tempReq.RequirementType = "Documentary";
+
+                        tempReq.DocumentTypeCode = Command.SHRDUnitOfWork.DocumentTypeRepository.Where(new { Name = doc }).FirstOrDefault()?.Code;
+                        tempReq.AttachedObjectFormatID = 1;
+
+                        tarpDocumentRequirements.Add(tempReq);
+                    }
+                }
+
+                if (roDocRequirements != null && !roDocRequirements.Contains("NaN"))
+                {
+                    foreach (var lpco in roDocRequirements)
+                    {
+                        var removespaces = lpco.Trim();
+                        roDocRequirementsTrimmed.Add(removespaces.TrimEnd('\n'));
+                    }
+
+                    // roDocRequirementsTrimmed.Remove("Application on DPP prescribed form 20 [Rule 44(1) of PQR 2019]");
+                    // roDocRequirementsTrimmed.Remove("Fee Challan");
+
+                    //DocumentaryRequirements
+                    foreach (var doc in roDocRequirementsTrimmed)
+                    {
+                        var tempReq = new DocumentaryRequirement();
+
+                        tempReq.Name = doc + " For " + "Release Order"; //replace DPP with collectionName 
+                        tempReq.DocumentName = doc;
+                        tempReq.IsMandatory = true;
+                        tempReq.RequirementType = "Documentary";
+
+                        tempReq.DocumentTypeCode = Command.SHRDUnitOfWork.DocumentTypeRepository.Where(new { Name = doc }).FirstOrDefault()?.Code;
+                        tempReq.AttachedObjectFormatID = 1;
+
+                        tarpDocumentRequirements.Add(tempReq);
+                    }
+                }
+
+                if (ipReq == true)
+                {
+                    var tempReq = new DocumentaryRequirement();
+                    var ipDocRequired = Command.SHRDUnitOfWork.DocumentTypeRepository.Where(new { AgencyID = RequestDTO.AgencyId, documentClassificationCode = documentClassification, AttachedObjectFormatID = 2, AltCode = "C" }).FirstOrDefault();
+
+                    tempReq.Name = ipDocRequired.Name + " For " + "Release Order"; //replace DPP with collectionName 
+                    tempReq.DocumentName = ipDocRequired.Name;
+                    tempReq.IsMandatory = true;
+                    tempReq.RequirementType = "Documentary";
+                    tempReq.DocumentTypeCode = ipDocRequired.Code;
+                    tempReq.AttachedObjectFormatID = ipDocRequired.AttachedObjectFormatID;
+
+                    tarpDocumentRequirements.Add(tempReq);
+
+                }
+
+                if (psiReq)
+                {
+                    var tempReq = new DocumentaryRequirement();
+
+                    var psiDocRequired = Command.SHRDUnitOfWork.DocumentTypeRepository.Where(new
+                    {
+                        Code = "D58" // TODO : Remove hardcoded values
+                    }).FirstOrDefault();
+
+                    tempReq.Name = psiDocRequired.Name + " For " + "Release Order"; //replace DPP with collectionName 
+                    tempReq.DocumentName = psiDocRequired.Name;
+                    tempReq.IsMandatory = psiReqMand;
+                    tempReq.RequirementType = "Documentary";
+                    tempReq.DocumentTypeCode = psiDocRequired.Code;
+                    tempReq.AttachedObjectFormatID = psiDocRequired.AttachedObjectFormatID;
+
+                    tarpDocumentRequirements.Add(tempReq);
+
+                }
+
+                if (psiRegReq)
+                {
+                    var tempReq = new DocumentaryRequirement();
+                    var documentCode = GetDocCodeByScheme(psiRegScheme);
+
+                    var psiRegRequired = Command.SHRDUnitOfWork.DocumentTypeRepository.Where(new
+                    {
+                        Code = documentCode
+                    }).FirstOrDefault();
+
+                    tempReq.Name = psiRegRequired.Name + " For " + "Release Order"; //replace DPP with collectionName //
+                    tempReq.DocumentName = psiRegRequired.Name;
+                    tempReq.IsMandatory = psiRegReqMand;
+                    tempReq.RequirementType = "Documentary";
+                    tempReq.DocumentTypeCode = psiRegRequired.Code;
+                    tempReq.AttachedObjectFormatID = psiRegRequired.AttachedObjectFormatID;
+
+                    tarpDocumentRequirements.Add(tempReq);
+                }
             }
 
             tarpRequirments.DocumentaryRequirementList = tarpDocumentRequirements;
@@ -410,6 +516,23 @@ namespace PSW.ITT.Service.Strategies
             response.Model = tarpRequirments;
             Log.Information("Tarp Requirments Response: {@response}", response);
             return response;
+        }
+
+        private string GetDocCodeByScheme(string PSIRegScheme)
+        {
+            var docCode = string.Empty;
+
+            switch(PSIRegScheme)
+            {
+                case PSIRegisterationScheme.Form1:
+                    return PSIRegisterationScheme.Form1_Certificate_DocType;
+                case PSIRegisterationScheme.Form16:
+                    return PSIRegisterationScheme.Form16_Certificate_DocType;
+                case PSIRegisterationScheme.Form17:
+                    return PSIRegisterationScheme.Form17_Certificate_DocType;
+                default:
+                    throw new ArgumentException($"PSI registeration scheme [\"{PSIRegScheme}\"] not recognized");
+            }
         }
         private string getValue(JToken str){
             return str.Value<string>();
