@@ -16,5 +16,6 @@ namespace PSW.ITT.Data.IRepositories
         List<ProductCodeAgencyLink> GetProductCodeValidity(string ProductCode, int AgencyID, short tradeType);
         List<GetProductExcelDataDTO> GetProductExcelData();
         List<ProductDetail> GetPCTCodeList(int tradeTranTypeID, string hsCode);
+        ProductCodeWithAgencyLink GetActiveProductCodeDetail(int agencyID, short tradeTranTypeID, string hsCodeExt);
     }
 }
