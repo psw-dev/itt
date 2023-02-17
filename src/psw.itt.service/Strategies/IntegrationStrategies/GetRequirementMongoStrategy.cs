@@ -379,29 +379,28 @@ namespace PSW.ITT.Service.Strategies
                         FinancialRequirement.AdditionalAmountOn = calculatedFee.AdditionalAmountOn;
                     }
                 }
-                //  else
-                // {
-                //     roDocRequirements = mongoRecord["RO  DOCUMENTARY REQUIREMENTS"].ToString().Split('|').ToList();
-                //     roDocOptional = mongoRecord["RO  DOCUMENTARY REQUIREMENTS(Optional)"].ToString().Split('|').ToList();
-                //     ipReq = mongoRecord["IP REQUIRED"].ToString().ToLower() == "yes";
-                //     docClassificCode = "IMP";
+                 else
+                {
+                    roDocRequirements = getListValue(mongoRecord["roMandatoryDocumentryRequirements"]);
+                    roDocOptional = getListValue(mongoRecord["roOptionalDocumentryRequirements"]);
+                    ipReq = getLowerValue(mongoRecord["ipRequired"]) == "yes";
 
-                //     // Check if HS Code is PSI related.  
-                //     var IsPSi = mongoRecord["Is PSI"].ToString().ToLower() == "yes";
-                //     if (IsPSi)
-                //     {
-                //         psiReq = mongoRecord["PSI REQUIRED (YES/NO)"].ToString().ToLower() == "yes";
-                //         psiRegReq = mongoRecord["REGISTRATION REQUIRED (YES/NO)"].ToString().ToLower() == "yes";
-                //         psiReqMand = mongoRecord["PSI REQUIRED MANDATORY (YES/NO)"].ToString().ToLower() == "yes";
-                //         psiRegReqMand = mongoRecord["REGISTRATION REQUIRED MANDATORY (YES/NO)"].ToString().ToLower() == "yes";
-                //         psiRegScheme = mongoRecord["REGISTRATION SCHEME DESCRIPTION"].ToString().ToLower();
-                //     }
+                    // Check if HS Code is PSI related.  
+                    var IsPSi = getLowerValue(mongoRecord["isPsi"]) == "yes";
+                    if (IsPSi)
+                    {
+                        psiReq = getLowerValue(mongoRecord["psiRequired"]) == "yes";
+                        psiRegReq = getLowerValue(mongoRecord["registationRequired"]) == "yes";
+                        psiReqMand = getLowerValue(mongoRecord["psiRequiredMandatory"]) == "yes";
+                        psiRegReqMand = getLowerValue(mongoRecord["registationRequiredMandatory"]) == "yes";
+                        psiRegScheme = getLowerValue(mongoRecord["registationSchemeDescription"]);
+                    }
 
 
-                //     //Financial Requirements
-                //     FinancialRequirement.PlainAmount = mongoRecord["RO FEES"].ToString();
-                //     FinancialRequirement.Amount = Command.CryptoAlgorithm.Encrypt(mongoRecord["RO FEES"].ToString());
-                // }
+                    //Financial Requirements
+                    FinancialRequirement.PlainAmount = getValue(mongoRecord["roFees"]);
+                    FinancialRequirement.Amount = Command.CryptoAlgorithm.Encrypt(getValue(mongoRecord["roFees"]));
+                }
             }
 
             tarpRequirments.DocumentaryRequirementList = tarpDocumentRequirements;
