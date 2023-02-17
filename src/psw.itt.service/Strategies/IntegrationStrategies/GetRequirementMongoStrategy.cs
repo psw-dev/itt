@@ -171,7 +171,10 @@ namespace PSW.ITT.Service.Strategies
                     Log.Error("|{0}|{1}| Error ", StrategyName, MethodID, response.Error.InternalError.Message);
                     throw new ArgumentException(response.Error.InternalError.Message);
                 }
+                ResponseDTO.FormNumber = GetFormNumber(regulationJson, documentClassificationCode);
                
+                Log.Information("|{0}|{1}| Documentary Requirements {@tempDocumentaryRequirementList}", StrategyName, MethodID, tempDocumentaryRequirementList);
+
                 Log.Information("|{0}|{1}| Response DTO : {@ResponseDTO}", StrategyName, MethodID, ResponseDTO);
 
                 // Send Command Reply 
@@ -186,6 +189,28 @@ namespace PSW.ITT.Service.Strategies
         #endregion 
 
         #region Methods
+         public string GetFormNumber(JObject mongoRecord, string requiredDocumentParentCode)
+        {
+            switch (requiredDocumentParentCode)
+            {
+                case DocumentClassificationCode.IMPORT_PERMIT:
+                    return getValue(mongoRecord["ipCertificateFormNumber"]);
+
+                case DocumentClassificationCode.RELEASE_ORDER:
+                    return getValue(mongoRecord["roCertificateFormNumber"]);
+
+                case DocumentClassificationCode.EXPORT_CERTIFICATE:
+                    return getValue(mongoRecord["ecCertificateFormNumber"]);
+
+                case DocumentClassificationCode.PRODUCT_REGISTRATION:
+                    return getValue(mongoRecord["prdCertificateFormNumber"]);
+
+                case DocumentClassificationCode.PREMISE_REGISTRATION:
+                    return getValue(mongoRecord["prmCertificateFormNumber"]);
+                
+            }
+            return "";
+        }
         public SingleResponseModel<GetDocumentRequirementResponse> GetRequirements(JObject mongoRecord, string documentClassification, LPCORegulation lpcoRegulation )
         {
             //SingleResponseModel<GetDocumentRequirementResponse>
