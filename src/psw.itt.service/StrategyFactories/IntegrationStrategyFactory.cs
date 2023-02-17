@@ -41,6 +41,7 @@ namespace PSW.ITT.Service.Strategies
                 case "220A": return new GetFactorLOVItemsStrategy(request);
                 case "220B": return new GetPCTCodeListStrategy(request);
                 case "220C": return new GetRequirementMongoStrategy(request);
+                case "220D": return new GetAgencyListStrategy(request);
                 default: break;
             }
 
