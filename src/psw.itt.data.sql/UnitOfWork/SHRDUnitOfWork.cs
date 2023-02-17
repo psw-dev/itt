@@ -38,6 +38,7 @@ namespace PSW.ITT.Data.Sql.UnitOfWork
         private ITradeTranTypeRepository _tradeTranTypeRepository;
         private IUoMRepository _uoMRepository;
         private IZoneRepository _zoneRepository;
+        private IRef_UnitsRepository _ref_UnitsRepository;
 		// private IAttributeValidationMappingRepository _attributeValidationMappingRepository;
         // private IProductCodeAgencyLinkRepository _productCodeAgencyLinkRepository;
         // private IProductCodeChapterRepository _productCodeChapterRepository;
@@ -101,6 +102,7 @@ namespace PSW.ITT.Data.Sql.UnitOfWork
         public ITradeTranTypeRepository TradeTranTypeRepository => _tradeTranTypeRepository ?? (_tradeTranTypeRepository = new TradeTranTypeRepository(_connection));
         public IUoMRepository UoMRepository => _uoMRepository ?? (_uoMRepository = new UoMRepository(_connection));
         public IZoneRepository ZoneRepository => _zoneRepository ?? (_zoneRepository = new ZoneRepository(_connection));
+        public IRef_UnitsRepository Ref_UnitsRepository => _ref_UnitsRepository ?? (_ref_UnitsRepository = new Ref_UnitsRepository(_connection));
         // public IAttributeValidationMappingRepository AttributeValidationMappingRepository => _attributeValidationMappingRepository ?? (_attributeValidationMappingRepository = new AttributeValidationMappingRepository(_connection));
 		// public IProductCodeAgencyLinkRepository ProductCodeAgencyLinkRepository => _productCodeAgencyLinkRepository ?? (_productCodeAgencyLinkRepository = new ProductCodeAgencyLinkRepository(_connection));
         // public IProductCodeChapterRepository ProductCodeChapterRepository => _productCodeChapterRepository ?? (_productCodeChapterRepository = new ProductCodeChapterRepository(_connection));

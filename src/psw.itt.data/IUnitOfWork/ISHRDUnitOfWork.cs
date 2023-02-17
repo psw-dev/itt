@@ -25,6 +25,7 @@ namespace PSW.ITT.Data
         ITradeTranTypeRepository TradeTranTypeRepository { get; }
         IUoMRepository UoMRepository { get; }
         IZoneRepository ZoneRepository { get; }
+        IRef_UnitsRepository Ref_UnitsRepository { get; }
 
 		// IAttributeValidationMappingRepository AttributeValidationMappingRepository { get; }
         // IProductCodeAgencyLinkRepository ProductCodeAgencyLinkRepository { get; }

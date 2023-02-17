@@ -14,6 +14,7 @@ using System.Text.Json;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PSW.ITT.Common.Model;
+using PSW.ITT.service;
 
 namespace PSW.ITT.Service.Strategies
 {
@@ -159,7 +160,7 @@ namespace PSW.ITT.Service.Strategies
 
                 var tempDocumentaryRequirementList = new List<DocumentaryRequirement>();
                 
-                var response = GetRequirements(regulationJson, documentClassificationCode);
+                var response = GetRequirements(regulationJson, documentClassificationCode, regulation);
 
                 if (!response.IsError)
                 {
@@ -185,7 +186,7 @@ namespace PSW.ITT.Service.Strategies
         #endregion 
 
         #region Methods
-        public SingleResponseModel<GetDocumentRequirementResponse> GetRequirements(JObject mongoRecord, string documentClassification)
+        public SingleResponseModel<GetDocumentRequirementResponse> GetRequirements(JObject mongoRecord, string documentClassification, LPCORegulation lpcoRegulation )
         {
             //SingleResponseModel<GetDocumentRequirementResponse>
             //  og.Information("[{0}.{1}] Started", GetType().Name, MethodBase.GetCurrentMethod().Name);
@@ -286,6 +287,123 @@ namespace PSW.ITT.Service.Strategies
                     }
                 }
             }
+            else if (documentClassification == DocumentClassificationCode.RELEASE_ORDER)
+            {
+                var roDocRequirements = new List<string>();
+                var roDocRequirementsTrimmed = new List<string>();
+                var roDocOptional = new List<string>();
+                var roDocOptionalTrimmed = new List<string>();
+                var ipReq = false;
+                var psiReq = false;
+                var psiRegReq = false;
+                var psiReqMand = false;
+                var psiRegReqMand = false;
+                var psiRegScheme = string.Empty;
+                var docClassificCode = string.Empty;
+
+                if (Convert.ToInt32(RequestDTO.AgencyId) == (int)AgencyEnum.AQD)
+                {
+                    roDocRequirements = getListValue(mongoRecord["roMandatoryDocumentryRequirements"]);
+                    roDocOptional = getListValue(mongoRecord["roOptionalDocumentryRequirements"]);
+                    // ipReq = mongoRecord["ENLISTMENT OF SEED VARIETY REQUIRED (Yes/No)"].ToString().ToLower() == "yes";
+                    //  docClassificCode = "PRD";
+
+                    if (RequestDTO.IsFinancialRequirement)
+                    {
+                        AQDECFeeCalculateRequestDTO calculateECFeeRequest = new AQDECFeeCalculateRequestDTO();
+                        calculateECFeeRequest.AgencyId = Convert.ToInt32(RequestDTO.AgencyId);
+                        calculateECFeeRequest.HsCodeExt = RequestDTO.HsCode;
+                        calculateECFeeRequest.Quantity = Convert.ToInt32(RequestDTO.Quantity);
+                        calculateECFeeRequest.TradeTranTypeID = RequestDTO.TradeTranTypeID;
+                        FactorData factorData = RequestDTO.FactorCodeValuePair["UNIT"];
+                        if (factorData != null && !string.IsNullOrEmpty(factorData.FactorValueID))
+                        {
+                            calculateECFeeRequest.AgencyUOMId = Convert.ToInt32(factorData.FactorValueID);
+                        }
+
+                        AQDECFeeCalculation feeCalculation = new AQDECFeeCalculation(Command.UnitOfWork, Command.SHRDUnitOfWork, calculateECFeeRequest);
+                        var responseModel = feeCalculation.CalculateECFee();
+                        if (!responseModel.IsError)
+                        {
+
+                            FinancialRequirement.PlainAmount = responseModel.Model.Amount;
+                            FinancialRequirement.Amount = Command.CryptoAlgorithm.Encrypt(FinancialRequirement.PlainAmount);
+                            FinancialRequirement.PlainAmmendmentFee = responseModel.Model.Amount;
+                            FinancialRequirement.AmmendmentFee = Command.CryptoAlgorithm.Encrypt(FinancialRequirement.PlainAmmendmentFee);
+                        }
+                        else
+                        {
+                            Log.Information("Response {@message}", responseModel.Error.InternalError.Message);
+                            // return InternalServerErrorReply(responseModel.Error.InternalError.Message);
+                        }
+
+                    }
+                }
+                else if (Convert.ToInt32(RequestDTO.AgencyId) == (int)AgencyEnum.FSCRD)
+                {
+                    roDocRequirements = getListValue(mongoRecord["roMandatoryDocumentryRequirements"]);
+                    roDocOptional = getListValue(mongoRecord["roOptionalDocumentryRequirements"]); 
+                    ipReq = getLowerValue(mongoRecord["isProductRegistrationRequired"]) == "yes";
+                    docClassificCode = "PRD";
+
+                    //Financial Requirements
+                    FinancialRequirement.PlainAmount = getValue(mongoRecord["roFees"]);
+                    FinancialRequirement.Amount = Command.CryptoAlgorithm.Encrypt(getValue(mongoRecord["roFees"]));
+                }
+                 else if (Convert.ToInt32(RequestDTO.AgencyId) == (int)AgencyEnum.PSQ)
+                {
+                    roDocRequirements = getListValue(mongoRecord["roMandatoryDocumentryRequirements"]);
+                    roDocOptional = getListValue(mongoRecord["roOptionalDocumentryRequirements"]);
+                    ipReq = false;
+
+                    //Financial Requirements
+                    if (RequestDTO.IsFinancialRequirement)
+                    {
+                        var feeConfigurationList = Command.UnitOfWork.LPCOFeeStructureRepository.GetFeeConfig(
+                            lpcoRegulation.LpcoFeeStructureID
+                        ).FirstOrDefault();
+
+                        var feeConfig = new LPCOFeeCleanResp();
+                        feeConfig.AdditionalAmount = feeConfigurationList.AdditionalAmount;
+                        feeConfig.AdditionalAmountOn = feeConfigurationList.AdditionalAmountOn;
+                        feeConfig.Rate = feeConfigurationList.Rate;
+                        feeConfig.CalculationBasis = feeConfigurationList.CalculationBasis;
+                        feeConfig.CalculationSource = feeConfigurationList.CalculationSource;
+                        feeConfig.MinAmount = feeConfigurationList.MinAmount;
+
+                        var calculatedFee = new LPCOFeeCalculator(feeConfig, RequestDTO).Calculate();
+
+                        FinancialRequirement.PlainAmount = calculatedFee.Fee.ToString();
+                        FinancialRequirement.Amount = Command.CryptoAlgorithm.Encrypt(calculatedFee.Fee.ToString());
+                        FinancialRequirement.AdditionalAmount = calculatedFee.AdditionalAmount;
+                        FinancialRequirement.AdditionalAmountOn = calculatedFee.AdditionalAmountOn;
+                    }
+                }
+                //  else
+                // {
+                //     roDocRequirements = mongoRecord["RO  DOCUMENTARY REQUIREMENTS"].ToString().Split('|').ToList();
+                //     roDocOptional = mongoRecord["RO  DOCUMENTARY REQUIREMENTS(Optional)"].ToString().Split('|').ToList();
+                //     ipReq = mongoRecord["IP REQUIRED"].ToString().ToLower() == "yes";
+                //     docClassificCode = "IMP";
+
+                //     // Check if HS Code is PSI related.  
+                //     var IsPSi = mongoRecord["Is PSI"].ToString().ToLower() == "yes";
+                //     if (IsPSi)
+                //     {
+                //         psiReq = mongoRecord["PSI REQUIRED (YES/NO)"].ToString().ToLower() == "yes";
+                //         psiRegReq = mongoRecord["REGISTRATION REQUIRED (YES/NO)"].ToString().ToLower() == "yes";
+                //         psiReqMand = mongoRecord["PSI REQUIRED MANDATORY (YES/NO)"].ToString().ToLower() == "yes";
+                //         psiRegReqMand = mongoRecord["REGISTRATION REQUIRED MANDATORY (YES/NO)"].ToString().ToLower() == "yes";
+                //         psiRegScheme = mongoRecord["REGISTRATION SCHEME DESCRIPTION"].ToString().ToLower();
+                //     }
+
+
+                //     //Financial Requirements
+                //     FinancialRequirement.PlainAmount = mongoRecord["RO FEES"].ToString();
+                //     FinancialRequirement.Amount = Command.CryptoAlgorithm.Encrypt(mongoRecord["RO FEES"].ToString());
+                // }
+            }
+
             tarpRequirments.DocumentaryRequirementList = tarpDocumentRequirements;
             tarpRequirments.FinancialRequirement = FinancialRequirement;
             tarpRequirments.ValidityRequirement = ValidityRequirement;
