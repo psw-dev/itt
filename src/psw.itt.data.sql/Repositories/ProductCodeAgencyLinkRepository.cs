@@ -40,12 +40,56 @@ namespace PSW.ITT.Data.Sql.Repositories
         public List<int> GetAllOTORoleIDAssociatedWithProductCode(long productCodeID)
         {
             var query = @"Select R.ID FROM [AUTH].[dbo].[UserRole] R
-INNER JOIN [AUTH].[dbo].[AspNetUser] U ON R.AspNetUserID = U.ID
-WHERE R.RoleCode = 'OTO'
-AND AgencyID in (SELECT [AgencyID] FROM [ITT].[dbo].[ProductCodeAgencyLink] WHERE ProductCodeID = @PRODUCTCODEID AND (EffectiveFromDt <= GETDATE() AND EffectiveThruDt >= GETDATE()) )";
+                        INNER JOIN [AUTH].[dbo].[AspNetUser] U ON R.AspNetUserID = U.ID
+                        WHERE R.RoleCode = 'OTO'
+                        AND AgencyID in (SELECT [AgencyID] FROM [ITT].[dbo].[ProductCodeAgencyLink] WHERE ProductCodeID = @PRODUCTCODEID AND (EffectiveFromDt <= GETDATE() AND EffectiveThruDt >= GETDATE()) )";
 
             return _connection.Query<int>(
               query, param: new { @PRODUCTCODEID = productCodeID },
+              transaction: _transaction
+             ).ToList();
+        }
+
+        public List<ViewRegulatedHsCodeExt> GetHsCodeExtList(int agencyId, string chapter)
+        {
+             var query = @"SELECT b.HsCodeExt, c.Description AS [HsCodeDescription], b.Description AS [HsCodeDescriptionExt], a.AgencyID 
+                            FROM ProductCodeAgencyLink a JOIN ProductCode b on a.ProductCodeID = b.ID 
+                            JOIN SHRD..Ref_HS_Codes c ON b.HSCode = c.HS_CODE
+                            WHERE GETDATE() BETWEEN b.EFFECTIVEFROMDT AND b.EFFECTIVETHRUDT 
+                            AND GETDATE() BETWEEN a.EFFECTIVEFROMDT AND a.EFFECTIVETHRUDT 
+                            AND GETDATE() BETWEEN c.Effective_Date AND c.End_Date
+                            AND a.IsActive=1 
+                            AND a.AGENCYID = @AGENCYID AND b.ChapterCode = @CHAPTERCODE";
+            return _connection.Query<ViewRegulatedHsCodeExt>(query, param: new { @AGENCYID = agencyId, @CHAPTERCODE = chapter },
+              transaction: _transaction
+             ).ToList();
+        }
+
+        public List<ViewRegulatedHsCodeExt> GetHsCodeExtList(int agencyId)
+        {
+             var query = @"SELECT b.HsCodeExt, c.Description AS [HsCodeDescription], b.Description AS [HsCodeDescriptionExt], a.AgencyID 
+                            FROM ProductCodeAgencyLink a JOIN ProductCode b on a.ProductCodeID = b.ID 
+                            JOIN SHRD..Ref_HS_Codes c ON b.HSCode = c.HS_CODE
+                            WHERE GETDATE() BETWEEN b.EFFECTIVEFROMDT AND b.EFFECTIVETHRUDT 
+                            AND GETDATE() BETWEEN a.EFFECTIVEFROMDT AND a.EFFECTIVETHRUDT 
+                            AND GETDATE() BETWEEN c.Effective_Date AND c.End_Date
+                            AND a.IsActive=1 
+                            AND a.AGENCYID = @AGENCYID ";
+            return _connection.Query<ViewRegulatedHsCodeExt>(query, param: new { @AGENCYID = agencyId},
+              transaction: _transaction
+             ).ToList();
+        }
+
+        public List<ViewRegulatedHsCodeExt> GetHsCodeExtList()
+        {
+             var query = @"SELECT b.HsCodeExt, c.Description AS [HsCodeDescription], b.Description AS [HsCodeDescriptionExt], a.AgencyID 
+                            FROM ProductCodeAgencyLink a JOIN ProductCode b on a.ProductCodeID = b.ID 
+                            JOIN SHRD..Ref_HS_Codes c ON b.HSCode = c.HS_CODE
+                            WHERE GETDATE() BETWEEN b.EFFECTIVEFROMDT AND b.EFFECTIVETHRUDT 
+                            AND GETDATE() BETWEEN a.EFFECTIVEFROMDT AND a.EFFECTIVETHRUDT 
+                            AND GETDATE() BETWEEN c.Effective_Date AND c.End_Date
+                            AND a.IsActive=1";
+            return _connection.Query<ViewRegulatedHsCodeExt>(query,
               transaction: _transaction
              ).ToList();
         }

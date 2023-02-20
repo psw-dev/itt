@@ -8,5 +8,8 @@ namespace PSW.ITT.Data.IRepositories
     {
         List<GetProductCodeListWithAgenciesResponseDTO> GetProductCodeIDWithOGA();
         List<int> GetAllOTORoleIDAssociatedWithProductCode(long productCodeID);
+        List<ViewRegulatedHsCodeExt> GetHsCodeExtList(int agencyId, string chapter);
+        List<ViewRegulatedHsCodeExt> GetHsCodeExtList(int agencyId);
+        List<ViewRegulatedHsCodeExt> GetHsCodeExtList();
     }
 }
