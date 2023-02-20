@@ -50,6 +50,9 @@ namespace PSW.ITT.Service.Strategies
                 case "2223": return new GetUploadFileProgressStrategy(request);
                 case "2224": return new UpdateFileHistoryStatusStrategy(request);
                 case "2226": return new UploadValidateProductCodeFileStrategy(request);
+
+                //Integration API
+                case "220E": return new GetRegulatedHSCodeListStrategy(request);
                 default: break;
             }
 
