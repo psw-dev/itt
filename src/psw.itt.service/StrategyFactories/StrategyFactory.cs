@@ -52,7 +52,7 @@ namespace PSW.ITT.Service.Strategies
                 case "2226": return new UploadValidateProductCodeFileStrategy(request);
 
                 //Integration API
-                case "220E": return new GetRegulatedHSCodeListStrategy(request);
+                case "220E": return new GetRegulatedHSCodeExtListStrategy(request);
                 default: break;
             }
 
