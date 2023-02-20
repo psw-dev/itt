@@ -146,6 +146,19 @@ namespace PSW.ITT.Data.Sql.Repositories
               transaction: _transaction
              ).ToList();
         }
+
+        public List<(string,int)> ValidateRegulatedHSCodes(List<string> HSCodes, int agencyId, int tradeTranTypeId)
+        {
+            // var HSCodesArray = HSCodes.ToArray();
+            return _connection.Query<(string,int)>(
+                string.Format(@"SELECT DISTINCT HsCode, a.ID
+                                FROM ProductCodeAgencyLink a JOIN ProductCode b on a.ProductCodeID = b.ID 
+                                WHERE  b.HSCode in @HSCODES AND a.AGENCYID = @AGENCYID AND b.TradeTranTypeID = @TRADETRANTYPEID
+                                AND GETDATE() BETWEEN b.EFFECTIVEFROMDT AND b.EFFECTIVETHRUDT 
+                                AND GETDATE() BETWEEN a.EFFECTIVEFROMDT AND a.EFFECTIVETHRUDT 
+                                AND a.IsActive=1 "),
+                param: new {@HSCODES = HSCodes,@AGENCYID = agencyId, @TRADETRANTYPEID = tradeTranTypeId},transaction: _transaction).AsList();
+        }
         #endregion
     }
 }
