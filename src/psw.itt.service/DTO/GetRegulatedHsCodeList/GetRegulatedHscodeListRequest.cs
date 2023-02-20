@@ -11,7 +11,7 @@ namespace PSW.ITT.Service.DTO
         [JsonPropertyName("chapter")]
         public string Chapter { set; get; }
 
-        [JsonPropertyName("documentTypeCode")]
-        public string DocumentTypeCode { set; get; }
+        [JsonPropertyName("tradeTranTypeID")]
+        public int TradeTranTypeID { set; get; }
     }
 }
