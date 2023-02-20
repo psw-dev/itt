@@ -42,6 +42,7 @@ namespace PSW.ITT.Service.Strategies
                 case "220B": return new GetPCTCodeListStrategy(request);
                 case "220C": return new GetRequirementMongoStrategy(request);
                 case "220D": return new GetAgencyListStrategy(request);
+                case "220F": return new GetRegulatedHSCodeListStrategy(request);
                 default: break;
             }
 

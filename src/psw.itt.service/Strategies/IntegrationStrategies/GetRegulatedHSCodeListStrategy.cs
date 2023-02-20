@@ -8,27 +8,23 @@ using PSW.ITT.Service.ModelValidators;
 using System.Linq;
 using PSW.ITT.Data.Entities;
 using PSW.ITT.Common.Enums;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace PSW.ITT.Service.Strategies
 {
-    public class GetRegulatedHSCodeExtListStrategy : ApiStrategy<GetRegulatedHscodeListRequest, GetRegulatedHSCodeExtListResponse>
+    public class GetRegulatedHSCodeListStrategy : ApiStrategy<GetRegulatedHscodeListRequest, GetRegulatedHscodeListResponse>
     {
         #region Constructors 
-        private int agencyId = 0;
-        public GetRegulatedHSCodeExtListStrategy(CommandRequest request) : base(request)
+        public GetRegulatedHSCodeListStrategy(CommandRequest request) : base(request)
         {
             Reply = new CommandReply();
-            this.Validator = new GetRegulatedHscodeListRequestDTOValidator();
-            var claims = request.UserClaims.Where(x => x.Type == "agencyId").FirstOrDefault();
-            if (claims != null)
-            {
-                agencyId = Convert.ToInt32(claims.Value);
-            }
+            // this.Validator = new GetRegulatedHscodeListRequestDTOValidator();
         }
         #endregion 
 
         #region Distructors 
-        ~GetRegulatedHSCodeExtListStrategy()
+        ~GetRegulatedHSCodeListStrategy()
         {
 
         }
@@ -42,44 +38,56 @@ namespace PSW.ITT.Service.Strategies
             {
                 Log.Information("|{0}|{1}| Request DTO {@RequestDTO}", StrategyName, MethodID, RequestDTO);
 
-                var hsCodeList = new List<ViewRegulatedHsCodeExt>();
-        
-                //Get Regulated Hscode list filtered on base of AgencyId and chapter
-                if (agencyId != 0 && RequestDTO.Chapter != null && RequestDTO.DocumentTypeCode == null)
-                {
-                    hsCodeList = Command.UnitOfWork.ProductCodeAgencyLinkRepository.GetHsCodeExtList(agencyId, RequestDTO.Chapter);
+                var regulatedHSCodeList = new List<ViewRegulatedHsCode>();
 
-                    if (hsCodeList == null || hsCodeList.Count == 0)
-                    {
-                        return BadRequestReply("Hscodes not available against provided Agency and chapter");
-                    }
-                }
-                
                 //Get Regulated Hscode list filtered on base of AgencyId 
-                if (agencyId != 0 && RequestDTO.DocumentTypeCode == null)
+                if (RequestDTO.AgencyId != 0 && RequestDTO.TradeTranTypeID == null)
                 {
-                    hsCodeList = Command.UnitOfWork.ProductCodeAgencyLinkRepository.GetHsCodeExtList(agencyId);
-
-                    if (hsCodeList == null || hsCodeList.Count == 0)
+                   regulatedHSCodeList = Command.UnitOfWork.ProductCodeAgencyLinkRepository.GetRegulatedHsCodeList(RequestDTO.AgencyId);
+                    if (regulatedHSCodeList == null || regulatedHSCodeList.Count == 0)
                     {
                         return BadRequestReply("Hscodes not available against provided Agency");
+                    }
+                }
+
+                //Get Regulated Hscode list filtered on base of AgencyId and DocumentTypeCode
+                else if (RequestDTO.AgencyId != 0 && RequestDTO.TradeTranTypeID != null)
+                {
+                    regulatedHSCodeList = Command.UnitOfWork.ProductCodeAgencyLinkRepository.GetRegulatedHsCodeList(RequestDTO.AgencyId, RequestDTO.TradeTranTypeID);
+                    if (regulatedHSCodeList == null || regulatedHSCodeList.Count == 0)
+                    {
+                        return BadRequestReply("Hscodes not available against provided Agency and Document");
                     }
                 }
 
                 else
                 {
-                    hsCodeList = Command.UnitOfWork.ProductCodeAgencyLinkRepository.GetHsCodeExtList();
-
-                    if (hsCodeList == null || hsCodeList.Count == 0)
+                    regulatedHSCodeList = Command.UnitOfWork.ProductCodeAgencyLinkRepository.GetRegulatedHsCodeList();
+                    
+                    if (regulatedHSCodeList == null || regulatedHSCodeList.Count == 0)
                     {
-                        return BadRequestReply("Hscodes not available against provided Agency");
+                        return BadRequestReply("Hscodes not available");
                     }
                 }
 
-                ResponseDTO = new GetRegulatedHSCodeExtListResponse
+                //Get hscodeDetails
+                foreach (var regulatedHscode in regulatedHSCodeList)
                 {
-                    RegulatedHsCodeExtList = hsCodeList
+                    regulatedHscode.HsCodeDetailsList = Command.UnitOfWork.ProductCodeAgencyLinkRepository.GetRegulatedHsCodeList(RequestDTO.TradeTranTypeID, RequestDTO.AgencyId, regulatedHscode.HsCode);
+                    foreach (var hsCodeDetails in regulatedHscode.HsCodeDetailsList)
+                    {       
+                    var lpcoRegulation = Command.UnitOfWork.LPCORegulationRepository.GetRegulationByProductAgencyLinkID(hsCodeDetails.ProductCodeAgencyLinkID).FirstOrDefault();
+                    JObject regulationJson = JObject.Parse(lpcoRegulation.RegulationJson);
+                    hsCodeDetails.TechnicalName = getValue(regulationJson["technicalName"]);
+                    }
+                }
+
+                ResponseDTO = new GetRegulatedHscodeListResponse
+                {
+                    RegulatedHsCodeList = regulatedHSCodeList
                 };
+
+
                 Log.Information("|{0}|{1}| Response DTO : {@ResponseDTO}", StrategyName, MethodID, ResponseDTO);
 
                 // Send Command Reply 
@@ -90,6 +98,10 @@ namespace PSW.ITT.Service.Strategies
                 Log.Error("|{0}|{1}| Exception Occurred {@ex}", StrategyName, MethodID, ex);
                 return InternalServerErrorReply(ex);
             }
+        }
+        
+        private string getValue(JToken str){
+            return str.Value<string>();
         }
         #endregion 
 

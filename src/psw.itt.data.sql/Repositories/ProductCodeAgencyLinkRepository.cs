@@ -93,6 +93,59 @@ namespace PSW.ITT.Data.Sql.Repositories
               transaction: _transaction
              ).ToList();
         }
+
+        
+        public List<ViewRegulatedHsCode> GetRegulatedHsCodeList()
+        {
+             var query = @"SELECT HsCode, AgencyID 
+                        FROM ProductCodeAgencyLink a JOIN ProductCode b on a.ProductCodeID = b.ID 
+                        WHERE 
+                        GETDATE() BETWEEN b.EFFECTIVEFROMDT AND b.EFFECTIVETHRUDT 
+                        AND GETDATE() BETWEEN a.EFFECTIVEFROMDT AND a.EFFECTIVETHRUDT 
+                        AND a.IsActive=1 ";
+            return _connection.Query<ViewRegulatedHsCode>(query,
+              transaction: _transaction
+             ).ToList();
+        }
+        public List<ViewRegulatedHsCode> GetRegulatedHsCodeList(int agencyId)
+        {
+             var query = @"SELECT HsCode, AgencyID 
+                        FROM ProductCodeAgencyLink a JOIN ProductCode b on a.ProductCodeID = b.ID 
+                        WHERE a.AGENCYID = @AGENCYID 
+                        AND GETDATE() BETWEEN b.EFFECTIVEFROMDT AND b.EFFECTIVETHRUDT 
+                        AND GETDATE() BETWEEN a.EFFECTIVEFROMDT AND a.EFFECTIVETHRUDT 
+                        AND a.IsActive=1 ";
+            return _connection.Query<ViewRegulatedHsCode>(query, param: new { @AGENCYID = agencyId},
+              transaction: _transaction
+             ).ToList();
+        }
+        public List<ViewRegulatedHsCode> GetRegulatedHsCodeList(int agencyId, int tradeTranTypeId)
+        {
+             var query = @"SELECT HsCode, AgencyID 
+                        FROM ProductCodeAgencyLink a JOIN ProductCode b on a.ProductCodeID = b.ID 
+                        WHERE a.AGENCYID = @AGENCYID  AND b.TradeTranTypeID = @TRADETRANTYPEID
+                        AND GETDATE() BETWEEN b.EFFECTIVEFROMDT AND b.EFFECTIVETHRUDT 
+                        AND GETDATE() BETWEEN a.EFFECTIVEFROMDT AND a.EFFECTIVETHRUDT 
+                        AND a.IsActive=1 ";
+            return _connection.Query<ViewRegulatedHsCode>(query, param: new { @AGENCYID = agencyId, @TRADETRANTYPEID =tradeTranTypeId},
+              transaction: _transaction
+             ).ToList();
+        }
+        public List<HscodeDetails> GetRegulatedHsCodeList(int tradeTranTypeId, int agencyId, string hsCode)
+        {
+             var query = @"SELECT a.ID AS ProductCodeAgencyLinkID, c.Description AS ITEMDESCRIPTION, b.ProductCode ,b.Description AS ITEMDESCRIPTIONEXT
+                            FROM ProductCodeAgencyLink a 
+                            JOIN ProductCode b on a.ProductCodeID = b.ID 
+                            JOIN SHRD..Ref_HS_Codes c ON b.HSCode = c.HS_CODE
+                            WHERE b.HSCode=@HSCODE AND a.AGENCYID = @AGENCYID AND b.TradeTranTypeID = @TRADETRANTYPEID
+                            AND GETDATE() BETWEEN b.EFFECTIVEFROMDT AND b.EFFECTIVETHRUDT 
+                            AND GETDATE() BETWEEN a.EFFECTIVEFROMDT AND a.EFFECTIVETHRUDT 
+                            AND GETDATE() BETWEEN c.Effective_Date AND c.End_Date
+                            AND a.IsActive=1";
+            return _connection.Query<HscodeDetails>(query, param: new { @AGENCYID = agencyId, @TRADETRANTYPEID =tradeTranTypeId, @HSCODE= hsCode},
+              transaction: _transaction
+             ).ToList();
+        }
         #endregion
     }
 }

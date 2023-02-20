@@ -29,6 +29,9 @@ namespace PSW.ITT.Data.Entities
 
         [JsonPropertyName("technicalName")]
         public string TechnicalName { get; set; }
+
+        [JsonPropertyName("productCodeAgencyLinkID")]
+        public int ProductCodeAgencyLinkID { get; set; }
     }
 
 
