@@ -11,11 +11,11 @@ using PSW.ITT.Common.Enums;
 
 namespace PSW.ITT.Service.Strategies
 {
-    public class GetRegulatedHSCodeListStrategy : ApiStrategy<GetRegulatedHscodeListRequest, GetRegulatedHSCodeExtListResponse>
+    public class GetRegulatedHSCodeExtListStrategy : ApiStrategy<GetRegulatedHscodeListRequest, GetRegulatedHSCodeExtListResponse>
     {
         #region Constructors 
         private int agencyId = 0;
-        public GetRegulatedHSCodeListStrategy(CommandRequest request) : base(request)
+        public GetRegulatedHSCodeExtListStrategy(CommandRequest request) : base(request)
         {
             Reply = new CommandReply();
             this.Validator = new GetRegulatedHscodeListRequestDTOValidator();
@@ -28,7 +28,7 @@ namespace PSW.ITT.Service.Strategies
         #endregion 
 
         #region Distructors 
-        ~GetRegulatedHSCodeListStrategy()
+        ~GetRegulatedHSCodeExtListStrategy()
         {
 
         }
