@@ -64,13 +64,7 @@ namespace PSW.ITT.Api.Controllers
         }
 
         
-        [HttpPost("fileUpload")]
-        [Authorize("authorizedUserPolicy")]
-        public override ActionResult<APIResponse> FileRegistration([FromForm] APIRequestFile apiRequest)
-        {
-            return base.FileRegistration(apiRequest);
-        }
-
+       
         
         #endregion
     }
