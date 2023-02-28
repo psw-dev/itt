@@ -26,6 +26,9 @@ using PSW.ITT.Common.Constants;
 using PSW.ITT.Service.BusinessLogicLayer;
 using PSW.ITT.Data.DTO;
 using System.Text.Json;
+using Newtonsoft.Json;
+using PSW.ITT.Common.Enums;
+using Newtonsoft.Json.Linq;
 
 namespace PSW.ITT.Service.Strategies
 {
@@ -735,10 +738,13 @@ namespace PSW.ITT.Service.Strategies
             }
             if (RequestDTO.FileType != (short)FileTypeEnum.INACTIVATE_REGULATIONS_TEMPLATE)
             {
+                var serializedJson = System.Text.Json.JsonSerializer.Serialize(obj);
+                JObject regulationJson = JObject.Parse(serializedJson);
+                var lpcoFeeStructureID = InsertFinancialInformation(regulationJson, propertyNameList, userRoleId);
                 LPCORegulation lpcoRegulation = new LPCORegulation
                 {
                     AgencyID = request.AgencyID,
-                    RegulationJson = System.Text.Json.JsonSerializer.Serialize(obj),// JsonSerializer.Serialize<dynamic>(Row.ItemArray),
+                    RegulationJson = serializedJson,// JsonSerializer.Serialize<dynamic>(Row.ItemArray),
                     CreatedOn = DateTime.Now,
                     UpdatedOn = DateTime.Now,
                     CreatedBy = userRoleId,
@@ -756,46 +762,108 @@ namespace PSW.ITT.Service.Strategies
             }
 
 
+        }
+        private int InsertFinancialInformation(JObject jobject, List<SheetAttributeMapping> propertyNameList, int userRoleId){
 
-            // ProductCodeEntity productCodeEntity = new ProductCodeEntity();
+            LPCOFeeStructure lpcoFeeStructure = new LPCOFeeStructure();
 
-            // try
-            // {
-            //     var ChapterCode = Row[0].ToString().Substring(0, 2);
-            //     var ProductCodeChapter = uow.ProductCodeChapterRepository.Where(new { Code = ChapterCode }).FirstOrDefault();
-            //     if(ProductCodeChapter!= null)
-            //     {
-            //         productCodeEntity.HSCode = Row[0].ToString();
-            //         productCodeEntity.HSCodeExt = Row[0].ToString() + "." + Row[1].ToString();
-            //         productCodeEntity.ProductCode = Row[1].ToString();
-            //         productCodeEntity.TradeTranTypeID = Convert.ToInt16(Row[3]);
-            //         productCodeEntity.ChapterCode = ChapterCode;
-            //         productCodeEntity.ProductCodeChapterID = (short)ProductCodeChapter.ID;
-            //         productCodeEntity.Description = Row[2].ToString();
-            //         productCodeEntity.ProductCodeSheetUploadHistoryID = fileUploadHistoryID;
-            //         productCodeEntity.EffectiveFromDt = Convert.ToDateTime(Row[4].ToString());
-            //         productCodeEntity.EffectiveThruDt = (String.IsNullOrEmpty(Row[5].ToString()) || 
-            //                                              String.IsNullOrWhiteSpace(Row[5].ToString())) ? DateTime.MaxValue : Convert.ToDateTime(Row[5].ToString()).AddHours(23).AddMinutes(59).AddSeconds(59) ;
+            var calculationBasis = Command.UnitOfWork.CalculationBasisRepository.Get().ToList();
+            var calculationSource = Command.UnitOfWork.CalculationSourceRepository.Get().ToList();
+            decimal n1;
+            //for Import Permit Fees
+            var feePropertyDetail = propertyNameList.Where(x=>x.NameShort=="ipFees").FirstOrDefault();
+            // var feeCalculationBasisPropertyDetail = propertyNameList.Where(x=>x.NameShort=="ipFeeCalculationBasis").FirstOrDefault();
+            // var feeCalculationSourcePropertyDetail = propertyNameList.Where(x=>x.NameShort=="ipFeeCalculationSource").FirstOrDefault();
+            // var feeMinimumAmountPropertyDetail = propertyNameList.Where(x=>x.NameShort=="ipFeeMinimumAmount").FirstOrDefault();
+            // var feeAdditionalAmountPropertyDetail = propertyNameList.Where(x=>x.NameShort=="ipFeeAdditionalAmount").FirstOrDefault();
+            // var feeAdditionalAmountOnPropertyDetail = propertyNameList.Where(x=>x.NameShort=="ipFeeAdditionalAmountOn").FirstOrDefault();
+            if(jobject.ContainsKey("ipRequired")){
+                if(getLowerValue(jobject["ipRequired"]) == "yes"){
+                    if(feePropertyDetail.NameLong.Contains("[Quantity-Unit-Price|]")){
 
-            //         productCodeEntity.CreatedOn = DateTime.Now;
-            //         productCodeEntity.UpdatedOn = DateTime.Now;
-            //         productCodeEntity.CreatedBy = userRoleId;
-            //         productCodeEntity.UpdatedBy = userRoleId;
-            //         // ACRHeader.CompletedOn = DateTime.Now;
+                    }
+                    else{
+                        lpcoFeeStructure.AgencyID = RequestDTO.AgencyID;
+                        lpcoFeeStructure.DocumentClassificationCode = DocumentClassificationCode.IMPORT_PERMIT;
+                        lpcoFeeStructure.CalculationBasis = calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault();
+                        lpcoFeeStructure.CalculationSource = calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault();
+                        lpcoFeeStructure.CurrencyCode = "PKR";
+                        if(Decimal.TryParse(getValue(jobject["ipFees"]), out n1)) lpcoFeeStructure.Rate =  n1;
+                        if(Decimal.TryParse(getValue(jobject["ipFeeMinimumAmount"]), out n1)) lpcoFeeStructure.MinAmount = n1 ;
+                        if(Decimal.TryParse(getValue(jobject["ipFeeAdditionalAmount"]), out n1)) lpcoFeeStructure.AdditionalAmount = n1 ;
+                        if (!IsNullOrEmpty( getLowerValue(jobject["ipFeeAdditionalAmountOn"]))) lpcoFeeStructure.AdditionalAmountOn = calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault();
+                        lpcoFeeStructure.IsActive = true;
 
-            //         var productCodeEntityId = uow.ProductCodeEntityRepository.Add(productCodeEntity);
-            //     }
-            //     else{
-            //         Log.Information("[{0}.{1}] Product Code Chapter Not Found {2} ", this.GetType().Name, MethodBase.GetCurrentMethod().Name, ProductCodeChapter);
-            //         throw new NullReferenceException(" Product Code Chapter Not Found ");
+                        Command.UnitOfWork.LPCOFeeStructureRepository.Add(lpcoFeeStructure);
+                    }
+                }
+            }
+            
+            //for Release Order Fees
+            // feePropertyDetail = propertyNameList.Where(x=>x.NameShort=="roFees").FirstOrDefault();
+            // feeCalculationBasisPropertyDetail = propertyNameList.Where(x=>x.NameShort=="roFeeCalculationBasis").FirstOrDefault();
+            // feeCalculationSourcePropertyDetail = propertyNameList.Where(x=>x.NameShort=="roFeeCalculationSource").FirstOrDefault();
+            // feeMinimumAmountPropertyDetail = propertyNameList.Where(x=>x.NameShort=="roFeeMinimumAmount").FirstOrDefault();
+            // feeAdditionalAmountPropertyDetail = propertyNameList.Where(x=>x.NameShort=="roFeeAdditionalAmount").FirstOrDefault();
+            // feeAdditionalAmountOnPropertyDetail = propertyNameList.Where(x=>x.NameShort=="roFeeAdditionalAmountOn").FirstOrDefault();
+            if(jobject.ContainsKey("roRequired")){
+                if(getLowerValue(jobject["roRequired"]) == "yes"){
+                    if(feePropertyDetail.NameLong.Contains("[Quantity-Unit-Price|]")){
 
-            //     }
-            // }
-            // catch (System.Exception ex)
-            // {
-            //     Log.Error("[{0}.{1}] {2}-{3}", this.GetType().Name, MethodBase.GetCurrentMethod().Name, ex, ex.StackTrace);
-            //     throw ex;
-            // }
+                    }
+                    else{
+                        lpcoFeeStructure.AgencyID = RequestDTO.AgencyID;
+                        lpcoFeeStructure.DocumentClassificationCode = DocumentClassificationCode.RELEASE_ORDER;
+                        lpcoFeeStructure.CalculationBasis = calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["roFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault();
+                        lpcoFeeStructure.CalculationSource = calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["roFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault();
+                        lpcoFeeStructure.CurrencyCode = "PKR";
+                        if(Decimal.TryParse(getValue(jobject["roFees"]), out n1)) lpcoFeeStructure.Rate =  n1;
+                        if(Decimal.TryParse(getValue(jobject["roFeeMinimumAmount"]), out n1)) lpcoFeeStructure.MinAmount = n1 ;
+                        if(Decimal.TryParse(getValue(jobject["roFeeAdditionalAmount"]), out n1)) lpcoFeeStructure.AdditionalAmount = n1 ;
+                        lpcoFeeStructure.AdditionalAmountOn = calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["roFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault();
+                        lpcoFeeStructure.IsActive = true;
+
+                        Command.UnitOfWork.LPCOFeeStructureRepository.Add(lpcoFeeStructure);
+                    }
+                }
+            }
+
+            //for Export Certificate Fees
+            // feePropertyDetail = propertyNameList.Where(x=>x.NameShort=="ecFees").FirstOrDefault();
+            // feeCalculationBasisPropertyDetail = propertyNameList.Where(x=>x.NameShort=="ecFeeCalculationBasis").FirstOrDefault();
+            // feeCalculationSourcePropertyDetail = propertyNameList.Where(x=>x.NameShort=="ecFeeCalculationSource").FirstOrDefault();
+            // feeMinimumAmountPropertyDetail = propertyNameList.Where(x=>x.NameShort=="ecFeeMinimumAmount").FirstOrDefault();
+            // feeAdditionalAmountPropertyDetail = propertyNameList.Where(x=>x.NameShort=="ecFeeAdditionalAmount").FirstOrDefault();
+            // feeAdditionalAmountOnPropertyDetail = propertyNameList.Where(x=>x.NameShort=="ecFeeAdditionalAmountOn").FirstOrDefault();
+            if(jobject.ContainsKey("ecRequired")){
+                if(getLowerValue(jobject["ecRequired"]) == "yes"){
+                    if(feePropertyDetail.NameLong.Contains("[Quantity-Unit-Price|]")){
+
+                    }
+                    else{
+                        lpcoFeeStructure.AgencyID = RequestDTO.AgencyID;
+                        lpcoFeeStructure.DocumentClassificationCode = DocumentClassificationCode.EXPORT_CERTIFICATE;
+                        lpcoFeeStructure.CalculationBasis =  calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ecFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault();
+                        lpcoFeeStructure.CalculationSource = calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ecFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault();
+                        lpcoFeeStructure.CurrencyCode = "PKR";
+                        if(Decimal.TryParse(getValue(jobject["ecFees"]), out n1)) lpcoFeeStructure.Rate =  n1;
+                        if(Decimal.TryParse(getValue(jobject["ecFeeMinimumAmount"]), out n1)) lpcoFeeStructure.MinAmount = n1 ;
+                        if(Decimal.TryParse(getValue(jobject["ecFeeAdditionalAmount"]), out n1)) lpcoFeeStructure.AdditionalAmount = n1 ;
+                        lpcoFeeStructure.AdditionalAmountOn = calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ecFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault();
+                        lpcoFeeStructure.IsActive = true;
+
+                        Command.UnitOfWork.LPCOFeeStructureRepository.Add(lpcoFeeStructure);
+                    }
+                }
+            }
+
+            return 1;
+        }
+        private string getValue(JToken str){
+            return str.Value<string>();
+        }
+        private string getLowerValue(JToken str){
+            return str.Value<string>().ToLower();
         }
         private bool UpdateFileUploadHistory(UnitOfWork uow, long fileUploadHistoryID, short statusId, int userRoleId)
         {

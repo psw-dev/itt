@@ -296,6 +296,36 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                         
                         break;
                     }
+                    case 23:
+                    case 24:
+                    {  
+                        
+                        var calculationList = command.UnitOfWork.CommonForLovRepository.GetLOV(item.TableName, item.ColumnName);
+                        if (String.IsNullOrEmpty(columnValue)){
+                            Error = Error == "" ? columnName+" is null" : Error + ", " + columnName+" is null";
+                        }
+                        else{
+                            string value = calculationList.Find( x=>x.Item2.ToLower()==columnValue.ToLower()).Item2;
+                            if (String.IsNullOrEmpty(value) )
+                            {
+                                Error = Error == "" ? columnName+" is Required, please select one of the stated values, ["+String.Join(calculationList.Select(x=>x.Item2).ToString(),",")+"]" : Error + ", " + columnName+" is Required, please select one of the stated values, ["+String.Join(calculationList.Select(x=>x.Item2).ToString(),",")+"]";
+                            }
+                        }
+                        break;
+                    }
+                    case 25:
+                    {  
+                        
+                        var calculationList = command.UnitOfWork.CommonForLovRepository.GetLOV(item.TableName, item.ColumnName);
+                        if (!String.IsNullOrEmpty(columnValue)){
+                            string value = calculationList.Find( x=>x.Item2.ToLower()==columnValue.ToLower()).Item2;
+                            if (String.IsNullOrEmpty(value) )
+                            {
+                                Error = Error == "" ? columnName+" is Required, please select one of the stated values, ["+String.Join(calculationList.Select(x=>x.Item2).ToString(),",")+"]" : Error + ", " + columnName+" is Required, please select one of the stated values, ["+String.Join(calculationList.Select(x=>x.Item2).ToString(),",")+"]";
+                            }
+                        }
+                        break;
+                    }
                 }
             }  
            return Error;

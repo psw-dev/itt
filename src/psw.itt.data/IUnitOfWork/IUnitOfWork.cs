@@ -9,6 +9,8 @@ namespace PSW.ITT.Data
 
         #region Repositories
 		IAttributeValidationMappingRepository AttributeValidationMappingRepository { get; }
+		ICalculationBasisRepository CalculationBasisRepository { get; }
+		ICalculationSourceRepository CalculationSourceRepository { get; }
         IProductCodeAgencyLinkRepository ProductCodeAgencyLinkRepository { get; }
         IProductCodeChapterRepository ProductCodeChapterRepository { get; }
         IProductCodeEntityRepository ProductCodeEntityRepository { get; }
@@ -18,6 +20,8 @@ namespace PSW.ITT.Data
         ILPCORegulationRepository LPCORegulationRepository { get; }
         IProductRegulationRequirementRepository ProductRegulationRequirementRepository { get; }
         ILPCOFeeStructureRepository LPCOFeeStructureRepository { get; }
+        ISheetTypeRepository SheetTypeRepository { get; }
+        ICommonForLovRepository CommonForLovRepository { get; }
         IEventBus eventBus { get; }
         #endregion
 
