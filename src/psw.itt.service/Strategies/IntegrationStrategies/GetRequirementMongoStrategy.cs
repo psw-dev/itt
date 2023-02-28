@@ -385,7 +385,7 @@ namespace PSW.ITT.Service.Strategies
                     if (RequestDTO.IsFinancialRequirement)
                     {
                         var feeConfigurationList = Command.UnitOfWork.LPCOFeeStructureRepository.GetFeeConfig(
-                            lpcoRegulation.LpcoFeeStructureID
+                            1//TODO : need to be change after fees implementation lpcoRegulation.LpcoFeeStructureID
                         ).FirstOrDefault();
 
                         var feeConfig = new LPCOFeeCleanResp();
