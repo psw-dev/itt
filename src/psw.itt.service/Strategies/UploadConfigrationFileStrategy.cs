@@ -776,55 +776,63 @@ namespace PSW.ITT.Service.Strategies
             
             //for Import Permit Fees
             var feePropertyDetail = propertyNameList.Where(x=>x.NameShort=="ipFees").FirstOrDefault();
-           if (RequestDTO.TradeTranTypeID==TradeTranType.IMPORT){
+           if (RequestDTO.TradeTranTypeID==(short)PSW.ITT.Common.Constants.TradeTranType.IMPORT){
                 if(jobject.ContainsKey("ipRequired")){
                     if(getLowerValue(jobject["ipRequired"]) == "yes"){
-                        if(feePropertyDetail.NameLong.Contains("[Quantity-Unit-Price|]")){
-                           
-                        }
-                        
-                        else{
-                            lpcoFeeStructure.AgencyID = RequestDTO.AgencyID;
-                            lpcoFeeStructure.DocumentClassificationCode = DocumentClassificationCode.IMPORT_PERMIT;
-                            lpcoFeeStructure.CalculationBasis = calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault();
-                            lpcoFeeStructure.CalculationSource = calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault();
-                            lpcoFeeStructure.CurrencyCode = "PKR";
-                            if(Decimal.TryParse(getValue(jobject["ipFees"]), out n1)) lpcoFeeStructure.Rate =  n1;
-                            if(Decimal.TryParse(getValue(jobject["ipFeeMinimumAmount"]), out n1)) lpcoFeeStructure.MinAmount = n1 ;
-                            if(Decimal.TryParse(getValue(jobject["ipFeeAdditionalAmount"]), out n1)) lpcoFeeStructure.AdditionalAmount = n1 ;
-                            if(!string.IsNullOrEmpty( getLowerValue(jobject["ipFeeAdditionalAmountOn"]))) lpcoFeeStructure.AdditionalAmountOn = calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault();
-                            lpcoFeeStructure.IsActive = true;
-                            lpcoFeeStructure.LPCORegulationID = lpcoRegulationId;
-                            lpcoFeeStructure.MasterDocumentClassificationCode = MasterDocumentClassificationCode.IMPORT_PERMIT;
-                            lpcoFeeStructure.CreatedOn = DateTime.Now;
-                            lpcoFeeStructure.UpdatedOn = DateTime.Now;
-                            lpcoFeeStructure.CreatedBy = userRoleId;
-                            lpcoFeeStructure.UpdatedBy = userRoleId;
+                          if(feePropertyDetail.NameLong.Contains("[Quantity;Unit;Price|]")){
+                            // string[] record = str.Split('|');
+                            // foreach( var i in record){
+                            //     lpcoFeeStructure.AgencyID = RequestDTO.AgencyID;
+                            //     lpcoFeeStructure.DocumentClassificationCode = DocumentClassificationCode.IMPORT_PERMIT;
+                            //     lpcoFeeStructure.CalculationBasis = calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault();
+                            //     lpcoFeeStructure.CalculationSource = calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault();
+                            //     lpcoFeeStructure.CurrencyCode = "PKR";
+                            //     lpcoFeeStructure.IsActive = true;
+                            //     lpcoFeeStructure.LPCORegulationID = lpcoRegulationId;
+                            //     lpcoFeeStructure.MasterDocumentClassificationCode = MasterDocumentClassificationCode.IMPORT_PERMIT;
+                            //     lpcoFeeStructure.CreatedOn = DateTime.Now;
+                            //     lpcoFeeStructure.UpdatedOn = DateTime.Now;
+                            //     lpcoFeeStructure.CreatedBy = userRoleId;
+                            //     lpcoFeeStructure.UpdatedBy = userRoleId;
 
-                            Command.UnitOfWork.LPCOFeeStructureRepository.Add(lpcoFeeStructure);
+                            //     string[] seperator = str.Split(';');
+                            //     if(seperator.Contains("-")){
+
+                            //     }
+                            // }
+                        }
+                        else{  
+ 
+                            mapObject(lpcoRegulationId, RequestDTO.AgencyID, null,// long lpcoRegulationId, short agencyID, int? unitID,
+                            calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault(),// int? calculationBasis,
+                            calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(),//int? calculationSource
+                            MasterDocumentClassificationCode.IMPORT_PERMIT,//string masterDocumentClassificationCode
+                            DocumentClassificationCode.IMPORT_PERMIT,//string documentClassificationCode,
+                            null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
+                            Decimal.TryParse(getValue(jobject["ipFees"]), out n1) ? (decimal?)n1:null, //decimal? rate
+                            Decimal.TryParse(getValue(jobject["ipFeeMinimumAmount"]), out n1) ? (decimal?) n1:null, // decimal? minAmount
+                            Decimal.TryParse(getValue(jobject["ipFeeAdditionalAmount"]), out n1)? (decimal?)n1 : null, //decimal? additionalAmount
+                            string.IsNullOrEmpty( getLowerValue(jobject["ipFeeAdditionalAmountOn"])) ? null : 
+                                    (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
+                            userRoleId );//int userRoleId
+                            
 
                             if(jobject.ContainsKey("ipAmendmentFees")){
-                                lpcoFeeStructure.AgencyID = RequestDTO.AgencyID;
-                                lpcoFeeStructure.DocumentClassificationCode = DocumentClassificationCode.IMPORT_PERMIT_AMENDMENT;
-                                lpcoFeeStructure.CalculationBasis = calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault();
-                                lpcoFeeStructure.CalculationSource = calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault();
-                                lpcoFeeStructure.CurrencyCode = "PKR";
-                                if(Decimal.TryParse(getValue(jobject["ipAmendmentFees"]), out n1)) lpcoFeeStructure.Rate =  n1;
 
-                                if(jobject.ContainsKey("ipExtensionAllowed")){
-                                    // if(Decimal.TryParse(getValue(jobject["ipFeeMinimumAmount"]), out n1)) lpcoFeeStructure.MinAmount = n1 ;
-                                    if(Decimal.TryParse(getValue(jobject["ipExtensionFees"]), out n1)) lpcoFeeStructure.AdditionalAmount = n1 ;
-                                    if (!string.IsNullOrEmpty( getLowerValue(jobject["ipFeeCalculationSource"]))) lpcoFeeStructure.AdditionalAmountOn = calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault();
-                                }
-                                lpcoFeeStructure.IsActive = true;
-                                lpcoFeeStructure.LPCORegulationID = lpcoRegulationId;
-                                lpcoFeeStructure.MasterDocumentClassificationCode = MasterDocumentClassificationCode.IMPORT_PERMIT;
-                                lpcoFeeStructure.CreatedOn = DateTime.Now;
-                                lpcoFeeStructure.UpdatedOn = DateTime.Now;
-                                lpcoFeeStructure.CreatedBy = userRoleId;
-                                lpcoFeeStructure.UpdatedBy = userRoleId;
-
-                                Command.UnitOfWork.LPCOFeeStructureRepository.Add(lpcoFeeStructure);
+                                mapObject(lpcoRegulationId, RequestDTO.AgencyID, null,// long lpcoRegulationId, short agencyID, int? unitID,
+                                calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault(),// int? calculationBasis,
+                                calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(), //int? calculationSource
+                                MasterDocumentClassificationCode.IMPORT_PERMIT,//string masterDocumentClassificationCode
+                                DocumentClassificationCode.IMPORT_PERMIT_AMENDMENT,//string documentClassificationCode,
+                                null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
+                                Decimal.TryParse(getValue(jobject["ipAmendmentFees"]), out n1) ? (decimal?)n1:null, //decimal? rate
+                                null, // decimal? minAmount
+                                jobject.ContainsKey("ipExtensionAllowed") ? Decimal.TryParse(getValue(jobject["ipExtensionFees"]), out n1) ? (decimal?)n1 : null : null,//decimal? additionalAmount
+                                string.IsNullOrEmpty( getLowerValue(jobject["ipFeeCalculationSource"])) ? null :
+                                         (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
+                                userRoleId );//int userRoleId
+                            
+                               
                             }
                         }
                     }
@@ -840,29 +848,24 @@ namespace PSW.ITT.Service.Strategies
 
                         }
                         else{
-                            lpcoFeeStructure.AgencyID = RequestDTO.AgencyID;
-                            lpcoFeeStructure.DocumentClassificationCode = DocumentClassificationCode.RELEASE_ORDER;
-                            lpcoFeeStructure.CalculationBasis = calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["roFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault();
-                            lpcoFeeStructure.CalculationSource = calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["roFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault();
-                            lpcoFeeStructure.CurrencyCode = "PKR";
-                            if(Decimal.TryParse(getValue(jobject["roFees"]), out n1)) lpcoFeeStructure.Rate =  n1;
-                            if(Decimal.TryParse(getValue(jobject["roFeeMinimumAmount"]), out n1)) lpcoFeeStructure.MinAmount = n1 ;
-                            if(Decimal.TryParse(getValue(jobject["roFeeAdditionalAmount"]), out n1)) lpcoFeeStructure.AdditionalAmount = n1 ;
-                            if (!string.IsNullOrEmpty( getLowerValue(jobject["roFeeAdditionalAmountOn"]))) lpcoFeeStructure.AdditionalAmountOn = calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["roFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault();
-                            lpcoFeeStructure.IsActive = true;
-                            lpcoFeeStructure.LPCORegulationID = lpcoRegulationId;
-                            lpcoFeeStructure.MasterDocumentClassificationCode = MasterDocumentClassificationCode.RELEASE_ORDER;
-                            lpcoFeeStructure.CreatedOn = DateTime.Now;
-                            lpcoFeeStructure.UpdatedOn = DateTime.Now;
-                            lpcoFeeStructure.CreatedBy = userRoleId;
-                            lpcoFeeStructure.UpdatedBy = userRoleId;
-
-                            Command.UnitOfWork.LPCOFeeStructureRepository.Add(lpcoFeeStructure);
+                            mapObject(lpcoRegulationId, RequestDTO.AgencyID, null, // long lpcoRegulationId, short agencyID, int? unitID,
+                            calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["roFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault(),// int? calculationBasis,
+                            calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["roFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(),  //int? calculationSource
+                            MasterDocumentClassificationCode.RELEASE_ORDER,//string masterDocumentClassificationCode
+                            DocumentClassificationCode.RELEASE_ORDER,//string documentClassificationCode,
+                            null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
+                            Decimal.TryParse(getValue(jobject["roFees"]), out n1) ? (decimal?)n1:null,//decimal? rate
+                            Decimal.TryParse(getValue(jobject["roFeeMinimumAmount"]), out n1) ? (decimal?) n1:null,  // decimal? minAmount
+                            Decimal.TryParse(getValue(jobject["roFeeAdditionalAmount"]), out n1)? (decimal?)n1 : null,//decimal? additionalAmount
+                            string.IsNullOrEmpty( getLowerValue(jobject["roFeeAdditionalAmountOn"])) ? null :
+                                     (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["roFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(),//int? additionalAmountOn
+                            userRoleId );//int userRoleId
+                           
                         }
                     }
                 }
            }
-           else if (RequestDTO.TradeTranTypeID==TradeTranType.EXPORT){
+           else if (RequestDTO.TradeTranTypeID==(short)PSW.ITT.Common.Constants.TradeTranType.EXPORT){
 
                 //for Export Certificate Fees
                 feePropertyDetail = propertyNameList.Where(x=>x.NameShort=="ecFees").FirstOrDefault();
@@ -873,29 +876,54 @@ namespace PSW.ITT.Service.Strategies
 
                         }
                         else{
-                            lpcoFeeStructure.AgencyID = RequestDTO.AgencyID;
-                            lpcoFeeStructure.DocumentClassificationCode = DocumentClassificationCode.EXPORT_CERTIFICATE;
-                            lpcoFeeStructure.CalculationBasis =  calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ecFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault();
-                            lpcoFeeStructure.CalculationSource = calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ecFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault();
-                            lpcoFeeStructure.CurrencyCode = "PKR";
-                            if(Decimal.TryParse(getValue(jobject["ecFees"]), out n1)) lpcoFeeStructure.Rate =  n1;
-                            if(Decimal.TryParse(getValue(jobject["ecFeeMinimumAmount"]), out n1)) lpcoFeeStructure.MinAmount = n1 ;
-                            if(Decimal.TryParse(getValue(jobject["ecFeeAdditionalAmount"]), out n1)) lpcoFeeStructure.AdditionalAmount = n1 ;
-                            if (!string.IsNullOrEmpty( getLowerValue(jobject["ecFeeAdditionalAmountOn"]))) lpcoFeeStructure.AdditionalAmountOn = calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ecFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault();
-                            lpcoFeeStructure.IsActive = true;
-                            lpcoFeeStructure.LPCORegulationID = lpcoRegulationId;
-                            lpcoFeeStructure.MasterDocumentClassificationCode = MasterDocumentClassificationCode.EXPORT_CERTIFICATE;
-                            lpcoFeeStructure.CreatedOn = DateTime.Now;
-                            lpcoFeeStructure.UpdatedOn = DateTime.Now;
-                            lpcoFeeStructure.CreatedBy = userRoleId;
-                            lpcoFeeStructure.UpdatedBy = userRoleId;
+                            mapObject(lpcoRegulationId, RequestDTO.AgencyID, null,// long lpcoRegulationId, short agencyID, int? unitID,
+                            calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ecFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault(),// int? calculationBasis,
+                            calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ecFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(), //int? calculationSource
+                            MasterDocumentClassificationCode.EXPORT_CERTIFICATE,//string masterDocumentClassificationCode
+                            DocumentClassificationCode.EXPORT_CERTIFICATE,//string documentClassificationCode,
+                            null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
+                            Decimal.TryParse(getValue(jobject["ecFees"]), out n1) ? (decimal?)n1:null,//decimal? rate
+                            Decimal.TryParse(getValue(jobject["ecFeeMinimumAmount"]), out n1) ? (decimal?) n1:null, // decimal? minAmount
+                            Decimal.TryParse(getValue(jobject["ecFeeAdditionalAmount"]), out n1)? (decimal?)n1 : null,//decimal? additionalAmount
+                            string.IsNullOrEmpty( getLowerValue(jobject["ecFeeAdditionalAmountOn"])) ? null : 
+                                    (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["roFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(),//int? additionalAmountOn
+                            userRoleId );//int userRoleId
 
-                            Command.UnitOfWork.LPCOFeeStructureRepository.Add(lpcoFeeStructure);
+
+                            
                         }
                     }
                 }
             }
         }
+
+        private void mapObject(long lpcoRegulationId, short agencyID, int? unitID, int? calculationBasis, int? calculationSource, string masterDocumentClassificationCode, string documentClassificationCode,
+                                int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, decimal? rate, decimal? minAmount, decimal? additionalAmount, int? additionalAmountOn, int userRoleId){
+                                    
+            LPCOFeeStructure lpcoFeeStructure = new LPCOFeeStructure();
+            lpcoFeeStructure.AgencyID = agencyID;
+            lpcoFeeStructure.Unit_ID = unitID == null ? null : unitID;
+            lpcoFeeStructure.CalculationBasis = calculationBasis;
+            lpcoFeeStructure.CalculationSource = calculationSource;
+            lpcoFeeStructure.MasterDocumentClassificationCode = masterDocumentClassificationCode;
+            lpcoFeeStructure.DocumentClassificationCode = documentClassificationCode;
+            lpcoFeeStructure.QtyRangeTo = qtyRangeTo == null ? null :  qtyRangeTo;
+            lpcoFeeStructure.CurrencyCode = "PKR";
+            lpcoFeeStructure.Rate = rate == null ? null :  rate;
+            lpcoFeeStructure.MinAmount = minAmount == null ? null : minAmount;
+            lpcoFeeStructure.AdditionalAmount = additionalAmount == null ? null : additionalAmount;
+            lpcoFeeStructure.AdditionalAmountOn = additionalAmountOn == null ? null : additionalAmountOn;
+            lpcoFeeStructure.IsActive = true;
+            lpcoFeeStructure.LPCORegulationID = lpcoRegulationId;
+            lpcoFeeStructure.CreatedOn = DateTime.Now;
+            lpcoFeeStructure.UpdatedOn = DateTime.Now;
+            lpcoFeeStructure.CreatedBy = userRoleId;
+            lpcoFeeStructure.UpdatedBy = userRoleId;
+
+
+            Command.UnitOfWork.LPCOFeeStructureRepository.Add(lpcoFeeStructure);
+        }
+
         private string getValue(JToken str){
             return str.Value<string>();
         }
