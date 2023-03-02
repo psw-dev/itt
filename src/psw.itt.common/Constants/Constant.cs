@@ -57,6 +57,18 @@ namespace PSW.ITT.Common.Constants
         public const string EXPORT_CERTIFICATE = "EC";
         public const string RELEASE_ORDER = "RO";
         public const string IMPORT_PERMIT = "IMP";
+        public const string IMPORT_PERMIT_AMENDMENT = "IPA";
+        public const string SINGLE_DECLARATION = "SD";
+        public const string PRODUCT_REGISTRATION = "PRD";
+        public const string PREMISE_REGISTRATION = "PRM";
+        public const string BUSINESS_REGISTRATION = "BSS";
+        
+    }
+    public static class MasterDocumentClassificationCode
+    {
+        public const string EXPORT_CERTIFICATE = "EC";
+        public const string RELEASE_ORDER = "RO";
+        public const string IMPORT_PERMIT = "IMP";
         public const string SINGLE_DECLARATION = "SD";
         public const string PRODUCT_REGISTRATION = "PRD";
         public const string PREMISE_REGISTRATION = "PRM";

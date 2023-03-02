@@ -16,7 +16,7 @@ namespace PSW.ITT.Data.Entities
         private string _hSCode;
         private string _hSCodeExt;
         private long _productCodeAgencyLinkID;
-        private int _lpcoFeeStructureID;
+        // private int _lpcoFeeStructureID;
         private DateTime _effectiveFromDt;
         private DateTime _effectiveThruDt;
         private short _tradeTranTypeID;
@@ -38,7 +38,7 @@ namespace PSW.ITT.Data.Entities
         public string HSCodeExt { get { return _hSCodeExt; } set { _hSCodeExt = value; } }
         public string RegulationJson { get { return _regulationJson; } set { _regulationJson = value; } }
         public long ProductCodeAgencyLinkID { get { return _productCodeAgencyLinkID; } set { _productCodeAgencyLinkID = value; } }
-        public int LpcoFeeStructureID { get { return _lpcoFeeStructureID; } set { _lpcoFeeStructureID = value; } }
+        // public int LpcoFeeStructureID { get { return _lpcoFeeStructureID; } set { _lpcoFeeStructureID = value; } }
         public DateTime EffectiveFromDt { get { return _effectiveFromDt; } set { _effectiveFromDt = value; } }
         public DateTime EffectiveThruDt { get { return _effectiveThruDt; } set { _effectiveThruDt = value; } }
         public short TradeTranTypeID { get { return _tradeTranTypeID; } set { _tradeTranTypeID = value; } }
@@ -68,7 +68,7 @@ namespace PSW.ITT.Data.Entities
                 {"AgencyID", AgencyID},
                 {"RegulationJson", RegulationJson},
                 {"ProductCodeAgencyLinkID", ProductCodeAgencyLinkID},
-                {"LpcoFeeStructureID", LpcoFeeStructureID},
+                // {"LpcoFeeStructureID", LpcoFeeStructureID},
                 {"EffectiveFromDt", EffectiveFromDt},
                 {"EffectiveThruDt", EffectiveThruDt},
                 {"TradeTranTypeID",TradeTranTypeID},
@@ -89,7 +89,7 @@ namespace PSW.ITT.Data.Entities
                 AgencyID,
                 RegulationJson,
                 ProductCodeAgencyLinkID,
-                LpcoFeeStructureID,
+                // LpcoFeeStructureID,
                 EffectiveFromDt,
                 EffectiveThruDt,
                 TradeTranTypeID,
