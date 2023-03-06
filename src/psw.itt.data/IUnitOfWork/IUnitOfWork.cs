@@ -22,6 +22,7 @@ namespace PSW.ITT.Data
         ILPCOFeeStructureRepository LPCOFeeStructureRepository { get; }
         ISheetTypeRepository SheetTypeRepository { get; }
         ICommonForLovRepository CommonForLovRepository { get; }
+		IValidationRepository ValidationRepository { get; }
         IEventBus eventBus { get; }
         #endregion
 

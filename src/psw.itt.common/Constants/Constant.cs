@@ -79,14 +79,16 @@ namespace PSW.ITT.Common.Constants
     }
     public static class FEEClassificationCodeForAdditionalAmount
     {
-        public const string EXPORT_CERTIFICATE = "EAD";
-        public const string RELEASE_ORDER = "RAD";
-        public const string IMPORT_PERMIT = "IAD";
-        public const string IMPORT_PERMIT_AMENDMENT = "IAAD";
-        public const string PRODUCT_REGISTRATION = "PRAD";
-        public const string PREMISE_REGISTRATION = "PMAD";
-        public const string BUSINESS_REGISTRATION = "BSAD";
-        public const string CATCH_CERTIFICATE = "CAD";
+        public const string EXPORT_CERTIFICATE = "ECAD";
+        public const string RELEASE_ORDER = "ROAD";
+        public const string IMPORT_PERMIT = "IMPAD";
+        public const string IMPORT_PERMIT_AMENDMENT = "IPAAD";
+        public const string SINGLE_DECLARATION = "SDAD";
+        public const string PRODUCT_REGISTRATION = "PRDAD";
+        public const string PREMISE_REGISTRATION = "PRMAD";
+        public const string PREMISE_REGISTRATION_RENEWAL = "PMRAD";
+        public const string BUSINESS_REGISTRATION = "BSSAD";
+        public const string CATCH_CERTIFICATE = "CCAD";
         
     }
 
