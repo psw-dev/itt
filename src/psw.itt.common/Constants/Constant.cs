@@ -64,6 +64,7 @@ namespace PSW.ITT.Common.Constants
         public const string PREMISE_REGISTRATION_RENEWAL = "PMR";
         public const string BUSINESS_REGISTRATION = "BSS";
         public const string CATCH_CERTIFICATE = "CC";
+        public const string EXPORT_PERMIT = "EP";
         
     }
     public static class MasterDocumentClassificationCode
@@ -76,6 +77,7 @@ namespace PSW.ITT.Common.Constants
         public const string PREMISE_REGISTRATION = "PRM";
         public const string BUSINESS_REGISTRATION = "BSS";
         public const string CATCH_CERTIFICATE = "CC";   
+        public const string EXPORT_PERMIT = "EP";
     }
     public static class FEEClassificationCodeForAdditionalAmount
     {
@@ -89,6 +91,7 @@ namespace PSW.ITT.Common.Constants
         public const string PREMISE_REGISTRATION_RENEWAL = "PMRAD";
         public const string BUSINESS_REGISTRATION = "BSSAD";
         public const string CATCH_CERTIFICATE = "CCAD";
+        public const string EXPORT_PERMIT = "EPAD";
         
     }
 

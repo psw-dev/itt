@@ -1105,6 +1105,56 @@ namespace PSW.ITT.Service.Strategies
                     }
                 }
 
+                //for Export Certificate Fees
+                feePropertyDetail = propertyNameList.Where(x=>x.NameShort=="epFees").FirstOrDefault();
+                
+                if(jobject.ContainsKey("epRequired")){
+                    if(getLowerValue(jobject["epRequired"]) == "yes"){
+
+                        decimal? additionalAmount = AdditionalAmountAccumulator(propertyNameList, jobject, FEEClassificationCodeForAdditionalAmount.EXPORT_PERMIT);
+
+                        if(feePropertyDetail.NameLong.Contains("[Quantity;Unit;Price|]")){
+
+                            List<FeeDecoderResponseDTO> listFeeDecoderResponseDTO = new List<FeeDecoderResponseDTO>();
+
+                            listFeeDecoderResponseDTO = FeeDecoder(jobject["ecFees"], calculationBasis, unitList, jobject["epFeeCalculationBasis"]);
+                            
+                            foreach( var i in listFeeDecoderResponseDTO){
+
+                                mapObject(lpcoRegulationId, RequestDTO.AgencyID, // long lpcoRegulationId, short agencyID, int? unitID,
+                                i.Unit, i.CalculationBasisValue,// int? unitID, int? calculationBasis,
+                                calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["epFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(),//int? calculationSource
+                                MasterDocumentClassificationCode.EXPORT_PERMIT,//string masterDocumentClassificationCode
+                                DocumentClassificationCode.EXPORT_PERMIT,//string documentClassificationCode,
+                                i.QtyRangeTo, i.QtyRangeFrom, "PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
+                                i.Rate, //decimal? rate
+                                Decimal.TryParse(getValue(jobject["epFeeMinimumAmount"]), out n1) ? (decimal?) n1:null, // decimal? minAmount
+                                additionalAmount, //decimal? additionalAmount
+                                string.IsNullOrEmpty( getLowerValue(jobject["epFeeAdditionalAmountOn"])) ? null : 
+                                        (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["epFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
+                                userRoleId );//int userRoleId
+                            }
+                        }
+                        else{
+                            mapObject(lpcoRegulationId, RequestDTO.AgencyID, null,// long lpcoRegulationId, short agencyID, int? unitID,
+                            calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["epFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault(),// int? calculationBasis,
+                            calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["epFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(), //int? calculationSource
+                            MasterDocumentClassificationCode.EXPORT_PERMIT,//string masterDocumentClassificationCode
+                            DocumentClassificationCode.EXPORT_PERMIT,//string documentClassificationCode,
+                            null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
+                            Decimal.TryParse(getValue(jobject["epFees"]), out n1) ? (decimal?)n1:null,//decimal? rate
+                            Decimal.TryParse(getValue(jobject["epFeeMinimumAmount"]), out n1) ? (decimal?) n1:null, // decimal? minAmount
+                            additionalAmount,//decimal? additionalAmount
+                            string.IsNullOrEmpty( getLowerValue(jobject["epFeeAdditionalAmountOn"])) ? null : 
+                                    (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["epFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(),//int? additionalAmountOn
+                            userRoleId );//int userRoleId
+
+
+                            
+                        }
+                    }
+                }
+
             }
         }
 
