@@ -75,7 +75,18 @@ namespace PSW.ITT.Common.Constants
         public const string PRODUCT_REGISTRATION = "PRD";
         public const string PREMISE_REGISTRATION = "PRM";
         public const string BUSINESS_REGISTRATION = "BSS";
-        public const string CATCH_CERTIFICATE = "CC";
+        public const string CATCH_CERTIFICATE = "CC";   
+    }
+    public static class FEEClassificationCodeForAdditionalAmount
+    {
+        public const string EXPORT_CERTIFICATE = "EAD";
+        public const string RELEASE_ORDER = "RAD";
+        public const string IMPORT_PERMIT = "IAD";
+        public const string IMPORT_PERMIT_AMENDMENT = "IAAD";
+        public const string PRODUCT_REGISTRATION = "PRAD";
+        public const string PREMISE_REGISTRATION = "PMAD";
+        public const string BUSINESS_REGISTRATION = "BSAD";
+        public const string CATCH_CERTIFICATE = "CAD";
         
     }
 
