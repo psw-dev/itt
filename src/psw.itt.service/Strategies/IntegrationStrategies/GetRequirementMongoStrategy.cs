@@ -368,7 +368,7 @@ namespace PSW.ITT.Service.Strategies
                 {
                     roDocRequirements = getListValue(mongoRecord["roMandatoryDocumentryRequirements"]);
                     roDocOptional = getListValue(mongoRecord["roOptionalDocumentryRequirements"]); 
-                    ipReq = getLowerValue(mongoRecord["isProductRegistrationRequired"]) == "yes";
+                    ipReq = getLowerValue(mongoRecord["prdRequired"]) == "yes";
                     docClassificCode = "PRD";
 
                     //Financial Requirements
@@ -553,7 +553,7 @@ namespace PSW.ITT.Service.Strategies
                 
                 if (Convert.ToInt32(RequestDTO.AgencyId) == (int)AgencyEnum.MFD)
                 {
-                    premisesRegistrationRequired = getLowerValue(mongoRecord["isPremiseRegistrationRequired"]) == "yes";
+                    premisesRegistrationRequired = getLowerValue(mongoRecord["prmRequired"]) == "yes";
                 }
 
                 if (ecDocOptional != null && !ecDocOptional.Contains("NaN"))
@@ -775,11 +775,11 @@ namespace PSW.ITT.Service.Strategies
 
                 case DocumentClassificationCode.PRODUCT_REGISTRATION:
                 IsParenCodeValid = true;
-                return  getLowerValue(mongoRecord["isProductRegistrationRequired"]) == "yes";
+                return  getLowerValue(mongoRecord["prdRequired"]) == "yes";
 
                 case DocumentClassificationCode.PREMISE_REGISTRATION:
                 IsParenCodeValid = true;
-                return  getLowerValue(mongoRecord["isPremiseRegistrationRequired"]) == "yes";
+                return  getLowerValue(mongoRecord["prmRequired"]) == "yes";
 
                 default:
                     IsParenCodeValid = false;
