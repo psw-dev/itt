@@ -773,12 +773,6 @@ namespace PSW.ITT.Service.Strategies
             var calculationSource = Command.UnitOfWork.CalculationSourceRepository.Get().ToList();
             var unitList = Command.SHRDUnitOfWork.Ref_UnitsRepository.Get().ToList();
             decimal n1;
-            int n2;  
-            int? unit=null;
-            decimal? rate=null;
-            int? calculationBasisValue=null;
-            int? qtyRangeTo=null;
-            int? qtyRangeFrom=null;
 
             
             //for Import Permit Fees
@@ -786,6 +780,9 @@ namespace PSW.ITT.Service.Strategies
            if (RequestDTO.TradeTranTypeID==(short)PSW.ITT.Common.Constants.TradeTranType.IMPORT){
                 if(jobject.ContainsKey("ipRequired")){
                     if(getLowerValue(jobject["ipRequired"]) == "yes"){
+                        
+                        decimal? additionalAmount = AdditionalAmountAccumulator(propertyNameList, jobject, FEEClassificationCodeForAdditionalAmount.IMPORT_PERMIT);
+
                         if(feePropertyDetail.NameLong.Contains("[Quantity;Unit;Price|]")){
                             
                             List<FeeDecoderResponseDTO> listFeeDecoderResponseDTO = new List<FeeDecoderResponseDTO>();
@@ -802,7 +799,7 @@ namespace PSW.ITT.Service.Strategies
                                 i.QtyRangeTo, i.QtyRangeFrom, "PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
                                 i.Rate, //decimal? rate
                                 Decimal.TryParse(getValue(jobject["ipFeeMinimumAmount"]), out n1) ? (decimal?) n1:null, // decimal? minAmount
-                                Decimal.TryParse(getValue(jobject["ipFeeAdditionalAmount"]), out n1)? (decimal?)n1 : null, //decimal? additionalAmount
+                                additionalAmount, //decimal? additionalAmount
                                 string.IsNullOrEmpty( getLowerValue(jobject["ipFeeAdditionalAmountOn"])) ? null : 
                                         (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
                                 userRoleId );//int userRoleId
@@ -810,7 +807,7 @@ namespace PSW.ITT.Service.Strategies
                             }
                         }
                         else{  
- 
+                        
                             mapObject(lpcoRegulationId, RequestDTO.AgencyID, null,// long lpcoRegulationId, short agencyID, int? unitID,
                             calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault(),// int? calculationBasis,
                             calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(),//int? calculationSource
@@ -819,7 +816,7 @@ namespace PSW.ITT.Service.Strategies
                             null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
                             Decimal.TryParse(getValue(jobject["ipFees"]), out n1) ? (decimal?)n1:null, //decimal? rate
                             Decimal.TryParse(getValue(jobject["ipFeeMinimumAmount"]), out n1) ? (decimal?) n1:null, // decimal? minAmount
-                            Decimal.TryParse(getValue(jobject["ipFeeAdditionalAmount"]), out n1)? (decimal?)n1 : null, //decimal? additionalAmount
+                            additionalAmount, //decimal? additionalAmount
                             string.IsNullOrEmpty( getLowerValue(jobject["ipFeeAdditionalAmountOn"])) ? null : 
                                     (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
                             userRoleId );//int userRoleId
@@ -827,6 +824,8 @@ namespace PSW.ITT.Service.Strategies
                             
 
                         if(jobject.ContainsKey("ipAmendmentFees")){
+                            
+                            decimal? additionalAmountForExtension = AdditionalAmountAccumulator(propertyNameList, jobject, FEEClassificationCodeForAdditionalAmount.IMPORT_PERMIT_AMENDMENT);
 
                             mapObject(lpcoRegulationId, RequestDTO.AgencyID, null,// long lpcoRegulationId, short agencyID, int? unitID,
                             calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault(),// int? calculationBasis,
@@ -836,7 +835,7 @@ namespace PSW.ITT.Service.Strategies
                             null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
                             Decimal.TryParse(getValue(jobject["ipAmendmentFees"]), out n1) ? (decimal?)n1:null, //decimal? rate
                             null, // decimal? minAmount
-                            jobject.ContainsKey("ipExtensionAllowed") ? Decimal.TryParse(getValue(jobject["ipExtensionFees"]), out n1) ? (decimal?)n1 : null : null,//decimal? additionalAmount
+                            jobject.ContainsKey("ipExtensionAllowed") ? additionalAmountForExtension : null,//decimal? additionalAmount
                             string.IsNullOrEmpty( getLowerValue(jobject["ipFeeCalculationSource"])) ? null :
                                         (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ipFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
                             userRoleId );//int userRoleId
@@ -852,8 +851,11 @@ namespace PSW.ITT.Service.Strategies
                 
                 if(jobject.ContainsKey("roRequired")){
                     if(getLowerValue(jobject["roRequired"]) == "yes"){
-                        if(feePropertyDetail.NameLong.Contains("[Quantity-Unit-Price|]")){
+                        
+                        decimal? additionalAmount = AdditionalAmountAccumulator(propertyNameList, jobject, FEEClassificationCodeForAdditionalAmount.RELEASE_ORDER);
 
+                        if(feePropertyDetail.NameLong.Contains("[Quantity;Unit;Price|]")){
+                            
                             List<FeeDecoderResponseDTO> listFeeDecoderResponseDTO = new List<FeeDecoderResponseDTO>();
 
                             listFeeDecoderResponseDTO = FeeDecoder(jobject["roFees"], calculationBasis, unitList, jobject["roFeeCalculationBasis"]);
@@ -868,7 +870,7 @@ namespace PSW.ITT.Service.Strategies
                                 i.QtyRangeTo, i.QtyRangeFrom, "PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
                                 i.Rate, //decimal? rate
                                 Decimal.TryParse(getValue(jobject["roFeeMinimumAmount"]), out n1) ? (decimal?) n1:null, // decimal? minAmount
-                                Decimal.TryParse(getValue(jobject["roFeeAdditionalAmount"]), out n1)? (decimal?)n1 : null, //decimal? additionalAmount
+                                additionalAmount, //decimal? additionalAmount
                                 string.IsNullOrEmpty( getLowerValue(jobject["roFeeAdditionalAmountOn"])) ? null : 
                                         (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["roFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
                                 userRoleId );//int userRoleId
@@ -884,7 +886,7 @@ namespace PSW.ITT.Service.Strategies
                             null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
                             Decimal.TryParse(getValue(jobject["roFees"]), out n1) ? (decimal?)n1:null,//decimal? rate
                             Decimal.TryParse(getValue(jobject["roFeeMinimumAmount"]), out n1) ? (decimal?) n1:null,  // decimal? minAmount
-                            Decimal.TryParse(getValue(jobject["roFeeAdditionalAmount"]), out n1)? (decimal?)n1 : null,//decimal? additionalAmount
+                            additionalAmount,//decimal? additionalAmount
                             string.IsNullOrEmpty( getLowerValue(jobject["roFeeAdditionalAmountOn"])) ? null :
                                      (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["roFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(),//int? additionalAmountOn
                             userRoleId );//int userRoleId
@@ -897,7 +899,10 @@ namespace PSW.ITT.Service.Strategies
                 
                 if(jobject.ContainsKey("prdRequired")){
                     if(getLowerValue(jobject["prdRequired"]) == "yes"){
-                        if(feePropertyDetail.NameLong.Contains("[Quantity-Unit-Price|]")){
+                        
+                        decimal? additionalAmount = AdditionalAmountAccumulator(propertyNameList, jobject, FEEClassificationCodeForAdditionalAmount.PRODUCT_REGISTRATION);
+
+                        if(feePropertyDetail.NameLong.Contains("[Quantity;Unit;Price|]")){
 
                             List<FeeDecoderResponseDTO> listFeeDecoderResponseDTO = new List<FeeDecoderResponseDTO>();
 
@@ -912,7 +917,7 @@ namespace PSW.ITT.Service.Strategies
                                 i.QtyRangeTo, i.QtyRangeFrom, "PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
                                 i.Rate, //decimal? rate
                                 Decimal.TryParse(getValue(jobject["prdFeeMinimumAmount"]), out n1) ? (decimal?) n1:null, // decimal? minAmount
-                                Decimal.TryParse(getValue(jobject["prdFeeAdditionalAmount"]), out n1)? (decimal?)n1 : null, //decimal? additionalAmount
+                                additionalAmount, //decimal? additionalAmount
                                 string.IsNullOrEmpty( getLowerValue(jobject["prdFeeAdditionalAmountOn"])) ? null : 
                                         (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["prdFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
                                 userRoleId );//int userRoleId
@@ -927,7 +932,7 @@ namespace PSW.ITT.Service.Strategies
                             null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
                             Decimal.TryParse(getValue(jobject["prdFees"]), out n1) ? (decimal?)n1:null,//decimal? rate
                             Decimal.TryParse(getValue(jobject["prdFeeMinimumAmount"]), out n1) ? (decimal?) n1:null, // decimal? minAmount
-                            Decimal.TryParse(getValue(jobject["prdFeeAdditionalAmount"]), out n1)? (decimal?)n1 : null,//decimal? additionalAmount
+                            additionalAmount,//decimal? additionalAmount
                             string.IsNullOrEmpty( getLowerValue(jobject["prdFeeAdditionalAmountOn"])) ? null : 
                                     (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["prdFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(),//int? additionalAmountOn
                             userRoleId );//int userRoleId
@@ -945,7 +950,10 @@ namespace PSW.ITT.Service.Strategies
                 
                 if(jobject.ContainsKey("ecRequired")){
                     if(getLowerValue(jobject["ecRequired"]) == "yes"){
-                        if(feePropertyDetail.NameLong.Contains("[Quantity-Unit-Price|]")){
+
+                        decimal? additionalAmount = AdditionalAmountAccumulator(propertyNameList, jobject, FEEClassificationCodeForAdditionalAmount.EXPORT_CERTIFICATE);
+
+                        if(feePropertyDetail.NameLong.Contains("[Quantity;Unit;Price|]")){
 
                             List<FeeDecoderResponseDTO> listFeeDecoderResponseDTO = new List<FeeDecoderResponseDTO>();
 
@@ -961,7 +969,7 @@ namespace PSW.ITT.Service.Strategies
                                 i.QtyRangeTo, i.QtyRangeFrom, "PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
                                 i.Rate, //decimal? rate
                                 Decimal.TryParse(getValue(jobject["ecFeeMinimumAmount"]), out n1) ? (decimal?) n1:null, // decimal? minAmount
-                                Decimal.TryParse(getValue(jobject["ecFeeAdditionalAmount"]), out n1)? (decimal?)n1 : null, //decimal? additionalAmount
+                                additionalAmount, //decimal? additionalAmount
                                 string.IsNullOrEmpty( getLowerValue(jobject["ecFeeAdditionalAmountOn"])) ? null : 
                                         (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ecFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
                                 userRoleId );//int userRoleId
@@ -976,7 +984,7 @@ namespace PSW.ITT.Service.Strategies
                             null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
                             Decimal.TryParse(getValue(jobject["ecFees"]), out n1) ? (decimal?)n1:null,//decimal? rate
                             Decimal.TryParse(getValue(jobject["ecFeeMinimumAmount"]), out n1) ? (decimal?) n1:null, // decimal? minAmount
-                            Decimal.TryParse(getValue(jobject["ecFeeAdditionalAmount"]), out n1)? (decimal?)n1 : null,//decimal? additionalAmount
+                            additionalAmount,//decimal? additionalAmount
                             string.IsNullOrEmpty( getLowerValue(jobject["ecFeeAdditionalAmountOn"])) ? null : 
                                     (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["ecFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(),//int? additionalAmountOn
                             userRoleId );//int userRoleId
@@ -992,7 +1000,10 @@ namespace PSW.ITT.Service.Strategies
                 
                 if(jobject.ContainsKey("prmRequired")){
                     if(getLowerValue(jobject["prmRequired"]) == "yes"){
-                        if(feePropertyDetail.NameLong.Contains("[Quantity-Unit-Price|]")){
+
+                        decimal? additionalAmount = AdditionalAmountAccumulator(propertyNameList, jobject, FEEClassificationCodeForAdditionalAmount.PREMISE_REGISTRATION);
+
+                        if(feePropertyDetail.NameLong.Contains("[Quantity;Unit;Price|]")){
 
                             List<FeeDecoderResponseDTO> listFeeDecoderResponseDTO = new List<FeeDecoderResponseDTO>();
 
@@ -1008,7 +1019,7 @@ namespace PSW.ITT.Service.Strategies
                                 i.QtyRangeTo, i.QtyRangeFrom, "PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
                                 i.Rate, //decimal? rate
                                 Decimal.TryParse(getValue(jobject["prmFeeMinimumAmount"]), out n1) ? (decimal?) n1:null, // decimal? minAmount
-                                Decimal.TryParse(getValue(jobject["prmFeeAdditionalAmount"]), out n1)? (decimal?)n1 : null, //decimal? additionalAmount
+                                additionalAmount, //decimal? additionalAmount
                                 string.IsNullOrEmpty( getLowerValue(jobject["prmFeeAdditionalAmountOn"])) ? null : 
                                         (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["prmFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
                                 userRoleId );//int userRoleId
@@ -1023,12 +1034,14 @@ namespace PSW.ITT.Service.Strategies
                             null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
                             Decimal.TryParse(getValue(jobject["prmFees"]), out n1) ? (decimal?)n1:null,//decimal? rate
                             Decimal.TryParse(getValue(jobject["prmFeeMinimumAmount"]), out n1) ? (decimal?) n1:null, // decimal? minAmount
-                            Decimal.TryParse(getValue(jobject["prmFeeAdditionalAmount"]), out n1)? (decimal?)n1 : null,//decimal? additionalAmount
+                            additionalAmount,//decimal? additionalAmount
                             string.IsNullOrEmpty( getLowerValue(jobject["prmFeeAdditionalAmountOn"])) ? null : 
                                     (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["prmFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(),//int? additionalAmountOn
                             userRoleId );//int userRoleId
                         }
                         if(jobject.ContainsKey("prmRenewalRequired")){
+
+                            decimal? additionalAmountRenewal = AdditionalAmountAccumulator(propertyNameList, jobject, FEEClassificationCodeForAdditionalAmount.PREMISE_REGISTRATION_RENEWAL);
 
                             mapObject(lpcoRegulationId, RequestDTO.AgencyID, null,// long lpcoRegulationId, short agencyID, int? unitID,
                             calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(jobject["prmFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault(),// int? calculationBasis,
@@ -1038,7 +1051,7 @@ namespace PSW.ITT.Service.Strategies
                             null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
                             Decimal.TryParse(getValue(jobject["prmRenewalFees"]), out n1) ? (decimal?)n1:null, //decimal? rate
                             null, // decimal? minAmount
-                            null,//decimal? additionalAmount
+                            additionalAmountRenewal,//decimal? additionalAmount
                             string.IsNullOrEmpty( getLowerValue(jobject["prmFeeCalculationSource"])) ? null :
                                         (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(jobject["prmFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
                             userRoleId );//int userRoleId
@@ -1052,7 +1065,9 @@ namespace PSW.ITT.Service.Strategies
                 
                 if(jobject.ContainsKey("ccRequired")){
                     if(getLowerValue(jobject["ccRequired"]) == "yes"){
-                        if(feePropertyDetail.NameLong.Contains("[Quantity-Unit-Price|]")){
+                        decimal? additionalAmount = AdditionalAmountAccumulator(propertyNameList, jobject, FEEClassificationCodeForAdditionalAmount.CATCH_CERTIFICATE);
+                        if(feePropertyDetail.NameLong.Contains("[Quantity;Unit;Price|]")){
+
 
                             List<FeeDecoderResponseDTO> listFeeDecoderResponseDTO = new List<FeeDecoderResponseDTO>();
 
@@ -1068,7 +1083,7 @@ namespace PSW.ITT.Service.Strategies
                                 i.QtyRangeTo, i.QtyRangeFrom, "PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
                                 i.Rate, //decimal? rate
                                 null, // decimal? minAmount
-                                null, //decimal? additionalAmount
+                                additionalAmount, //decimal? additionalAmount
                                 null, //int? additionalAmountOn
                                 userRoleId );//int userRoleId
                             }
@@ -1082,16 +1097,31 @@ namespace PSW.ITT.Service.Strategies
                             null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
                             Decimal.TryParse(getValue(jobject["ccFees"]), out n1) ? (decimal?)n1:null,//decimal? rate
                             null, // decimal? minAmount
-                            null,//decimal? additionalAmount
+                            additionalAmount,//decimal? additionalAmount
                             null,//int? additionalAmountOn
                             userRoleId );//int userRoleId
-
-
                             
                         }
                     }
                 }
 
+            }
+        }
+
+        private decimal? AdditionalAmountAccumulator(List<SheetAttributeMapping> propertyNameList, JObject jobject, string classificationCode){
+
+            var additionalAmountDetail = propertyNameList.Where(x=>x.ClassificationCode == classificationCode).ToList();
+            if (additionalAmountDetail.Count ==0){
+                return null;
+            }
+            else{
+                decimal n1;
+                decimal? totalAmount = null;
+                foreach(var i in additionalAmountDetail){
+                    var amount = Decimal.TryParse(getValue(jobject[i.NameShort]), out n1)? (decimal?)n1 : null;          
+                    totalAmount = amount == null ? totalAmount : totalAmount == null ? amount : totalAmount + amount ;
+                }
+                return totalAmount;
             }
         }
         private List<FeeDecoderResponseDTO> FeeDecoder(JToken fees, List<CalculationBasis> calculationBasisList, List<PSW.ITT.Data.Entities.Ref_Units> unitList, JToken calculationBasis){
