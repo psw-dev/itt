@@ -387,7 +387,7 @@ namespace PSW.ITT.Service.Strategies
                          var calculationBasis = Command.UnitOfWork.CalculationBasisRepository.Get().ToList();
                         var calculationSource = Command.UnitOfWork.CalculationSourceRepository.Get().ToList();
                         var feeConfigurationList = Command.UnitOfWork.LPCOFeeStructureRepository.GetFeeConfig(
-                           1 // lpcoRegulation.LpcoFeeStructureID
+                            1//TODO : need to be change after fees implementation lpcoRegulation.LpcoFeeStructureID
                         ).FirstOrDefault();
 
                         var feeConfig = new LPCOFeeCleanResp();
