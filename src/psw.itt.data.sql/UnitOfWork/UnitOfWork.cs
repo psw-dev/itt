@@ -23,6 +23,8 @@ namespace PSW.ITT.Data.Sql.UnitOfWork
         // Repositories 
 
 		private IAttributeValidationMappingRepository _attributeValidationMappingRepository;
+		private ICalculationBasisRepository _calculationBasisRepository;
+		private ICalculationSourceRepository _calculationSourceRepository;
         private IProductCodeAgencyLinkRepository _productCodeAgencyLinkRepository;
         private IProductCodeChapterRepository _productCodeChapterRepository;
         private IProductCodeEntityRepository _productCodeEntityRepository;
@@ -33,6 +35,8 @@ namespace PSW.ITT.Data.Sql.UnitOfWork
         private IProductRegulationRequirementRepository _productRegulationRequirementRepository;
 		private IValidationRepository _validationRepository;
 		private ILPCOFeeStructureRepository _lPCOFeeStructureRepository;
+		private ISheetTypeRepository _sheetTypeRepository;
+		private ICommonForLovRepository _commonForLovRepository;
 
         private IEventBus _eventBus;
         public IEventBus eventBus => _eventBus;
@@ -69,6 +73,8 @@ namespace PSW.ITT.Data.Sql.UnitOfWork
 
         #region Public Properties
         public IAttributeValidationMappingRepository AttributeValidationMappingRepository => _attributeValidationMappingRepository ?? (_attributeValidationMappingRepository = new AttributeValidationMappingRepository(_connection));
+		public ICalculationBasisRepository CalculationBasisRepository => _calculationBasisRepository ?? (_calculationBasisRepository = new CalculationBasisRepository(_connection));
+		public ICalculationSourceRepository CalculationSourceRepository => _calculationSourceRepository ?? (_calculationSourceRepository = new CalculationSourceRepository(_connection));
 		public IProductCodeAgencyLinkRepository ProductCodeAgencyLinkRepository => _productCodeAgencyLinkRepository ?? (_productCodeAgencyLinkRepository = new ProductCodeAgencyLinkRepository(_connection));
         public IProductCodeChapterRepository ProductCodeChapterRepository => _productCodeChapterRepository ?? (_productCodeChapterRepository = new ProductCodeChapterRepository(_connection));
         public IProductCodeEntityRepository ProductCodeEntityRepository => _productCodeEntityRepository ?? (_productCodeEntityRepository = new ProductCodeEntityRepository(_connection));
@@ -79,6 +85,8 @@ namespace PSW.ITT.Data.Sql.UnitOfWork
         public IProductRegulationRequirementRepository ProductRegulationRequirementRepository => _productRegulationRequirementRepository ?? (_productRegulationRequirementRepository = new ProductRegulationRequirementRepository(_connection));
         public IValidationRepository ValidationRepository => _validationRepository ?? (_validationRepository = new ValidationRepository(_connection));
         public ILPCOFeeStructureRepository LPCOFeeStructureRepository => _lPCOFeeStructureRepository ?? (_lPCOFeeStructureRepository = new LPCOFeeStructureRepository(_connection));
+		public ISheetTypeRepository SheetTypeRepository => _sheetTypeRepository ?? (_sheetTypeRepository = new SheetTypeRepository(_connection));
+        public ICommonForLovRepository CommonForLovRepository => _commonForLovRepository ?? (_commonForLovRepository = new CommonForLovRepository(_connection));
 
         #endregion
 

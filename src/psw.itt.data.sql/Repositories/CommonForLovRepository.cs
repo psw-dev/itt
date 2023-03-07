@@ -10,7 +10,7 @@ using PSW.Lib.Logs;
 
 namespace PSW.ITT.Data.Sql.Repositories
 {
-    public class ShrdCommonForLovRepository : IShrdCommonForLovRepository
+    public class CommonForLovRepository : ICommonForLovRepository
     {
         #region Protected properties
         protected string TableName { get; set; }
@@ -31,7 +31,7 @@ namespace PSW.ITT.Data.Sql.Repositories
 
         #region public constructors
         
-        public ShrdCommonForLovRepository(IDbConnection connection)
+        public CommonForLovRepository(IDbConnection connection)
         {
             Dapper.SqlMapper.AddTypeMap(typeof(string), System.Data.DbType.AnsiString);
             _connection = connection;
@@ -48,7 +48,7 @@ namespace PSW.ITT.Data.Sql.Repositories
     public List<(int,string)> GetLOV(string TableName, string ColumnName )
         {
             Log.Information("[{0}] ConnectionString", _connection.ConnectionString);
-            var query = @"SELECT id,"+ColumnName+"  FROM "+ TableName + " WHERE IsActive = 1";
+            var query = @"SELECT id,"+ColumnName+"  FROM "+ TableName  ;
              var returnValue = _connection.Query<(int,string)>(
                     query 
                    ).ToList();
@@ -58,7 +58,7 @@ namespace PSW.ITT.Data.Sql.Repositories
     public List<string> GetList(string TableName, string ColumnName )
         {
             Log.Information("[{0}] ConnectionString", _connection.ConnectionString);
-            var query = @"SELECT "+ColumnName+"  FROM "+ TableName + " WHERE IsActive = 1";
+            var query = @"SELECT "+ColumnName+"  FROM "+ TableName ;
              var returnValue = _connection.Query<string>(
                     query 
                    ).ToList();

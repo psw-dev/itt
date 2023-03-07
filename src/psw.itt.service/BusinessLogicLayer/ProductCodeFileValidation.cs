@@ -4,7 +4,7 @@ using PSW.ITT.Service.Command;
 using PSW.Lib.Logs;
 using System.Collections.Generic;
 using System.Linq;
-
+using Newtonsoft.Json.Linq;
 
 namespace PSW.ITT.Service.BusinessLogicLayer
 {
@@ -296,64 +296,88 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                         
                         break;
                     }
+                    case 23:
+                    case 24:
+                    {  
+                        
+                        var calculationList = command.UnitOfWork.CommonForLovRepository.GetLOV(item.TableName, item.ColumnName);
+                        if (String.IsNullOrEmpty(columnValue)){
+                            Error = Error == "" ? columnName+" is null" : Error + ", " + columnName+" is null";
+                        }
+                        else{
+                            string value = calculationList.Find( x=>x.Item2.ToLower()==columnValue.ToLower()).Item2;
+                            if (String.IsNullOrEmpty(value) )
+                            {
+                                Error = Error == "" ? columnName+" is Required, please select one of the stated values, ["+String.Join(calculationList.Select(x=>x.Item2).ToString(),",")+"]" : Error + ", " + columnName+" is Required, please select one of the stated values, ["+String.Join(calculationList.Select(x=>x.Item2).ToString(),",")+"]";
+                            }
+                        }
+                        break;
+                    }
+                    case 25:
+                    {  
+                        
+                        var calculationList = command.UnitOfWork.CommonForLovRepository.GetLOV(item.TableName, item.ColumnName);
+                        if (!String.IsNullOrEmpty(columnValue)){
+                            string value = calculationList.Find( x=>x.Item2.ToLower()==columnValue.ToLower()).Item2;
+                            if (String.IsNullOrEmpty(value) )
+                            {
+                                Error = Error == "" ? columnName+" is Required, please select one of the stated values, ["+String.Join(calculationList.Select(x=>x.Item2).ToString(),",")+"]" : Error + ", " + columnName+" is Required, please select one of the stated values, ["+String.Join(calculationList.Select(x=>x.Item2).ToString(),",")+"]";
+                            }
+                        }
+                        break;
+                    }
+                    case 26:
+                    {  
+                        bool returnError=false;
+                        var numericValidation = command.UnitOfWork.ValidationRepository.Where(new{ID=15}).FirstOrDefault();
+                        var decimalValidation = command.UnitOfWork.ValidationRepository.Where(new{ID=7}).FirstOrDefault();
+                        if(columnName.Contains("[Quantity;Unit;Price|]")){
+                            string[] record = getValue(columnValue).Split('|');
+                            foreach( var i in record){
+                                string[] seperator = i.Split(';');
+
+                                //Quantity Validation
+                                if(seperator[0].Contains("-")){
+                                    Match matchFrom = Regex.Match(seperator[0].Split('-').First().Trim(), numericValidation.Value, RegexOptions.IgnoreCase);
+                                    Match matchTo = Regex.Match(seperator[0].Split('-').Last().Trim(), numericValidation.Value, RegexOptions.IgnoreCase);
+                                    if (!matchFrom.Success || !matchTo.Success )
+                                    {
+                                        returnError = true;
+                                        // Error = Error == "" ? columnName+" value is not in correct format as prescribed" : Error + ", " + columnName+" decimal is not in correct format";
+                                    }
+                                }
+                                else{
+                                    Match matchWhole = Regex.Match(seperator[0].Split('-').First().Trim(), numericValidation.Value, RegexOptions.IgnoreCase);
+                                    if (!matchWhole.Success) returnError = true;
+                                }
+
+                                //Unit Validation
+                                var unit = command.SHRDUnitOfWork.Ref_UnitsRepository.Where(new{Unit_Description = getLowerValue(seperator[1])}).FirstOrDefault();
+                                if (unit==null ) returnError = true;
+
+                                //Price Validation
+                                Match matchD = Regex.Match(seperator[2].Trim(), decimalValidation.Value, RegexOptions.IgnoreCase);
+                                Match matchN = Regex.Match(seperator[2].Trim(), numericValidation.Value, RegexOptions.IgnoreCase);
+                                if (!matchD.Success && !matchN.Success) returnError = true;
+                            }
+                            if (returnError)
+                            {
+                                Error = Error == "" ? columnName+" value is not in correct format as prescribed" : Error + ", " + columnName+"  value is not in correct format as prescribed";
+                            }
+                        }
+                        break;
+                    }
                 }
             }  
            return Error;
 
-           
-            // // Product code end date can not be set as a previous date. It should always be today's or future date.
-            // if (DateTime.Compare(DateTime.Now, effectiveThruDt) > 0)
-            // {
-            //     Log.Error($"|ProductCodeValidation| Product code end date can not be set as a previous date");
-            //     throw new System.Exception($"the effective thru {effectiveThruDt} should always be current or future date");
-            // }
-            // // Product code thru date can not be set less than start date. It should always be greater than from date
-
-            // if (DateTime.Compare(effectiveFromDt, effectiveThruDt) > 0)
-            // {
-            //     Log.Error($"|ProductCodeValidation| Product code end date can not be set before start date");
-            //     throw new System.Exception($"the effective thru {effectiveThruDt} should always greater than Effective from date");
-            // }
-
-            // // HSCode lenght should be 8 digits (numeric value)
-            // string pattern = @"([0-9]{4})\.([0-9]{4})";
-            // string input = hSCode;
-            // if (input.Length != 9)
-            // {
-            //     Log.Error($"|ProductCodeValidation| Invalid Hscode");
-            //     throw new System.Exception($"Invalid Hscode {hSCode}");
-            // }
-            // Match match = Regex.Match(input, pattern, RegexOptions.IgnoreCase);
-            // if (!match.Success)
-            // {
-            //     Log.Error($"|ProductCodeValidation| Invalid Hscode");
-            //     throw new System.Exception($"Invalid Hscode {hSCode}");
-            // }
-
-            // // Product Code should be 4 digits(numeric value)
-
-            // if (productCode.Length != 4)
-            // {
-            //     Log.Error($"|ProductCodeValidation| Invalid Product Code");
-            //     throw new System.Exception($"Invalid Product Code {productCode}");
-            // }
-            // match = Regex.Match(input, @"[0-9]{4}", RegexOptions.IgnoreCase);
-            // if (!match.Success)
-            // {
-            //     Log.Error($"|ProductCodeValidation| Invalid Product Code");
-            //     throw new System.Exception($"Invalid Product Code {productCode}");
-            // }
-
-            // // There should be no active same HsCode + Product Code combination having overlapping effective date and end date. 
-
-            // var overLappingProductCode = command.UnitOfWork.ProductCodeEntityRepository.GetOverlappingProductCode(hSCode, productCode, effectiveFromDt, effectiveThruDt, tradeType);
-            // if (overLappingProductCode.Count > 0)
-            // {
-            //     Log.Error($"|ProductCodeValidation| Product Code is overlapping with existing product code");
-            //     throw new System.Exception($"Invalid! Product Code is overlapping with existing product code");
-            // }
-
-
+        }
+        
+        private string getValue(JToken str){
+            return str.Value<string>();
+        }
+        private string getLowerValue(JToken str){
+            return str.Value<string>().ToLower();
         }
 
     }
