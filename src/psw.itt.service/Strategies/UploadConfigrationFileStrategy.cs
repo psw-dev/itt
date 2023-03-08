@@ -728,6 +728,12 @@ namespace PSW.ITT.Service.Strategies
                 var lpcoRegulationUpdate = uow.LPCORegulationRepository.Where(new { AgencyID = request.AgencyID, TradeTranTypeID = request.TradeTranTypeID, HSCode = hsCode, HSCodeExt = productCode, Factor = factorObject.Item2 }).LastOrDefault();
                 lpcoRegulationUpdate.EffectiveThruDt = DateTime.Now;
                 uow.LPCORegulationRepository.Update(lpcoRegulationUpdate);
+
+                var lpcoFeeStructure = uow.LPCOFeeStructureRepository.Where(new {LPCORegulationID=lpcoRegulationUpdate.ID}).ToList();
+                foreach(var i in lpcoFeeStructure){
+                    i.IsActive = false;
+                    uow.LPCOFeeStructureRepository.Update(i);
+                }
             }
             else if (RequestDTO.FileType == (short)FileTypeEnum.INACTIVATE_REGULATIONS_TEMPLATE)
             {
@@ -736,6 +742,12 @@ namespace PSW.ITT.Service.Strategies
                 var lpcoRegulationUpdate = uow.LPCORegulationRepository.Where(new { AgencyID = request.AgencyID, TradeTranTypeID = request.TradeTranTypeID, HSCode = hsCode, HSCodeExt = productCode, Factor = factorObject.Item2 }).LastOrDefault();
                 lpcoRegulationUpdate.EffectiveThruDt = String.IsNullOrEmpty(expiryDate) ? DateTime.Now : Convert.ToDateTime(expiryDate);
                 uow.LPCORegulationRepository.Update(lpcoRegulationUpdate);
+
+                var lpcoFeeStructure = uow.LPCOFeeStructureRepository.Where(new {LPCORegulationID=lpcoRegulationUpdate.ID}).ToList();
+                foreach(var i in lpcoFeeStructure){
+                    i.IsActive = false;
+                    uow.LPCOFeeStructureRepository.Update(i);
+                }
             }
             if (RequestDTO.FileType != (short)FileTypeEnum.INACTIVATE_REGULATIONS_TEMPLATE)
             {
