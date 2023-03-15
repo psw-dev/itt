@@ -141,7 +141,7 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                         }
                         else{
                             foreach(var i in  columnValue. Split(',') ){
-                            var document = DocumentList.Find( x=>x.ItemValue.ToLower().Trim()==i.ToLower().Trim()).ItemValue;
+                            var document = DocumentList.Find( x=>x.ItemValue.ToLower().Trim()==i.ToLower().Trim())?.ItemValue;
                                 if(String.IsNullOrEmpty(document)){
                                     value.Add(i);
                                 };
