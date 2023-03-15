@@ -52,6 +52,13 @@ namespace PSW.ITT.Api.Controllers
             return System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
         }
 
+        [HttpPost("fileUpload")]
+        [Authorize("authorizedUserPolicy")]
+        public override ActionResult<APIResponse> FileRegistration([FromForm] APIRequestFile apiRequest)
+        {
+            return base.FileRegistration(apiRequest);
+        }
+
         #endregion
     }
 }

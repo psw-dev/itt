@@ -128,6 +128,38 @@ namespace PSW.ITT.Data.Sql.Repositories
                     transaction: _transaction
                    ).ToList();
         }
+        public List<ProductDetail> GetPCTCodeList(int tradeTranTypeID, string hsCode)
+        {
+
+            var query = @"SELECT ID, PRODUCTCODE, Concat(ProductCode, Description) as  ItemDescription  
+                        FROM ProductCode WHERE GETDATE() BETWEEN EFFECTIVEFROMDT AND EFFECTIVETHRUDT 
+                        AND  tradeTranTypeId = @TRADETRANTYPEID
+                        AND  HsCode = @HSCODE ";
+
+            return _connection.Query<ProductDetail>(
+                    query, param: new { TRADETRANTYPEID = tradeTranTypeID, HSCODE = hsCode},
+                    transaction: _transaction
+                   ).ToList();
+        }
+        public ProductCodeWithAgencyLink GetActiveProductCodeDetail(int agencyID, short tradeTranTypeID, string hsCodeExt)
+        {
+            var query = new Query("ProductCode")
+              .Join("ProductCodeAgencyLink", "ProductCodeAgencyLink.ProductCodeID", "ProductCode.ID")
+              .WhereRaw("SoftDelete = 0 AND ProductCodeAgencyLink.AgencyID = " + agencyID)
+              .WhereRaw("ProductCode.HSCodeExt= '" + hsCodeExt+"'")
+              .WhereRaw("(ProductCode.TradeTranTypeID = " + tradeTranTypeID + " OR ProductCode.TradeTranTypeID = 4) " )
+              .WhereRaw("((ProductCodeAgencyLink.EffectiveFromDt <= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate())")
+              .OrWhereRaw("(ProductCodeAgencyLink.EffectiveFromDt >= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate()))")
+              .WhereRaw("ProductCodeAgencyLink.IsActive= 1 AND ProductCodeAgencyLink.SoftDelete = 0")
+              .SelectRaw("ProductCode.*")
+              .SelectRaw("ProductCodeAgencyLink.ID AS ProductCodeAgencyLinkID, ProductCodeAgencyLink.AgencyID, ProductCodeAgencyLink.EffectiveFromDt AS PalEffectiveFromDt, ProductCodeAgencyLink.EffectiveThruDt AS PalEffectiveThruDt, ProductCodeAgencyLink.IsActive, ProductCodeAgencyLink.SoftDelete");
+
+            var result = _sqlCompiler.Compile(query);
+            var sql = result.Sql;
+            var parameters = new DynamicParameters(result.NamedBindings);
+
+            return _connection.Query<ProductCodeWithAgencyLink>(sql, param: parameters, transaction: _transaction).FirstOrDefault();
+        }
         #endregion
     }
 }

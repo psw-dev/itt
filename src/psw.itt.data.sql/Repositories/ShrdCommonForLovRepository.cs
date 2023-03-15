@@ -5,18 +5,42 @@ using Dapper;
 using PSW.ITT.Data.Entities;
 using PSW.ITT.Data.IRepositories;
 using SqlKata;
+using SqlKata.Compilers;
 using PSW.Lib.Logs;
 
 namespace PSW.ITT.Data.Sql.Repositories
 {
-    public class ShrdCommonForLovRepository : SHRDRepository, IShrdCommonForLovRepository
+    public class ShrdCommonForLovRepository : IShrdCommonForLovRepository
     {
-        #region public constructors
+        #region Protected properties
+        protected string TableName { get; set; }
+        protected string PrimaryKeyName { get; set; }
+        protected SqlServerCompiler _sqlCompiler;
 
-        public ShrdCommonForLovRepository(IDbConnection context) : base(context)
+        #endregion
+
+        #region Public properties
+
+        public Entity Entity { get; set; }
+
+        #endregion
+        #region Protected Fields
+        protected IDbTransaction _transaction;//{ get; private set; }
+        protected IDbConnection _connection;// { get { return _transaction.Connection; } }
+        #endregion
+
+        #region public constructors
+        
+        public ShrdCommonForLovRepository(IDbConnection connection)
         {
-          
+            Dapper.SqlMapper.AddTypeMap(typeof(string), System.Data.DbType.AnsiString);
+            _connection = connection;
+            _sqlCompiler = new SqlServerCompiler();
         }
+        // public ShrdCommonForLovRepository(IDbConnection context) : base(context)
+        // {
+          
+        // }
 
         #endregion
 
@@ -63,6 +87,11 @@ namespace PSW.ITT.Data.Sql.Repositories
                    ).ToList();
                    return returnValue;
         }
-    }     
+     public void SetTransaction(IDbTransaction transaction)
+        {
+            _transaction = transaction;
+        }
         #endregion
+    }     
+       
 }
