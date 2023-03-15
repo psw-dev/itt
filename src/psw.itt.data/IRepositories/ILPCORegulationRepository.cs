@@ -10,5 +10,6 @@ namespace PSW.ITT.Data.IRepositories
     {
         LPCORegulation CheckIfRecordAlreadyExistInTheSystem(string hsCode, string productCode, short tradeTranTypeID, int agencyID, string factor); //, DateTime EffectiveFromDt, DateTime EffectiveThruDt
         List<LPCORegulation> GetRegulationByProductAgencyLinkID(long productAgencyID);
+        List<FactorLOVItems> GetFactorLovItemList(int agencyID, int tradeTranTypeID, string hsCodeExt );
     }
 }

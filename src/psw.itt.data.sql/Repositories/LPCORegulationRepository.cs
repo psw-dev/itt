@@ -50,6 +50,7 @@ namespace PSW.ITT.Data.Sql.Repositories
                                 ,[HsCode]
                                 ,[HsCodeExt]
                                 ,[Factor]
+                                ,[FactorID]
                                 ,[ProductCodeAgencyLinkID]
                                 ,[TradeTranTypeID]
                                 ,[EffectiveThruDt]
@@ -60,6 +61,20 @@ namespace PSW.ITT.Data.Sql.Repositories
 
             return _connection.Query<LPCORegulation>(
                     query, param: new { @PRODUCTAGENCYID = productAgencyID },
+                    transaction: _transaction
+                   ).ToList();
+        }
+
+        public List<FactorLOVItems> GetFactorLovItemList(int agencyID, int tradeTranTypeID, string hsCodeExt ){
+                var query = @"SELECT l.Factor as ItemValue,
+                                     l.FactorID as ItemKey 
+                                     FROM lpcoRegulation l 
+                                JOIN ProductCodeAgencyLink p 
+                                    on l.ProductCodeAgencyLinkID = p.ID 
+                                WHERE l.HsCodeExt=@HSCODEEXT AND  l.TradeTranTypeID = @TRADETRANTYPEID AND  l.EffectiveThruDt >= GETDATE() AND l.EffectiveFromDt <= GETDATE() AND l.AgencyID = @AgencyID 
+                                AND p.AgencyID=@AGENCYID AND p.EffectiveThruDt >= GETDATE() AND p.EffectiveFromDt <= GETDATE() AND p.RegulationEffectiveThruDt >= GETDATE() AND p.RegulationEffectiveFromDt <= GETDATE() AND p.IsActive = 1 AND p.SoftDelete = 0";
+            return _connection.Query<FactorLOVItems>(
+                    query, param: new { HSCODEEXT = hsCodeExt, @TRADETRANTYPEID = tradeTranTypeID, @AGENCYID = agencyID },
                     transaction: _transaction
                    ).ToList();
         }
