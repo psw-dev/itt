@@ -17,7 +17,9 @@ namespace PSW.ITT.Common.Enums
         
         DECIMAL_TEXTBOX = 7,
 
-        CHECKBOX = 8
+        CHECKBOX = 8,
+
+        FEE_MECHENISM = 9
        
     }
 }
