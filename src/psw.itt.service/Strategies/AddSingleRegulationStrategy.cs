@@ -9,6 +9,8 @@ using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PSW.ITT.service;
+using PSW.ITT.Common.Enums;
 
 namespace PSW.ITT.Service.Strategies
 {
@@ -71,6 +73,12 @@ namespace PSW.ITT.Service.Strategies
                 // regulationAgencyLink.UpdatedBy = Command.LoggedInUserRoleID;
                 // regulationAgencyLink.TradeTranTypeID = RequestDTO.TradeTranTypeID;
                 // Command.UnitOfWork.ProductRegulationRequirementRepository.Add(regulationAgencyLink);
+                
+                var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE ).ToList();
+
+                LPCOFeeInsertation lpcoFeeInsertation = new LPCOFeeInsertation(Command, json, propertyNameList, Command.LoggedInUserRoleID, LPCOid, RequestDTO.AgencyID, RequestDTO.TradeTranTypeID);
+                lpcoFeeInsertation.InsertFinancialInformation();
+
                 Command.UnitOfWork.Commit();
                 // Prepare and return command reply
                 return OKReply("Regulation Uploaded Successfully");

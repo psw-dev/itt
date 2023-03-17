@@ -6,6 +6,7 @@ using PSW.Lib.Logs;
 using System.Linq;
 using PSW.ITT.Service.ModelValidators;
 using System.Collections.Generic;
+using PSW.ITT.Data.Entities;
 
 namespace PSW.ITT.Service.Strategies
 {
@@ -46,6 +47,21 @@ namespace PSW.ITT.Service.Strategies
                 lovItem.LOVTableName = "ITTAgencyDocuments";
 
                 lovDataFromDBList.Add(lovItem);
+
+                var calculationBasis = Command.UnitOfWork.CalculationBasisRepository.Get().Select(x=> new LOVItem { ItemKey = x.ID.ToString(), ItemValue= x.Description}).ToList();
+                lovItem = new FetchLOVDataResponseDTO();
+                lovItem.LOVItems = calculationBasis;
+                lovItem.LOVTableName = "CalculationBasis";
+
+                lovDataFromDBList.Add(lovItem);
+
+                var calculationSource = Command.UnitOfWork.CalculationSourceRepository.Get().Select(x=> new LOVItem{ ItemKey = x.ID.ToString(), ItemValue= x.Description}).ToList();
+                lovItem = new FetchLOVDataResponseDTO();
+                lovItem.LOVItems = calculationSource;
+                lovItem.LOVTableName = "CalculationSource";
+                
+                lovDataFromDBList.Add(lovItem);
+
                 ResponseDTO = lovDataFromDBList;
 
                 // Prepare and return command reply
