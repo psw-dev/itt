@@ -32,6 +32,12 @@ namespace PSW.ITT.Service.Strategies
                     RegulationEntity.UpdatedBy = Command.LoggedInUserRoleID;
                     RegulationEntity.UpdatedOn = currentDateTime;
                     Command.UnitOfWork.LPCORegulationRepository.Update(RegulationEntity);
+
+                    var lpcoFeeStructure = Command.UnitOfWork.LPCOFeeStructureRepository.Where(new {LPCORegulationID=RegulationEntity.ID}).ToList();
+                    foreach(var i in lpcoFeeStructure){
+                        i.IsActive = false;
+                        Command.UnitOfWork.LPCOFeeStructureRepository.Update(i);
+                    }
                     Command.UnitOfWork.Commit();
                 }
                 else
@@ -41,6 +47,12 @@ namespace PSW.ITT.Service.Strategies
                     RegulationEntity.UpdatedBy = Command.LoggedInUserRoleID;
                     RegulationEntity.UpdatedOn = currentDateTime;
                     Command.UnitOfWork.LPCORegulationRepository.Update(RegulationEntity);
+
+                    var lpcoFeeStructure = Command.UnitOfWork.LPCOFeeStructureRepository.Where(new {LPCORegulationID=RegulationEntity.ID}).ToList();
+                    foreach(var i in lpcoFeeStructure){
+                        i.IsActive = false;
+                        Command.UnitOfWork.LPCOFeeStructureRepository.Update(i);
+                    }
                     Command.UnitOfWork.Commit();
                 }
 
