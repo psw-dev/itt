@@ -30,4 +30,12 @@ namespace PSW.ITT.Service.DTO
         public short FileType { get; set; }
 
     }
+    public class FeeDecoderResponseDTO
+    {
+        public int? Unit { get; set; }
+        public decimal? Rate { get; set; }
+        public int? CalculationBasisValue { get; set; }
+        public int? QtyRangeTo { get; set; }
+        public int? QtyRangeFrom { get; set; }
+    }
 }

@@ -57,10 +57,41 @@ namespace PSW.ITT.Common.Constants
         public const string EXPORT_CERTIFICATE = "EC";
         public const string RELEASE_ORDER = "RO";
         public const string IMPORT_PERMIT = "IMP";
+        public const string IMPORT_PERMIT_AMENDMENT = "IPA";
+        public const string SINGLE_DECLARATION = "SD";
+        public const string PRODUCT_REGISTRATION = "PRD";
+        public const string PREMISE_REGISTRATION = "PRM";
+        public const string PREMISE_REGISTRATION_RENEWAL = "PMR";
+        public const string BUSINESS_REGISTRATION = "BSS";
+        public const string CATCH_CERTIFICATE = "CC";
+        public const string EXPORT_PERMIT = "EP";
+        
+    }
+    public static class MasterDocumentClassificationCode
+    {
+        public const string EXPORT_CERTIFICATE = "EC";
+        public const string RELEASE_ORDER = "RO";
+        public const string IMPORT_PERMIT = "IMP";
         public const string SINGLE_DECLARATION = "SD";
         public const string PRODUCT_REGISTRATION = "PRD";
         public const string PREMISE_REGISTRATION = "PRM";
         public const string BUSINESS_REGISTRATION = "BSS";
+        public const string CATCH_CERTIFICATE = "CC";   
+        public const string EXPORT_PERMIT = "EP";
+    }
+    public static class FEEClassificationCodeForAdditionalAmount
+    {
+        public const string EXPORT_CERTIFICATE = "ECAD";
+        public const string RELEASE_ORDER = "ROAD";
+        public const string IMPORT_PERMIT = "IMPAD";
+        public const string IMPORT_PERMIT_AMENDMENT = "IPAAD";
+        public const string SINGLE_DECLARATION = "SDAD";
+        public const string PRODUCT_REGISTRATION = "PRDAD";
+        public const string PREMISE_REGISTRATION = "PRMAD";
+        public const string PREMISE_REGISTRATION_RENEWAL = "PMRAD";
+        public const string BUSINESS_REGISTRATION = "BSSAD";
+        public const string CATCH_CERTIFICATE = "CCAD";
+        public const string EXPORT_PERMIT = "EPAD";
         
     }
 

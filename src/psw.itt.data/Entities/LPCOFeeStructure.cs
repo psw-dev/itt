@@ -15,18 +15,20 @@ namespace PSW.ITT.Data.Entities
 		
 		private long _iD;
 		private short _agencyID;
-		private short _oGAItemCategoryID;
+		private long _lPCORegulationID;
 		private int? _unit_ID;
-		private string _calculationBasis;
-		private string _calculationSource;
+		private int? _calculationBasis;
+		private int? _calculationSource;
+		private string _masterDocumentClassificationCode;//Document
+		private string _documentClassificationCode;
 		private int? _qtyRangeTo;
 		private int? _qtyRangeFrom;
 		private string _currencyCode;
 		private decimal? _rate;
-		private int? _factorValueID;
+		// private int? _factorValueID;
 		private decimal? _minAmount;
 		private decimal? _additionalAmount;
-		private string _additionalAmountOn;
+		private int? _additionalAmountOn;
 		private bool _isActive;
 		private DateTime _createdOn;
 		private int _createdBy;
@@ -39,18 +41,20 @@ namespace PSW.ITT.Data.Entities
 		
 		public long ID { get { return _iD; } set { _iD = value; PrimaryKey = value; }}
 		public short AgencyID { get { return _agencyID; } set { _agencyID = value;  }}
-		public short OGAItemCategoryID { get { return _oGAItemCategoryID; } set { _oGAItemCategoryID = value;  }}
+		public long LPCORegulationID { get { return _lPCORegulationID; } set { _lPCORegulationID = value;  }}
 		public int? Unit_ID { get { return _unit_ID; } set { _unit_ID = value;  }}
-		public string CalculationBasis { get { return _calculationBasis; } set { _calculationBasis = value;  }}
-		public string CalculationSource { get { return _calculationSource; } set { _calculationSource = value;  }}
+		public int? CalculationBasis { get { return _calculationBasis; } set { _calculationBasis = value;  }}
+		public int? CalculationSource { get { return _calculationSource; } set { _calculationSource = value;  }}
+		public string MasterDocumentClassificationCode { get { return _masterDocumentClassificationCode; } set { _masterDocumentClassificationCode = value;  }}
+		public string DocumentClassificationCode { get { return _documentClassificationCode; } set { _documentClassificationCode = value;  }}
 		public int? QtyRangeTo { get { return _qtyRangeTo; } set { _qtyRangeTo = value;  }}
 		public int? QtyRangeFrom { get { return _qtyRangeFrom; } set { _qtyRangeFrom = value;  }}
 		public string CurrencyCode { get { return _currencyCode; } set { _currencyCode = value;  }}
 		public decimal? Rate { get { return _rate; } set { _rate = value;  }}
-		public int? FactorValueID { get { return _factorValueID; } set { _factorValueID = value;  }}
+		// public int? FactorValueID { get { return _factorValueID; } set { _factorValueID = value;  }}
 		public decimal? MinAmount { get { return _minAmount; } set { _minAmount = value;  }}
 		public decimal? AdditionalAmount { get { return _additionalAmount; } set { _additionalAmount = value;  }}
-		public string AdditionalAmountOn { get { return _additionalAmountOn; } set { _additionalAmountOn = value;  }}
+		public int? AdditionalAmountOn { get { return _additionalAmountOn; } set { _additionalAmountOn = value;  }}
 		public bool IsActive { get { return _isActive; } set { _isActive = value;  }}
 		public DateTime CreatedOn { get { return _createdOn; } set { _createdOn = value;  }}
 		public int CreatedBy { get { return _createdBy; } set { _createdBy = value;  }}
@@ -71,15 +75,17 @@ namespace PSW.ITT.Data.Entities
 			{
 				{"ID", ID},
 				{"AgencyID", AgencyID},
-				{"OGAItemCategoryID", OGAItemCategoryID},
+				{"LPCORegulationID", LPCORegulationID},
 				{"Unit_ID", Unit_ID},
 				{"CalculationBasis", CalculationBasis},
 				{"CalculationSource", CalculationSource},
+				{"MasterDocumentClassificationCode", MasterDocumentClassificationCode},
+				{"DocumentClassificationCode", DocumentClassificationCode},
 				{"QtyRangeTo", QtyRangeTo},
 				{"QtyRangeFrom", QtyRangeFrom},
 				{"CurrencyCode", CurrencyCode},
 				{"Rate", Rate},
-				{"FactorValueID", FactorValueID},
+				// {"FactorValueID", FactorValueID},
 				{"MinAmount", MinAmount},
 				{"AdditionalAmount", AdditionalAmount},
 				{"AdditionalAmountOn", AdditionalAmountOn},
@@ -96,15 +102,17 @@ namespace PSW.ITT.Data.Entities
             {
                 ID
 				,AgencyID
-				,OGAItemCategoryID
+				,LPCORegulationID
 				,Unit_ID
 				,CalculationBasis
 				,CalculationSource
+				,MasterDocumentClassificationCode
+				,DocumentClassificationCode
 				,QtyRangeTo
 				,QtyRangeFrom
 				,CurrencyCode
 				,Rate
-				,FactorValueID
+				// ,FactorValueID
 				,MinAmount
 				,AdditionalAmount
 				,AdditionalAmountOn
