@@ -31,13 +31,13 @@ namespace PSW.ITT.service
             Log.Information("[{0}.{1}] Started. Request: {@RequestDTO}", GetType().Name, MethodBase.GetCurrentMethod().Name, request);
             var response = new SingleResponseModel<AQDECFeeCalculateResponseDTO>();
             var model = new AQDECFeeCalculateResponseDTO();
-            var feeConfigurationList = unitOfWork.LPCOFeeStructureRepository.Get();
-            // .Where(new
-            // {
-            //     HSCodeExt = request.HsCodeExt,
-            //     Unit_ID = request.AgencyUOMId,
-            //     TradeTranTypeID = request.TradeTranTypeID,
-            // }).Where(x => x.EffectiveFromDt < DateTime.Now && x.EffectiveThruDt > DateTime.Now);
+            var feeConfigurationList = unitOfWork.LPCOFeeStructureRepository
+            .Where(new
+            {
+                LPCORegulationID = request.LPCORegulation.ID,
+                Unit_ID = request.AgencyUOMId,
+                IsActive =1
+            });
 
             if (feeConfigurationList != null && feeConfigurationList.Count() > 0)
             {

@@ -340,6 +340,7 @@ namespace PSW.ITT.Service.Strategies
                         calculateECFeeRequest.HsCodeExt = RequestDTO.HsCode;
                         calculateECFeeRequest.Quantity = Convert.ToInt32(RequestDTO.Quantity);
                         calculateECFeeRequest.TradeTranTypeID = RequestDTO.TradeTranTypeID;
+                        calculateECFeeRequest.LPCORegulation = lpcoRegulation;
                         FactorData factorData = RequestDTO.FactorCodeValuePair["UNIT"];
                         if (factorData != null && !string.IsNullOrEmpty(factorData.FactorValueID))
                         {
@@ -386,8 +387,8 @@ namespace PSW.ITT.Service.Strategies
                     {
                          var calculationBasis = Command.UnitOfWork.CalculationBasisRepository.Get().ToList();
                         var calculationSource = Command.UnitOfWork.CalculationSourceRepository.Get().ToList();
-                        var feeConfigurationList = Command.UnitOfWork.LPCOFeeStructureRepository.GetFeeConfig(
-                            1//TODO : need to be change after fees implementation lpcoRegulation.LpcoFeeStructureID
+                        var feeConfigurationList = Command.UnitOfWork.LPCOFeeStructureRepository.Where(new{LPCORegulationID = lpcoRegulation.ID,
+                        IsActive =1}
                         ).FirstOrDefault();
 
                         var feeConfig = new LPCOFeeCleanResp();
@@ -686,7 +687,7 @@ namespace PSW.ITT.Service.Strategies
                         // FinancialRequirement.Amount = Command.CryptoAlgorithm.Encrypt(mongoRecord["Health Certificate Fee(PKR)"].ToString());
 
 
-                        string ECFeeString = mongoRecord["Certificate of Quality and Origin Processing Fee (PKR)"].ToString();
+                        string ECFeeString = mongoRecord["ecFees"].ToString();
 
                         decimal ECFeeDecimal = 0.0m;
                         if (!string.IsNullOrEmpty(ECFeeString))
@@ -696,7 +697,7 @@ namespace PSW.ITT.Service.Strategies
                         // The column that tells if Health Certificate is Fee Required (Conditional)
                         // Condition: If the destination country is from one of the countries in the following column, then fee is applied.
                         // "Names of Countries Requiring Health Certificate on prescribed format"
-                        countries = mongoRecord["Codes of Countries Requiring Health Certificate on prescribed format"].ToString().Split('|').ToList();
+                        countries = mongoRecord["countryCodes"].ToString().Split('|').ToList();
                         Log.Information("|{0}|{1}| countries {@countries}", StrategyName, MethodID, countries);
                         if (countries.Contains(RequestDTO.DestinationCountryCode))
                         {
@@ -705,7 +706,7 @@ namespace PSW.ITT.Service.Strategies
 
                             Log.Information("|{0}|{1}| ECFeeDecimal {@ECFeeDecimal}", StrategyName, MethodID, ECFeeDecimal);
 
-                            string HealthCertFeeString = mongoRecord["Health Certificate Fee (PKR)"].ToString();
+                            string HealthCertFeeString = mongoRecord["hcFees"].ToString();
                             decimal HealthCertFeeDecimal = 0.0m;
                             if (!string.IsNullOrEmpty(HealthCertFeeString))
                                 decimal.TryParse(HealthCertFeeString, out HealthCertFeeDecimal);
