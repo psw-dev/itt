@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-
+using PSW.ITT.Data.Entities;
 
 namespace PSW.ITT.Service.DTO
 {
@@ -20,6 +20,9 @@ namespace PSW.ITT.Service.DTO
 
         [JsonPropertyName("tradeTranTypeId")]
         public int TradeTranTypeID { get; set; }
+
+        [JsonPropertyName("lpcoRegulation")]
+        public LPCORegulation LPCORegulation { get; set; }
 
 
     }
