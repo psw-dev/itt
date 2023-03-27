@@ -7,7 +7,9 @@ using PSW.ITT.Service.Command;
 using PSW.ITT.Service.DTO;
 using PSW.ITT.Service.Exception;
 using PSW.Lib.Logs;
-
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;   
 namespace PSW.ITT.Service.Strategies
 {
     public class DownloadJSONExcelStrategy : ApiStrategy<DownloadJSONExcelRequestDTO, DownloadJSONExcelResponseDTO>
@@ -32,7 +34,24 @@ namespace PSW.ITT.Service.Strategies
 
                 foreach (var x in regulatoryData)
                 {
-                    var obj1 = JsonSerializer.Deserialize<dynamic>(x.RegulationJson);
+                    var json = JObject.Parse(x.RegulationJson);
+                    foreach (var item in json) 
+                    {
+                        if(item.Value.Count()>0)
+                        {   var a = "";
+                            var jobj = (JArray)item.Value;
+                            foreach(JToken  jprop in jobj) {
+                                if(item.Key.Contains("Fees")){
+                                    a = a=="" ? String.Join( "|",jprop.ToString()) : String.Join( "|",a,jprop.ToString());
+                                }
+                                else{
+                                    a = a=="" ? String.Join( ",",jprop.ToString()) : String.Join( ",",a,jprop.ToString());
+                                }
+                            }
+                        json[item.Key] = (JToken)a;
+                        }
+                    }
+                    var obj1 = System.Text.Json.JsonSerializer.Deserialize<dynamic>(json.ToString());
                     Data.Add(obj1);
                 }
                 ResponseDTO.Data = Data;
