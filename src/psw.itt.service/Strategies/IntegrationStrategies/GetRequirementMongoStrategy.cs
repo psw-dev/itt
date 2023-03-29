@@ -414,16 +414,18 @@ namespace PSW.ITT.Service.Strategies
                     ipReq = getLowerValue(mongoRecord["ipRequired"]) == "yes";
 
                     // Check if HS Code is PSI related.  
-                    var IsPSi = getLowerValue(mongoRecord["isPsi"]) == "yes";
-                    if (IsPSi)
-                    {
-                        psiReq = getLowerValue(mongoRecord["psiRequired"]) == "yes";
-                        psiRegReq = getLowerValue(mongoRecord["registationRequired"]) == "yes";
-                        psiReqMand = getLowerValue(mongoRecord["psiRequiredMandatory"]) == "yes";
-                        psiRegReqMand = getLowerValue(mongoRecord["registationRequiredMandatory"]) == "yes";
-                        psiRegScheme = getLowerValue(mongoRecord["registationSchemeDescription"]);
-                    }
-
+                    if(mongoRecord.ContainsKey("isPsi"))
+                    {   
+                        var IsPSi = getLowerValue(mongoRecord["isPsi"]) == "yes";
+                        if (IsPSi)
+                        {
+                            psiReq = getLowerValue(mongoRecord["psiRequired"]) == "yes";
+                            psiRegReq = getLowerValue(mongoRecord["registationRequired"]) == "yes";
+                            psiReqMand = getLowerValue(mongoRecord["psiRequiredMandatory"]) == "yes";
+                            psiRegReqMand = getLowerValue(mongoRecord["registationRequiredMandatory"]) == "yes";
+                            psiRegScheme = getLowerValue(mongoRecord["registationSchemeDescription"]);
+                        }
+}
 
                     //Financial Requirements
                     FinancialRequirement.PlainAmount = getValue(mongoRecord["roFees"]);
