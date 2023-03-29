@@ -39,6 +39,7 @@ namespace PSW.ITT.Service.Strategies
                 Log.Information("|{0}|{1}| Request DTO {@RequestDTO}", StrategyName, MethodID, RequestDTO);
 
                 var regulatedHSCodeList = new List<ViewRegulatedHsCode>();
+                Log.Information("|{0}|{1}| AgencyId {@AgencyId} TradeTranTypeID {@TradeTranTypeID}", StrategyName, MethodID, RequestDTO.AgencyId, RequestDTO.TradeTranTypeID);
 
                 //Get Regulated Hscode list filtered on base of AgencyId 
                 if (RequestDTO.AgencyId != 0 && RequestDTO.TradeTranTypeID == null)
@@ -69,18 +70,28 @@ namespace PSW.ITT.Service.Strategies
                         return BadRequestReply("Hscodes not available");
                     }
                 }
+                Log.Information("|{0}|{1}|before regulatedHSCodeList foreach {@regulatedHSCodeList}", StrategyName, MethodID, regulatedHSCodeList);
 
                 //Get hscodeDetails
                 foreach (var regulatedHscode in regulatedHSCodeList)
                 {
+                    Log.Information("|{0}|{1}|within regulatedHscode foreach {@regulatedHSCodeList}", StrategyName, MethodID, regulatedHscode);
                     regulatedHscode.HsCodeDetailsList = Command.UnitOfWork.ProductCodeAgencyLinkRepository.GetRegulatedHsCodeList(RequestDTO.TradeTranTypeID, RequestDTO.AgencyId, regulatedHscode.HsCode);
+
+                    Log.Information("|{0}|{1}|before regulatedHscode.HsCodeDetailsList  foreach {@regulatedHscode.HsCodeDetailsList}", StrategyName, MethodID, regulatedHscode.HsCodeDetailsList);
                     foreach (var hsCodeDetails in regulatedHscode.HsCodeDetailsList)
-                    {       
-                    var lpcoRegulation = Command.UnitOfWork.LPCORegulationRepository.GetRegulationByProductAgencyLinkID(hsCodeDetails.ProductCodeAgencyLinkID).FirstOrDefault();
-                    JObject regulationJson = JObject.Parse(lpcoRegulation.RegulationJson);
-                    hsCodeDetails.TechnicalName = getValue(regulationJson["technicalName"]);
+                    { 
+                        Log.Information("|{0}|{1}|within hsCodeDetails  foreach {@hsCodeDetails}", StrategyName, MethodID, hsCodeDetails);
+                          
+                        var lpcoRegulation = Command.UnitOfWork.LPCORegulationRepository.GetRegulationByProductAgencyLinkID(hsCodeDetails.ProductCodeAgencyLinkID).FirstOrDefault();
+                        Log.Information("|{0}|{1}| lpcoRegulation {@lpcoRegulation}", StrategyName, MethodID, lpcoRegulation);
+                        JObject regulationJson = JObject.Parse(lpcoRegulation.RegulationJson);
+                        Log.Information("|{0}|{1}| regulationJson {@regulationJson}", StrategyName, MethodID, regulationJson);
+                        hsCodeDetails.TechnicalName = getValue(regulationJson["technicalName"]);
+                        Log.Information("|{0}|{1}| hsCodeDetails.TechnicalName {@hsCodeDetails.TechnicalName }", StrategyName, MethodID, hsCodeDetails.TechnicalName);
                     }
                 }
+                Log.Information("|{0}|{1}| regulatedHSCodeList {@regulatedHSCodeList}", StrategyName, MethodID, regulatedHSCodeList);
 
                 ResponseDTO = new GetRegulatedHscodeListResponse
                 {
