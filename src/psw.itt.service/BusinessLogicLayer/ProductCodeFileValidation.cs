@@ -188,8 +188,13 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                     }
                     case 12:
                     {
+                        Match match = Regex.Match(columnValue,  "^[0-9]*$", RegexOptions.IgnoreCase);
+                        // Console.WriteLine(columnValue);
                         if (String.IsNullOrEmpty(columnValue)){
                             Error = Error == "" ? columnName+" should not be null" : Error + ", " + columnName+" should not be null";
+                        }
+                        else if ((!match.Success)){
+                            Error = Error == "" ? columnName+" only allow numeric value" : Error + ", " + columnName+" only allow numeric value";
                         }
                         else if (Convert.ToInt32(columnValue) == 0)
                         {
@@ -333,32 +338,37 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                         var decimalValidation = command.UnitOfWork.ValidationRepository.Where(new{ID=7}).FirstOrDefault();
                         if(columnName.Contains("[Quantity;Unit;Price|]")){
                             string[] record = getValue(columnValue).Split('|');
-                            foreach( var i in record){
-                                string[] seperator = i.Split(';');
+                            if(!String.IsNullOrEmpty(getValue(columnValue)))
+                            {
+                                foreach( var i in record){
+                                    string[] seperator = i.Split(';');
+                                    if(seperator.Count()>0)
+                                    {   
+                                        //Quantity Validation
+                                        if(seperator[0].Contains("-")){
+                                            Match matchFrom = Regex.Match(seperator[0].Split('-').First().Trim(), numericValidation.Value, RegexOptions.IgnoreCase);
+                                            Match matchTo = Regex.Match(seperator[0].Split('-').Last().Trim(), numericValidation.Value, RegexOptions.IgnoreCase);
+                                            if (!matchFrom.Success || !matchTo.Success )
+                                            {
+                                                returnError = true;
+                                                // Error = Error == "" ? columnName+" value is not in correct format as prescribed" : Error + ", " + columnName+" decimal is not in correct format";
+                                            }
+                                        }
+                                        else{
+                                            Match matchWhole = Regex.Match(seperator[0].Split('-').First().Trim(), numericValidation.Value, RegexOptions.IgnoreCase);
+                                            if (!matchWhole.Success) returnError = true;
+                                        }
 
-                                //Quantity Validation
-                                if(seperator[0].Contains("-")){
-                                    Match matchFrom = Regex.Match(seperator[0].Split('-').First().Trim(), numericValidation.Value, RegexOptions.IgnoreCase);
-                                    Match matchTo = Regex.Match(seperator[0].Split('-').Last().Trim(), numericValidation.Value, RegexOptions.IgnoreCase);
-                                    if (!matchFrom.Success || !matchTo.Success )
-                                    {
-                                        returnError = true;
-                                        // Error = Error == "" ? columnName+" value is not in correct format as prescribed" : Error + ", " + columnName+" decimal is not in correct format";
+                                        //Unit Validation
+                                        var unit = command.SHRDUnitOfWork.Ref_UnitsRepository.Where(new{Unit_Description = getLowerValue(seperator[1])}).FirstOrDefault();
+                                        if (unit==null ) returnError = true;
+
+                                        //Price Validation
+                                        Match matchD = Regex.Match(seperator[2].Trim(), decimalValidation.Value, RegexOptions.IgnoreCase);
+                                        Match matchN = Regex.Match(seperator[2].Trim(), numericValidation.Value, RegexOptions.IgnoreCase);
+                                        if (!matchD.Success && !matchN.Success) returnError = true;
                                     }
                                 }
-                                else{
-                                    Match matchWhole = Regex.Match(seperator[0].Split('-').First().Trim(), numericValidation.Value, RegexOptions.IgnoreCase);
-                                    if (!matchWhole.Success) returnError = true;
-                                }
-
-                                //Unit Validation
-                                var unit = command.SHRDUnitOfWork.Ref_UnitsRepository.Where(new{Unit_Description = getLowerValue(seperator[1])}).FirstOrDefault();
-                                if (unit==null ) returnError = true;
-
-                                //Price Validation
-                                Match matchD = Regex.Match(seperator[2].Trim(), decimalValidation.Value, RegexOptions.IgnoreCase);
-                                Match matchN = Regex.Match(seperator[2].Trim(), numericValidation.Value, RegexOptions.IgnoreCase);
-                                if (!matchD.Success && !matchN.Success) returnError = true;
                             }
                             if (returnError)
                             {

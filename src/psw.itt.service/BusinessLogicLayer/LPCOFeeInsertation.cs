@@ -47,50 +47,49 @@ namespace PSW.ITT.service
            if (TradeTranTypeID==(short)PSW.ITT.Common.Constants.TradeTranType.IMPORT){
                 if(RegulationJson.ContainsKey("ipRequired")){
                     if(getLowerValue(RegulationJson["ipRequired"]) == "yes"){
-                        
-                        decimal? additionalAmount = AdditionalAmountAccumulator(PropertyNameList, RegulationJson, FEEClassificationCodeForAdditionalAmount.IMPORT_PERMIT);
+                        if(RegulationJson["ipFees"]!=null)
+                        {
+                            decimal? additionalAmount = AdditionalAmountAccumulator(PropertyNameList, RegulationJson, FEEClassificationCodeForAdditionalAmount.IMPORT_PERMIT);
 
-                        if(feePropertyDetail.NameLong.Contains("[Quantity;Unit;Price|]")){
+                            if(feePropertyDetail.NameLong.Contains("[Quantity;Unit;Price|]")){
+                                
+                                List<FeeDecoderResponseDTO> listFeeDecoderResponseDTO = new List<FeeDecoderResponseDTO>();
+                                
+                                listFeeDecoderResponseDTO = FeeDecoder(RegulationJson["ipFees"], calculationBasis, unitList, RegulationJson["ipFeeCalculationBasis"]);
+
+                                foreach( var i in listFeeDecoderResponseDTO){
+
+                                    mapObject(LpcoRegulationId, AgencyID, // long LpcoRegulationId, short agencyID, int? unitID,
+                                    i.Unit, i.CalculationBasisValue,// int? unitID, int? calculationBasis,
+                                    calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["ipFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(),//int? calculationSource
+                                    MasterDocumentClassificationCode.IMPORT_PERMIT,//string masterDocumentClassificationCode
+                                    DocumentClassificationCode.IMPORT_PERMIT,//string documentClassificationCode,
+                                    i.QtyRangeTo, i.QtyRangeFrom, "PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
+                                    i.Rate, //decimal? rate
+                                    RegulationJson["ipFeeMinimumAmount"] != null ? Decimal.TryParse(getValue(RegulationJson["ipFeeMinimumAmount"]), out n1) ? (decimal?) n1 :null :null, // decimal? minAmount
+                                    additionalAmount, //decimal? additionalAmount
+                                    RegulationJson["ipFeeAdditionalAmountOn"] == null ? null : string.IsNullOrEmpty( getLowerValue(RegulationJson["ipFeeAdditionalAmountOn"])) ? null : 
+                                            (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["ipFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
+                                    UserRoleId );//int UserRoleId
+                                }
+                            }
+                            else{  
                             
-                            List<FeeDecoderResponseDTO> listFeeDecoderResponseDTO = new List<FeeDecoderResponseDTO>();
-                            
-                            listFeeDecoderResponseDTO = FeeDecoder(RegulationJson["ipFees"], calculationBasis, unitList, RegulationJson["ipFeeCalculationBasis"]);
-
-                            foreach( var i in listFeeDecoderResponseDTO){
-
-                                mapObject(LpcoRegulationId, AgencyID, // long LpcoRegulationId, short agencyID, int? unitID,
-                                i.Unit, i.CalculationBasisValue,// int? unitID, int? calculationBasis,
+                                mapObject(LpcoRegulationId, AgencyID, null,// long LpcoRegulationId, short agencyID, int? unitID,
+                                calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["ipFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault(),// int? calculationBasis,
                                 calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["ipFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(),//int? calculationSource
                                 MasterDocumentClassificationCode.IMPORT_PERMIT,//string masterDocumentClassificationCode
                                 DocumentClassificationCode.IMPORT_PERMIT,//string documentClassificationCode,
-                                i.QtyRangeTo, i.QtyRangeFrom, "PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
-                                i.Rate, //decimal? rate
-                                RegulationJson["ipFeeMinimumAmount"] != null ? Decimal.TryParse(getValue(RegulationJson["ipFeeMinimumAmount"]), out n1) ? (decimal?) n1 :null :null, // decimal? minAmount
+                                null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
+                                RegulationJson["ipFees"] != null ? Decimal.TryParse(getValue(RegulationJson["ipFees"]), out n1) ? (decimal?) n1 : null : null, //decimal? rate
+                                RegulationJson["ipFeeMinimumAmount"] != null ? Decimal.TryParse(getValue(RegulationJson["ipFeeMinimumAmount"]), out n1) ? (decimal?) n1 : null : null, // decimal? minAmount
                                 additionalAmount, //decimal? additionalAmount
                                 RegulationJson["ipFeeAdditionalAmountOn"] == null ? null : string.IsNullOrEmpty( getLowerValue(RegulationJson["ipFeeAdditionalAmountOn"])) ? null : 
                                         (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["ipFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
                                 UserRoleId );//int UserRoleId
-
-                            }
+                            }       
                         }
-                        else{  
-                        
-                            mapObject(LpcoRegulationId, AgencyID, null,// long LpcoRegulationId, short agencyID, int? unitID,
-                            calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["ipFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault(),// int? calculationBasis,
-                            calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["ipFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(),//int? calculationSource
-                            MasterDocumentClassificationCode.IMPORT_PERMIT,//string masterDocumentClassificationCode
-                            DocumentClassificationCode.IMPORT_PERMIT,//string documentClassificationCode,
-                            null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
-                            RegulationJson["ipFees"] != null ? Decimal.TryParse(getValue(RegulationJson["ipFees"]), out n1) ? (decimal?) n1 : null : null, //decimal? rate
-                            RegulationJson["ipFeeMinimumAmount"] != null ? Decimal.TryParse(getValue(RegulationJson["ipFeeMinimumAmount"]), out n1) ? (decimal?) n1 : null : null, // decimal? minAmount
-                            additionalAmount, //decimal? additionalAmount
-                            RegulationJson["ipFeeAdditionalAmountOn"] == null ? null : string.IsNullOrEmpty( getLowerValue(RegulationJson["ipFeeAdditionalAmountOn"])) ? null : 
-                                    (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["ipFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
-                            UserRoleId );//int UserRoleId
-                        }
-                            
-
-                        if(RegulationJson.ContainsKey("ipAmendmentFees")){
+                        if(RegulationJson.ContainsKey("ipAmendmentFees") && RegulationJson["ipAmendmentFees"]!=null){
                             
                             decimal? additionalAmountForExtension = AdditionalAmountAccumulator(PropertyNameList, RegulationJson, FEEClassificationCodeForAdditionalAmount.IMPORT_PERMIT_AMENDMENT);
 
@@ -118,46 +117,48 @@ namespace PSW.ITT.service
                 
                 if(RegulationJson.ContainsKey("roRequired")){
                     if(getLowerValue(RegulationJson["roRequired"]) == "yes"){
-                        
-                        decimal? additionalAmount = AdditionalAmountAccumulator(PropertyNameList, RegulationJson, FEEClassificationCodeForAdditionalAmount.RELEASE_ORDER);
+                       if(RegulationJson["roFees"] != null)
+                        { 
+                            decimal? additionalAmount = AdditionalAmountAccumulator(PropertyNameList, RegulationJson, FEEClassificationCodeForAdditionalAmount.RELEASE_ORDER);
 
-                        if(feePropertyDetail.NameLong.Contains("[Quantity;Unit;Price|]")){
-                            
-                            List<FeeDecoderResponseDTO> listFeeDecoderResponseDTO = new List<FeeDecoderResponseDTO>();
+                            if(feePropertyDetail.NameLong.Contains("[Quantity;Unit;Price|]")){
+                                
+                                List<FeeDecoderResponseDTO> listFeeDecoderResponseDTO = new List<FeeDecoderResponseDTO>();
 
-                            listFeeDecoderResponseDTO = FeeDecoder(RegulationJson["roFees"], calculationBasis, unitList, RegulationJson["roFeeCalculationBasis"]);
-                            
-                            foreach( var i in listFeeDecoderResponseDTO){
-                            
-                                mapObject(LpcoRegulationId, AgencyID, // long LpcoRegulationId, short agencyID, int? unitID,
-                                i.Unit, i.CalculationBasisValue,// int? unitID, int? calculationBasis,
-                                calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["roFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(),//int? calculationSource
+                                listFeeDecoderResponseDTO = FeeDecoder(RegulationJson["roFees"], calculationBasis, unitList, RegulationJson["roFeeCalculationBasis"]);
+                                
+                                foreach( var i in listFeeDecoderResponseDTO){
+                                
+                                    mapObject(LpcoRegulationId, AgencyID, // long LpcoRegulationId, short agencyID, int? unitID,
+                                    i.Unit, i.CalculationBasisValue,// int? unitID, int? calculationBasis,
+                                    calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["roFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(),//int? calculationSource
+                                    MasterDocumentClassificationCode.RELEASE_ORDER,//string masterDocumentClassificationCode
+                                    DocumentClassificationCode.RELEASE_ORDER,//string documentClassificationCode,
+                                    i.QtyRangeTo, i.QtyRangeFrom, "PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
+                                    i.Rate, //decimal? rate
+                                    RegulationJson["roFeeMinimumAmount"] != null ? Decimal.TryParse(getValue(RegulationJson["roFeeMinimumAmount"]), out n1) ? (decimal?) n1 : null : null, // decimal? minAmount
+                                    additionalAmount, //decimal? additionalAmount
+                                    RegulationJson["roFeeAdditionalAmountOn"] == null ? null : string.IsNullOrEmpty( getLowerValue(RegulationJson["roFeeAdditionalAmountOn"])) ? null : 
+                                            (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["roFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
+                                    UserRoleId );//int UserRoleId
+
+                                }
+                            }
+                            else{
+                                mapObject(LpcoRegulationId, AgencyID, null, // long LpcoRegulationId, short agencyID, int? unitID,
+                                calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["roFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault(),// int? calculationBasis,
+                                calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["roFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(),  //int? calculationSource
                                 MasterDocumentClassificationCode.RELEASE_ORDER,//string masterDocumentClassificationCode
                                 DocumentClassificationCode.RELEASE_ORDER,//string documentClassificationCode,
-                                i.QtyRangeTo, i.QtyRangeFrom, "PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
-                                i.Rate, //decimal? rate
-                                RegulationJson["roFeeMinimumAmount"] != null ? Decimal.TryParse(getValue(RegulationJson["roFeeMinimumAmount"]), out n1) ? (decimal?) n1 : null : null, // decimal? minAmount
-                                additionalAmount, //decimal? additionalAmount
-                                 RegulationJson["roFeeAdditionalAmountOn"] == null ? null : string.IsNullOrEmpty( getLowerValue(RegulationJson["roFeeAdditionalAmountOn"])) ? null : 
-                                        (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["roFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(), //int? additionalAmountOn
+                                null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
+                                RegulationJson["roFees"] == null ? null : Decimal.TryParse(getValue(RegulationJson["roFees"]), out n1) ? (decimal?)n1:null,//decimal? rate
+                                RegulationJson["roFeeMinimumAmount"] != null ? Decimal.TryParse(getValue(RegulationJson["roFeeMinimumAmount"]), out n1) ? (decimal?) n1 : null : null,  // decimal? minAmount
+                                additionalAmount,//decimal? additionalAmount
+                                RegulationJson["roFeeAdditionalAmountOn"] == null ? null : string.IsNullOrEmpty( getLowerValue(RegulationJson["roFeeAdditionalAmountOn"])) ? null :
+                                        (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["roFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(),//int? additionalAmountOn
                                 UserRoleId );//int UserRoleId
-
+                            
                             }
-                        }
-                        else{
-                            mapObject(LpcoRegulationId, AgencyID, null, // long LpcoRegulationId, short agencyID, int? unitID,
-                            calculationBasis.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["roFeeCalculationBasis"])).Select(x=>x.ID).FirstOrDefault(),// int? calculationBasis,
-                            calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["roFeeCalculationSource"])).Select(x=>x.ID).FirstOrDefault(),  //int? calculationSource
-                            MasterDocumentClassificationCode.RELEASE_ORDER,//string masterDocumentClassificationCode
-                            DocumentClassificationCode.RELEASE_ORDER,//string documentClassificationCode,
-                            null,null,"PKR", // int? qtyRangeTo, int? qtyRangeFrom, string currencyCode, 
-                            RegulationJson["roFees"] == null ? null : Decimal.TryParse(getValue(RegulationJson["roFees"]), out n1) ? (decimal?)n1:null,//decimal? rate
-                            RegulationJson["roFeeMinimumAmount"] != null ? Decimal.TryParse(getValue(RegulationJson["roFeeMinimumAmount"]), out n1) ? (decimal?) n1 : null : null,  // decimal? minAmount
-                            additionalAmount,//decimal? additionalAmount
-                            RegulationJson["roFeeAdditionalAmountOn"] == null ? null : string.IsNullOrEmpty( getLowerValue(RegulationJson["roFeeAdditionalAmountOn"])) ? null :
-                                     (int?)calculationSource.Where(x=>x.Description.ToLower() == getLowerValue(RegulationJson["roFeeAdditionalAmountOn"])).Select(x=>x.ID).FirstOrDefault(),//int? additionalAmountOn
-                            UserRoleId );//int UserRoleId
-                           
                         }
                     }
                 
@@ -384,7 +385,7 @@ namespace PSW.ITT.service
 
                             List<FeeDecoderResponseDTO> listFeeDecoderResponseDTO = new List<FeeDecoderResponseDTO>();
 
-                            listFeeDecoderResponseDTO = FeeDecoder(RegulationJson["ecFees"], calculationBasis, unitList, RegulationJson["epFeeCalculationBasis"]);
+                            listFeeDecoderResponseDTO = FeeDecoder(RegulationJson["epFees"], calculationBasis, unitList, RegulationJson["epFeeCalculationBasis"]);
                             
                             foreach( var i in listFeeDecoderResponseDTO){
 
