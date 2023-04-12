@@ -136,7 +136,7 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                         var DocumentList = command.UnitOfWork.ProductCodeEntityRepository.GetDocumentLOV(agencyID, "DocumentType", "Name", tradeTranTypeID);
                         // var DocumentList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetDocumentLOV(item.TableName, item.ColumnName, item.Validation, agencyID);
                         var value = new List<string>();
-                         if(String.IsNullOrEmpty(columnValue)){
+                         if(String.IsNullOrEmpty(columnValue.Trim())){
                             break;
                         }
                         else{
@@ -246,7 +246,7 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                     case 19:
                     case 18:
                     {  
-                        if(String.IsNullOrEmpty(columnValue)){
+                        if(String.IsNullOrEmpty(columnValue.Trim())){
                             break;
                         }
                         else{
