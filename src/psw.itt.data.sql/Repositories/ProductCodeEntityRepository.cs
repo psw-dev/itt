@@ -95,7 +95,7 @@ namespace PSW.ITT.Data.Sql.Repositories
             var query = new Query("ProductCode")
               .Join("ProductCodeAgencyLink", "ProductCodeAgencyLink.ProductCodeID", "ProductCode.ID")
               .WhereRaw("ProductCode.HSCodeExt = '" + ProductCode + "'")
-              .WhereRaw("ProductCodeAgencyLink.AgencyID = " + AgencyID)
+              .WhereRaw("ProductCodeAgencyLink.AgencyID = " + AgencyID + "AND ProductCodeAgencyLink.SoftDelete = 0 AND ProductCodeAgencyLink.IsActive = 1")
               .WhereRaw("(TradeTranTypeID != 4 or TradeTranTypeID = " + tradeType + ")")
               .WhereRaw("((ProductCodeAgencyLink.EffectiveFromDt <= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate())")
               .OrWhereRaw("(ProductCodeAgencyLink.EffectiveFromDt >= GetDate() AND ProductCodeAgencyLink.EffectiveThruDt >= GetDate()))")
