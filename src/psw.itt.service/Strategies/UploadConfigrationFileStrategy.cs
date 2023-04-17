@@ -686,7 +686,7 @@ namespace PSW.ITT.Service.Strategies
             placeholders.Add("@ProcessedRecordsCount", fileUploadHistory.ProcessedRecordsCount.ToString());
             return placeholders;
         }
-        public static void AddProperty(ExpandoObject expando, SheetAttributeMapping property, string propertyValue)
+        public static void AddProperty(ExpandoObject expando, SheetAttributeMapping property, string propertyValue, CommandRequest Command)
         {
             // ExpandoObject supports IDictionary so we can extend it like this
                 var arrayReturnObject = new List<string>();
@@ -701,6 +701,11 @@ namespace PSW.ITT.Service.Strategies
                      arrayReturnObject.Add(textInfo.ToTitleCase(i).Trim());
                 }
             }
+
+            if(property.TableName.ToLower()=="country"){
+                arrayReturnObject = Command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetList(property.TableName, property.ColumnName);
+            }
+
             var expandoDict = expando as IDictionary<string, object>;
             if (expandoDict.ContainsKey(property.NameShort))
             //    expandoDict[propertyName] =propertyValue;
@@ -709,6 +714,7 @@ namespace PSW.ITT.Service.Strategies
                 // expandoDict.Add(propertyName,propertyValue);
                 expandoDict.Add(property.NameShort,arrayReturnObject.Count>0?arrayReturnObject: (object)textInfo.ToTitleCase(propertyValue));
         }
+
         private void InsertProductCodeRecord(UnitOfWork uow, DataRow Row, short status, UploadConfigrationFileRequestDTO request, long fileUploadHistoryID, List<SheetAttributeMapping> propertyNameList, int userRoleId)
         {
             string productCode = Row["Product Code"].ToString();
@@ -725,7 +731,7 @@ namespace PSW.ITT.Service.Strategies
 
             foreach (var column in propertyNameList)
             {
-                AddProperty(obj, column, Row[column.Index - 1].ToString() ?? "");
+                AddProperty(obj, column, Row[column.Index - 1].ToString() ?? "",Command);
 
             }
             if (RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE)
