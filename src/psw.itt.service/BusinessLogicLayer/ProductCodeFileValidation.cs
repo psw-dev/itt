@@ -78,7 +78,7 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                     {  
                         var countryList = command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetList(item.TableName, item.ColumnName);
                         var value = new List<string>();
-                         if (!String.IsNullOrEmpty(columnValue)){
+                         if (!String.IsNullOrEmpty(columnValue.Trim())){
                             if(columnValue.ToLower()=="all"){
                                 break;
                             }
