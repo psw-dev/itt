@@ -693,7 +693,7 @@ namespace PSW.ITT.Service.Strategies
                 TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
             if(property.FieldControlTypeID==(int)FieldControlTypeEnum.MULTI_SELECT_DROPDOWN){
                 foreach(var i in  propertyValue.Split(',') ){
-                     arrayReturnObject.Add(textInfo.ToTitleCase(i));
+                     arrayReturnObject.Add(textInfo.ToTitleCase(i).Trim());
                 }
             }
             if(property.FieldControlTypeID==(int)FieldControlTypeEnum.FEE_MECHENISM){
