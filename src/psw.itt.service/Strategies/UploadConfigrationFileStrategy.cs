@@ -691,9 +691,15 @@ namespace PSW.ITT.Service.Strategies
             // ExpandoObject supports IDictionary so we can extend it like this
                 var arrayReturnObject = new List<string>();
                 TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-            if(property.FieldControlTypeID==(int)FieldControlTypeEnum.MULTI_SELECT_DROPDOWN){
-                foreach(var i in  propertyValue.Split(',') ){
-                     arrayReturnObject.Add(textInfo.ToTitleCase(i).Trim());
+            if(property.TableName.ToLower()=="country" && propertyValue.Split(',').Count()==1 && propertyValue.Trim().ToLower()=="all"){
+                arrayReturnObject = Command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetList(property.TableName, property.ColumnName);
+            }
+            else
+            {
+                if(property.FieldControlTypeID==(int)FieldControlTypeEnum.MULTI_SELECT_DROPDOWN){
+                    foreach(var i in  propertyValue.Split(',') ){
+                        arrayReturnObject.Add(textInfo.ToTitleCase(i).Trim());
+                    }
                 }
             }
             if(property.FieldControlTypeID==(int)FieldControlTypeEnum.FEE_MECHENISM){
@@ -702,9 +708,7 @@ namespace PSW.ITT.Service.Strategies
                 }
             }
 
-            if(property.TableName.ToLower()=="country"){
-                arrayReturnObject = Command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetList(property.TableName, property.ColumnName);
-            }
+            
 
             var expandoDict = expando as IDictionary<string, object>;
             if (expandoDict.ContainsKey(property.NameShort))
