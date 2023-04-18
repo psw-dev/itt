@@ -62,7 +62,7 @@ namespace PSW.ITT.Data.Sql.Repositories
         }
         public List<LOVItem> GetDocumentLOV(int agencyID, string lovTableName, string lovColumnName, int TradeTranTypeID)
         {
-            return _connection.Query<LOVItem>(string.Format("SELECT  Code as ItemKey, 'TRIM({0})' as ItemValue FROM [ITT].[dbo].[ITTAgencyDocuments] AD INNER JOIN [SHRD].[dbo].[DocumentType] DT ON AD.DocumentTypeCode = DT.Code WHERE IsActive = 1 AND (AD.AgencyID = {2} or AD.AgencyID is null) AND (TradeTranTypeID = {3} or TradeTranTypeID is null)", lovColumnName, lovTableName, agencyID, TradeTranTypeID)).ToList();
+            return _connection.Query<LOVItem>(string.Format("SELECT  Code as ItemKey, TRIM({0}) as ItemValue FROM [ITT].[dbo].[ITTAgencyDocuments] AD INNER JOIN [SHRD].[dbo].[DocumentType] DT ON AD.DocumentTypeCode = DT.Code WHERE IsActive = 1 AND (AD.AgencyID = {2} or AD.AgencyID is null) AND (TradeTranTypeID = {3} or TradeTranTypeID is null)", lovColumnName, lovTableName, agencyID, TradeTranTypeID)).ToList();
         }
         public List<ProductCodeEntity> GetOverlappingProductCode(string hscode, string ProductCode, DateTime effectiveFromDt, DateTime effectiveThruDt, short tradeType)
         {
