@@ -155,12 +155,26 @@ namespace PSW.ITT.Service.Strategies
                     {
                         error = "Invalid Hscode";
                         Match matchHsCode = Regex.Match(d[hsCode.Index].ToString(), @"([0-9]{4})\.([0-9]{4})", RegexOptions.IgnoreCase);
-                        if  (!matchHsCode.Success)
+                        
+                        if  (!matchHsCode.Success )
                         // error
                        { error = "Hscode is not in correct Format";}
-                        // dispuedTable.Rows.Add(row);
+                       row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
+                    }
+                    else if  (d[hsCode.Index].ToString().Length == 9) //example
+                    {
+                        Match matchHsCode = Regex.Match(d[hsCode.Index].ToString(), @"([0-9]{4})\.([0-9]{4})", RegexOptions.IgnoreCase);
+                        var hsCodeExist = Command.SHRDUnitOfWork.Ref_HS_CodesRepository.GetHsCodeList(d[hsCode.Index].ToString());
                         
-                        row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
+                        if  (!matchHsCode.Success )
+                        // error
+                       { error = "Hscode is not in correct Format";}
+                       else if(hsCodeExist == null){
+                        error = "Hscode does not exist in the system.";
+                       }
+                        // dispuedTable.Rows.Add(row);
+                        if(error!="")
+                        {row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);}
                     }
 
                     //Product Code Validation

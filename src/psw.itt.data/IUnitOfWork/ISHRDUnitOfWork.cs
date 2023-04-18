@@ -26,6 +26,7 @@ namespace PSW.ITT.Data
         IUoMRepository UoMRepository { get; }
         IZoneRepository ZoneRepository { get; }
         IRef_UnitsRepository Ref_UnitsRepository { get; }
+        IRef_HS_CodesRepository Ref_HS_CodesRepository { get; }
 
 		// IAttributeValidationMappingRepository AttributeValidationMappingRepository { get; }
         // IProductCodeAgencyLinkRepository ProductCodeAgencyLinkRepository { get; }
