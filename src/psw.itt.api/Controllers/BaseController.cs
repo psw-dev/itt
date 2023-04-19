@@ -15,6 +15,7 @@ using PSW.Lib.Logs;
 using System.Threading.Tasks;
 using PSW.ITT.Data;
 using System.Collections.Generic;
+using psw.common;
 
 namespace PSW.ITT.Api.Controllers
 {
@@ -98,6 +99,7 @@ namespace PSW.ITT.Api.Controllers
 
                 // Preparing Response 
                 apiResponse = ApiResponseByCommand(commandReply, apiResponse);
+                apiResponse.envId = Utility.GetHostIPAddress().Split('.')[3];
             }
             catch (Exception ex)
             {
@@ -177,6 +179,7 @@ namespace PSW.ITT.Api.Controllers
 
                 // Preparing Response 
                 apiResponse = ApiResponseByCommand(commandReply, apiResponse);
+                apiResponse.envId = Utility.GetHostIPAddress().Split('.')[3];
             }
             catch (Exception ex)
             {
@@ -311,6 +314,7 @@ namespace PSW.ITT.Api.Controllers
                 }
                 );
                 apiResponse = ApiResponseByCommand(commandReply, apiResponse);
+                apiResponse.envId = Utility.GetHostIPAddress().Split('.')[3];
 
                 Log.Information($"|FileRegistration| Path {path}.");
                 if (commandReply.code == "400" || commandReply.code == "500")

@@ -12,6 +12,7 @@ namespace PSW.ITT.Api.APICommand
         public ServerPaginationModel pagination { get; set; }
         public ResponseMessage message { get; set; }
         public ErrorModel error { get; set; }
+        public string envId { get; set; }
 
         public APIResponse()
         {
