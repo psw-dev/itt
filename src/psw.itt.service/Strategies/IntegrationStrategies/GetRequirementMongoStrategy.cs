@@ -266,7 +266,7 @@ namespace PSW.ITT.Service.Strategies
                         tarpRequirments.AllowedQuantity = getValue(mongoRecord["ipQuantityAllowed"]);
                     }
                 }
-                if (ipDocOptional != null && !ipDocOptional.Contains("NaN"))
+                if (ipDocOptional != null && !ipDocOptional.Contains(""))
                 {
                     foreach (var lpco in ipDocOptional)
                     {
@@ -289,7 +289,7 @@ namespace PSW.ITT.Service.Strategies
                     }
                 }
 
-                if (ipDocRequirements != null && !ipDocRequirements.Contains("NaN"))
+                if (ipDocRequirements != null && !ipDocRequirements.Contains(""))
                 {
                     foreach (var lpco in ipDocRequirements)
                     {
@@ -431,7 +431,7 @@ namespace PSW.ITT.Service.Strategies
                     FinancialRequirement.PlainAmount = getValue(mongoRecord["roFees"]);
                     FinancialRequirement.Amount = Command.CryptoAlgorithm.Encrypt(getValue(mongoRecord["roFees"]));
                 }
-                if (roDocOptional != null && !roDocOptional.Contains("NaN"))
+                if (roDocOptional != null && !roDocOptional.Contains(""))
                 {
                     foreach (var lpco in roDocOptional)
                     {
@@ -454,7 +454,7 @@ namespace PSW.ITT.Service.Strategies
                     }
                 }
 
-                if (roDocRequirements != null && !roDocRequirements.Contains("NaN"))
+                if (roDocRequirements != null && !roDocRequirements.Contains(""))
                 {
                     foreach (var lpco in roDocRequirements)
                     {
@@ -559,7 +559,7 @@ namespace PSW.ITT.Service.Strategies
                     premisesRegistrationRequired = getLowerValue(mongoRecord["prmRequired"]) == "yes";
                 }
 
-                if (ecDocOptional != null && !ecDocOptional.Contains("NaN"))
+                if (ecDocOptional != null && !ecDocOptional.Contains(""))
                 {
                     foreach (var lpco in ecDocOptional)
                     {
@@ -584,7 +584,7 @@ namespace PSW.ITT.Service.Strategies
                     }
                 }
 
-                if (ecDocRequirements != null && !ecDocRequirements.Contains("NaN"))
+                if (ecDocRequirements != null && !ecDocRequirements.Contains(""))
                 {
                     foreach (var lpco in ecDocRequirements)
                     {
