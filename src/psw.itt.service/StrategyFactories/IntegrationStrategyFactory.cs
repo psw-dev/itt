@@ -44,6 +44,7 @@ namespace PSW.ITT.Service.Strategies
                 case "220D": return new GetAgencyListStrategy(request);
                 case "220F": return new GetRegulatedHSCodeListStrategy(request);
                 case "220G": return new ValidateRegulatedHSCodesStrategy(request);
+                case "220H": return new GetRegulatedHsCodePurposeStrategy(request);
                 default: break;
             }
 
