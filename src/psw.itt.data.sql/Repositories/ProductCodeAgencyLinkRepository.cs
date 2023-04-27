@@ -159,6 +159,18 @@ namespace PSW.ITT.Data.Sql.Repositories
                                 AND a.IsActive=1 "),
                 param: new {@HSCODES = HSCodes,@AGENCYID = agencyId, @TRADETRANTYPEID = tradeTranTypeId},transaction: _transaction).AsList();
         }
+         public List<ProductCodeAgencyLink> GetAgencyAssociatedHsCodeList(int agencyId, int tradeTranTypeId)
+        {
+             var query = @"SELECT a.*
+                        FROM ProductCodeAgencyLink a JOIN ProductCode b on a.ProductCodeID = b.ID 
+                        WHERE a.AGENCYID = @AGENCYID  AND b.TradeTranTypeID = @TRADETRANTYPEID
+                        AND GETDATE() BETWEEN b.EFFECTIVEFROMDT AND b.EFFECTIVETHRUDT 
+                        AND GETDATE() BETWEEN a.EFFECTIVEFROMDT AND a.EFFECTIVETHRUDT 
+                        AND a.IsActive=1 AND a.SoftDelete = 0 ";
+            return _connection.Query<ProductCodeAgencyLink>(query, param: new { @AGENCYID = agencyId, @TRADETRANTYPEID =tradeTranTypeId},
+              transaction: _transaction
+             ).ToList();
+        }
         #endregion
     }
 }
