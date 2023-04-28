@@ -850,7 +850,7 @@ namespace PSW.ITT.Service.Strategies
 
                 case DocumentClassificationCode.EXPORT_PERMIT:
                     IsParenCodeValid = true;
-                    return getLowerValue(mongoRecord["expRequired"]) == "yes"
+                    return getLowerValue(mongoRecord["expRequired"]) == "yes";
                 default:
                     IsParenCodeValid = false;
                     return false;
