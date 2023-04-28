@@ -112,7 +112,7 @@ namespace PSW.ITT.Service.Strategies
                 
             JObject regulationJson = JObject.Parse(regulation.RegulationJson);
                 var documentClassificationCode = "";
-                if(RequestDTO.documentTypeCode==null)
+                if(RequestDTO.documentTypeCode==null  || RequestDTO.documentTypeCode == string.Empty)
                 {
                     if(RequestDTO.TradeTranTypeID==(int)PSW.ITT.Common.Constants.TradeTranType.IMPORT){
                         documentClassificationCode = DocumentClassificationCode.RELEASE_ORDER;
@@ -134,10 +134,19 @@ namespace PSW.ITT.Service.Strategies
 
                 bool DocumentIsRequired = false;
                 bool IsParenCodeValid = false;
+                bool DocReqNeedsToBeAttachedColExists = false;
+                bool DocReqNeedsToBeAttached = false;
+                bool isLPCOReqState = true;
 
                 //Reterive information if LPCO require documentary requirement 
                 // working of TARP mongoDBRecordFetcher.CheckIfLPCORequired
                 DocumentIsRequired = CheckIfLPCORequired(regulationJson, documentClassificationCode, out IsParenCodeValid);
+
+                DocReqNeedsToBeAttachedColExists = regulationJson.ContainsKey("isAttachedDocumentryRequirement");
+                if(DocReqNeedsToBeAttachedColExists)
+                {
+                    DocReqNeedsToBeAttached = getLowerValue(regulationJson["isAttachedDocumentryRequirement"]) == "yes";
+                }
 
                 if (!IsParenCodeValid)
                 {
@@ -149,9 +158,24 @@ namespace PSW.ITT.Service.Strategies
                 {
                     Log.Information("|{0}|{1}| LPCO required {2}", StrategyName, MethodID, "false");
 
-                    ResponseDTO.isLPCORequired = false;
+                    isLPCOReqState = false;
 
-                    return OKReply(string.Format("{0} not required for HsCode : {1} and Factor : {2}", documentClassificationCode, RequestDTO.HsCode, RequestDTO.FactorCodeValuePair.Values.FirstOrDefault().FactorValue));
+                    if((!DocReqNeedsToBeAttachedColExists || !DocReqNeedsToBeAttached))
+                    {
+                        ResponseDTO.isLPCORequired = isLPCOReqState;
+
+                        if(RequestDTO.FactorCodeValuePair.ContainsKey("PURPOSE"))
+                        {
+                            return OKReply(string.Format("Requested document not required for HsCode : {0} and Purpose : {1}", RequestDTO.HsCode, RequestDTO.FactorCodeValuePair["PURPOSE"]?.FactorValue));
+                        }
+                        else
+                        {
+                            return OKReply(string.Format("Requested document not required for HsCode : {0}", RequestDTO.HsCode));
+                        }
+                    }
+                    // ResponseDTO.isLPCORequired = false;
+
+                    // return OKReply(string.Format("{0} not required for HsCode : {1} and Factor : {2}", documentClassificationCode, RequestDTO.HsCode, RequestDTO.FactorCodeValuePair.Values.FirstOrDefault().FactorValue));
                 }
 
                 Log.Information("|{0}|{1}| LPCO required {2}", StrategyName, MethodID, "true");
@@ -174,6 +198,9 @@ namespace PSW.ITT.Service.Strategies
                 ResponseDTO.FormNumber = GetFormNumber(regulationJson, documentClassificationCode);
                
                 Log.Information("|{0}|{1}| Documentary Requirements {@tempDocumentaryRequirementList}", StrategyName, MethodID, tempDocumentaryRequirementList);
+            
+                ResponseDTO.isLPCORequired = isLPCOReqState;
+                ResponseDTO.IsDocumentAttachmentRequired = isLPCOReqState || DocReqNeedsToBeAttached;
 
                 Log.Information("|{0}|{1}| Response DTO : {@ResponseDTO}", StrategyName, MethodID, ResponseDTO);
 
@@ -207,6 +234,10 @@ namespace PSW.ITT.Service.Strategies
 
                 case DocumentClassificationCode.PREMISE_REGISTRATION:
                     return getValue(mongoRecord["prmCertificateFormNumber"]);
+
+                case DocumentClassificationCode.EXPORT_PERMIT:
+                    // return getValue(mongoRecord["epCertificateFormNumber"]);
+                    return string.Empty;
                 
             }
             return "";
@@ -548,11 +579,20 @@ namespace PSW.ITT.Service.Strategies
                 var ecDocOptionalTrimmed = new List<string>();
                 var premisesRegistrationRequired = false;
                 var healthCertificateFeeRequired = false;
-                var countries = new List<string>();
+                var countries = new List<string>(); 
+                
+                var epReq = false;
+                var docClassificCode = string.Empty;
+                
+                
 
                 ecDocRequirements = getListValue(mongoRecord["ecMandatoryDocumentryRequirements"]);
                 ecDocOptional = getListValue(mongoRecord["ecOptionalDocumentryRequirements"]);
                 
+                if(mongoRecord.ContainsKey("expRequired")){
+                    epReq = getLowerValue(mongoRecord["prmRequired"]) == "yes";
+                    docClassificCode = "EXP";
+                }
                 
                 if (Convert.ToInt32(RequestDTO.AgencyId) == (int)AgencyEnum.MFD)
                 {
@@ -637,6 +677,25 @@ namespace PSW.ITT.Service.Strategies
                     }
 
                 }
+                if (epReq == true)
+                {
+                    var tempReq = new DocumentaryRequirement();
+                    var epDocRequired = Command.SHRDUnitOfWork.DocumentTypeRepository.Where(new { AgencyID = RequestDTO.AgencyId, documentClassificationCode = docClassificCode, AttachedObjectFormatID = 2, AltCode = "C" }).FirstOrDefault();
+
+                    tempReq.Name = epDocRequired.Name;
+
+                    if(Convert.ToInt32(RequestDTO.AgencyId) != (int)AgencyEnum.MNC)
+                    {
+                        tempReq.Name = tempReq.Name + " For " + "Release Order";
+                    }
+
+                    tempReq.DocumentName = epDocRequired.Name;
+                    tempReq.IsMandatory = true;
+                    tempReq.RequirementType = "Documentary";
+                    tempReq.DocumentTypeCode = epDocRequired.Code;
+                    tempReq.AttachedObjectFormatID = epDocRequired.AttachedObjectFormatID;
+                    tarpDocumentRequirements.Add(tempReq);
+                }
                 if (RequestDTO.IsFinancialRequirement)
                 {
                     //Financial Requirements
@@ -646,6 +705,11 @@ namespace PSW.ITT.Service.Strategies
                         FinancialRequirement.Amount = Command.CryptoAlgorithm.Encrypt(getValue(mongoRecord["ecFees"]));
                         FinancialRequirement.PlainAmmendmentFee = getValue(mongoRecord["ecAmendmentFees"]);
                         FinancialRequirement.AmmendmentFee = Command.CryptoAlgorithm.Encrypt(getValue(mongoRecord["ecAmendmentFees"]));
+                    }
+                    else if (Convert.ToInt32(RequestDTO.AgencyId) == (int)AgencyEnum.MNC)
+                    {
+                        FinancialRequirement.PlainAmount = getValue(mongoRecord["ecFees"]);
+                        FinancialRequirement.Amount = Command.CryptoAlgorithm.Encrypt(getValue(mongoRecord["ecFees"]));
                     }
                     else if (Convert.ToInt32(RequestDTO.AgencyId) == (int)AgencyEnum.AQD)
                     {
@@ -784,6 +848,9 @@ namespace PSW.ITT.Service.Strategies
                 IsParenCodeValid = true;
                 return  getLowerValue(mongoRecord["prmRequired"]) == "yes";
 
+                case DocumentClassificationCode.EXPORT_PERMIT:
+                    IsParenCodeValid = true;
+                    return getLowerValue(mongoRecord["expRequired"]) == "yes"
                 default:
                     IsParenCodeValid = false;
                     return false;
