@@ -32,14 +32,19 @@ namespace PSW.ITT.Service.Strategies
                 Log.Information("|{0}|{1}| Request DTO {@RequestDTO}", StrategyName, MethodID, RequestDTO);
                 // var json = JsonConvert.DeserializeObject<JObject>(RequestDTO.Data);
                 var json = JObject.Parse(RequestDTO.Data.ToString());
-
-                var productcode = json.hsCode + "." + json.productCode;
+                string hsCode = json.hsCode ;
+                string productcode = json.hsCode + "." + json.productCode;
                 var duplicateCheckList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, 1).Where(x => x.CheckDuplicate == true).ToList();
                 duplicateCheckList.RemoveAll(x => x.NameLong.Contains("HSCode"));
                 duplicateCheckList.RemoveAll(x => x.NameLong.Contains("Product Code"));
                 var factor = RequestDTO.Data.GetProperty(duplicateCheckList[0].NameShort).ToString();
                 var factorObject = Command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetLOV(duplicateCheckList.FirstOrDefault().TableName,duplicateCheckList.FirstOrDefault().ColumnName).Find(x=>x.Item2.ToLower()==RequestDTO.Data.GetProperty(duplicateCheckList[0].NameShort).ToString().ToLower());
-            
+
+                var recordAlreadyExistInTheSystem = Command.UnitOfWork.LPCORegulationRepository.CheckIfRecordAlreadyExistInTheSystem(hsCode, productcode, RequestDTO.TradeTranTypeID,(int)RequestDTO.AgencyID, factorObject.Item2.ToString()); //, Convert.ToDateTime(effectiveFromDt), Convert.ToDateTime(effectiveThruDt)
+                if (recordAlreadyExistInTheSystem != null)
+                {
+                    return  BadRequestReply( "Record already exist in the system.");
+                }
                 json.productCode = productcode;
                 Command.UnitOfWork.BeginTransaction();
                 var regulation = new LPCORegulation();
