@@ -146,6 +146,8 @@ namespace PSW.ITT.Service.Strategies
                     // var infiniteDate = propertyNameList.Where(x => x.NameLong == "Infinite Date(1->Yes/0->No)").FirstOrDefault();
                     var tradeTranType = propertyNameList.Where(x => x.NameLong == "Direction(1->Import/2->Export/3->Both)").FirstOrDefault();
                     string error = "";
+                    string format = "dd/MM/yyyy";
+
                     //HSCode Validation
 
                     DataRow row = dispuedTable.NewRow();
@@ -199,29 +201,38 @@ namespace PSW.ITT.Service.Strategies
                         error = error == "" ? string.Concat(error, "There should be no active same HsCode + Product Code combination having overlapping effective date and end date.") : string.Concat(error, ", There should be no active same HsCode + Product Code combination having overlapping effective date and end date.");
 
                     }
+                    // var dateFrom = DateTime.ParseExact(d[effectiveDateFrom.Index].ToString(),  format, CultureInfo.InvariantCulture);
+                    // var dateThru = DateTime.ParseExact(d[effectiveDateThru.Index].ToString(),  format, CultureInfo.InvariantCulture);
+                    var isDateFrom = DateTime.TryParseExact(d[effectiveDateFrom.Index].ToString(), format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateFrom);
+                    var isDateThru = DateTime.TryParseExact(d[effectiveDateThru.Index].ToString(), format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateThru);
+                    var dateThruIsNotNullOrEmpty = !(String.IsNullOrEmpty(d[effectiveDateThru.Index].ToString())) ||
+                            !(String.IsNullOrWhiteSpace(d[effectiveDateThru.Index].ToString())) ;
+                          
                     // Product code effective from date can not be set as a previous date. More preciously, the effective date should always be current or future date.
-                    if (Convert.ToDateTime(d[effectiveDateFrom.Index].ToString()) < DateTime.Now)
-                    {
+                    if(isDateFrom){
+                        if (dateFrom < DateTime.Now)
+                        {
+                            row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
+                            error = error == "" ? string.Concat(error, "Product code effective from date can not be set as a previous date.") : string.Concat(error, ", Product code effective from date can not be set as a previous date.");
+                        }
+                    } 
+                    else{
                         row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
-                        error = error == "" ? string.Concat(error, "Product code effective from date can not be set as a previous date.") : string.Concat(error, ", Product code effective from date can not be set as a previous date.");
-
-                    }
+                        error = error == "" ? string.Concat(error, "Invalid Effective Date") : string.Concat(error, ", Invalid Effective Date");
+                        }
                     // var date=(DateTime.TryParseExact(d[effectiveDateThru.Index].ToString(),"dd/mm/yyyy", _culture, DateTimeStyles.None, out DateTime resugfgdgltDate));
-                    if (!(
-                        (String.IsNullOrEmpty(d[effectiveDateThru.Index].ToString())) ||
-                            (String.IsNullOrWhiteSpace(d[effectiveDateThru.Index].ToString())) ||
-                            (DateTime.TryParseExact(d[effectiveDateThru.Index].ToString(), "dd/mm/yyyy", _culture, DateTimeStyles.None, out DateTime resultDate))))
+                    if (isDateThru)
                     {
-
-                        row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
-                        error = error == "" ? string.Concat(error, "Invalid End Date") : string.Concat(error, ", Invalid End Date");
-
+                        if ( dateThru < DateTime.Now)
+                        {
+                            row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
+                            error = error == "" ? string.Concat(error, "Product code end date can not be set as a previous date.") : string.Concat(error, ", Product code end date can not be set as a previous date.");
+                        }
                     }
                     // Product code end date can not be set as a previous date. It should always be today's or future date.
-                    else if ((DateTime.TryParseExact(d[effectiveDateThru.Index].ToString(), "dd/mm/yyyy", _culture, DateTimeStyles.None, out DateTime resultsDate)) && Convert.ToDateTime(d[effectiveDateThru.Index].ToString()) < DateTime.Now)
-                    {
-                        row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
-                        error = error == "" ? string.Concat(error, "Product code end date can not be set as a previous date.") : string.Concat(error, ", Product code end date can not be set as a previous date.");
+                    else if( dateThruIsNotNullOrEmpty){
+                         row = AddToDisputedTable(dispuedTable, d, hsCode.Index, productCode.Index);
+                        error = error == "" ? string.Concat(error, "Invalid End Date") : string.Concat(error, ", Invalid End Date");
 
                     }
                     // valdate Trade Direction
