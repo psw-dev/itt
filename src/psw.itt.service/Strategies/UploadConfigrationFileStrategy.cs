@@ -206,8 +206,8 @@ namespace PSW.ITT.Service.Strategies
                     foreach (DataRow d in dt.Rows)
                     {
                         string error = "";
-                        string productCode = d["Product Code"].ToString();
-                        string hsCode = d["HSCode"].ToString();
+                        string productCode = d["Product Code (12 digit)"].ToString();
+                        string hsCode = d["HSCode (8 digit)"].ToString();
                         // string effectiveFromDt = d["Effective From Date"].ToString();
                         // string effectiveThruDt = d["Effective Thru Date"].ToString();
 
