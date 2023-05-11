@@ -17,5 +17,6 @@ namespace PSW.ITT.Data.IRepositories
         List<HscodeDetails> GetRegulatedHsCodeList(int tradeTranTypeId, int agencyId,  string hsCode);
         List<(string,int)>  ValidateRegulatedHSCodes(List<string> HSCodes, int agencyId, int tradeTranTypeId);
         List<ProductCodeAgencyLink> GetAgencyAssociatedHsCodeList(int agencyId, int tradeTranTypeId);
+        ProductCodeEntity isHsCodeAgencyAssociated(string hsCode, string productCode, int agencyId, int tradeTranTypeId);
     }
 }

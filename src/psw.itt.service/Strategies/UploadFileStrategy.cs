@@ -139,12 +139,12 @@ namespace PSW.ITT.Service.Strategies
                 foreach (DataRow d in dt.Rows)
                 {
                     rowIndex += 1;
-                    var hsCode = propertyNameList.Where(x => x.NameLong == "HSCode").FirstOrDefault();
-                    var productCode = propertyNameList.Where(x => x.NameLong == "Product Code").FirstOrDefault();
-                    var effectiveDateFrom = propertyNameList.Where(x => x.NameLong == "Effective Date").FirstOrDefault();
-                    var effectiveDateThru = propertyNameList.Where(x => x.NameLong == "End Date").FirstOrDefault();
+                    var hsCode = propertyNameList.Where(x => x.NameShort == "HSCode").FirstOrDefault();
+                    var productCode = propertyNameList.Where(x => x.NameShort == "ProductCode").FirstOrDefault();
+                    var effectiveDateFrom = propertyNameList.Where(x => x.NameShort == "EffectiveDate").FirstOrDefault();
+                    var effectiveDateThru = propertyNameList.Where(x => x.NameShort == "EndDate").FirstOrDefault();
                     // var infiniteDate = propertyNameList.Where(x => x.NameLong == "Infinite Date(1->Yes/0->No)").FirstOrDefault();
-                    var tradeTranType = propertyNameList.Where(x => x.NameLong == "Direction(1->Import/2->Export/3->Both)").FirstOrDefault();
+                    var tradeTranType = propertyNameList.Where(x => x.NameShort == "Direction").FirstOrDefault();
                     string error = "";
                     string format = "dd/MM/yyyy";
 
