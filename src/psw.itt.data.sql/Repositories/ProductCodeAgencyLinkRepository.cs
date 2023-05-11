@@ -171,6 +171,19 @@ namespace PSW.ITT.Data.Sql.Repositories
               transaction: _transaction
              ).ToList();
         }
+        public ProductCodeEntity isHsCodeAgencyAssociated(string hsCode, string productCode, int agencyId, int tradeTranTypeId)
+        {
+             var query = @"Select p.* FROM
+                         ProductCode p
+                         JOIN [ProductCodeAgencyLink] a ON a.ProductCodeID = p.ID 
+                         WHERE ((a.EffectiveFromDt <= GetDate() AND a.EffectiveThruDt >= GetDate()) 
+                         OR (a.EffectiveFromDt >= GetDate() AND a.EffectiveThruDt >= GetDate()))
+                         AND a.SoftDelete = 0 AND a.IsActive = 1
+                         AND p.HsCode = @HSCODE AND p.HsCodeExt = @PRODUCTCODE AND (p.tradeTranTypeID = 4 or p.TradeTranTypeID = @TRADETRANTYPEID) AND a.AgencyID = @AGENCYID ";
+            return _connection.Query<ProductCodeEntity>(query, param: new { @HSCODE = hsCode, @PRODUCTCODE = productCode, @AGENCYID = agencyId, @TRADETRANTYPEID =tradeTranTypeId},
+              transaction: _transaction
+             ).FirstOrDefault();
+        }
         #endregion
     }
 }

@@ -221,6 +221,11 @@ namespace PSW.ITT.Service.Strategies
                             {
                                 error = "Record already exist in the system.";
                             }
+                            var isHsCodeAgencyAssociated = Command.UnitOfWork.ProductCodeAgencyLinkRepository.isHsCodeAgencyAssociated(hsCode, productCode, RequestDTO.AgencyID, RequestDTO.TradeTranTypeID);
+                            if (isHsCodeAgencyAssociated == null)
+                            {
+                                error = "Record does not exist in the system.";
+                            }
                         }
                         else if (RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE || RequestDTO.FileType == (short)FileTypeEnum.INACTIVATE_REGULATIONS_TEMPLATE)
                         {

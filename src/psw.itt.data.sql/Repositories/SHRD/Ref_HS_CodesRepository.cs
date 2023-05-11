@@ -31,10 +31,10 @@ namespace PSW.ITT.Data.Sql.Repositories
                             FROM SHRD..Ref_HS_Codes c 
                             WHERE GETDATE() BETWEEN c.Effective_Date AND c.End_Date 
                             AND Hs_Code = @HSCODE";
-            var returnBool = _connection.Query<Ref_HS_Codes>(query, param: new { HSCODE = hsCode },
+                            
+             return  _connection.Query<Ref_HS_Codes>(query, param: new { HSCODE = hsCode },
               transaction: _transaction
              ).FirstOrDefault();
-             return returnBool ;
         }  
         #endregion
     }
