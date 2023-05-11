@@ -45,12 +45,17 @@ namespace PSW.ITT.Service.BusinessLogicLayer
                         break;
                     }
                     case 2:
-                    {  
+                    {  var hsCode = command.SHRDUnitOfWork.Ref_HS_CodesRepository.GetHsCodeList(columnValue);
                         Match match = Regex.Match(columnValue, item.Validation, RegexOptions.IgnoreCase);
                         if (!match.Success)
                         {
                             Error = Error=="" ? "HS Code length is invalid" : Error+ ", HS Code length is invalid";
                         }
+                        else if (hsCode == null)
+                        {
+                            Error = Error=="" ? "HS Code does not exist in the system" : Error+ ", HS Code does not exist in the system";
+                        }
+
                         break;
                     }
                     case 3:

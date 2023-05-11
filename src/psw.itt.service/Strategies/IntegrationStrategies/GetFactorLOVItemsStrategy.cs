@@ -38,8 +38,8 @@ namespace PSW.ITT.Service.Strategies
                 
 
                 var getFactor = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping((short)RequestDTO.TradeTranTypeID, (short)RequestDTO.AgencyId, 1).Where(x => x.CheckDuplicate == true).ToList();
-                getFactor.RemoveAll(x => x.NameLong.Contains("HSCode"));
-                getFactor.RemoveAll(x => x.NameLong.Contains("Product Code"));
+                getFactor.RemoveAll(x => x.NameShort.Contains("hsCode"));
+                getFactor.RemoveAll(x => x.NameShort.Contains("productCode"));
                 
                 var tempFactorDatalist = new List<FactorLOVItemsData>();
                     foreach(var i in RequestDTO.FactorList){

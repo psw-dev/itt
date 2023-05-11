@@ -35,8 +35,8 @@ namespace PSW.ITT.Service.Strategies
                 string hsCode = json.hsCode ;
                 string productcode = json.hsCode + "." + json.productCode;
                 var duplicateCheckList = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, 1).Where(x => x.CheckDuplicate == true).ToList();
-                duplicateCheckList.RemoveAll(x => x.NameLong.Contains("HSCode"));
-                duplicateCheckList.RemoveAll(x => x.NameLong.Contains("Product Code"));
+                duplicateCheckList.RemoveAll(x => x.NameShort.Contains("hsCode"));
+                duplicateCheckList.RemoveAll(x => x.NameShort.Contains("productCode"));
                 var factor = RequestDTO.Data.GetProperty(duplicateCheckList[0].NameShort).ToString();
                 var factorObject = Command.SHRDUnitOfWork.ShrdCommonForLovRepository.GetLOV(duplicateCheckList.FirstOrDefault().TableName,duplicateCheckList.FirstOrDefault().ColumnName).Find(x=>x.Item2.ToLower()==RequestDTO.Data.GetProperty(duplicateCheckList[0].NameShort).ToString().ToLower());
 
