@@ -99,7 +99,6 @@ namespace PSW.ITT.Service.Strategies
                 foreach (var cols in outputTableColumnNames)
                 {
                     outputTable.Columns.Add(cols.NameLong.ToString(), typeof(string));
-
                 }
                 outputTable.Columns.Add("Error", typeof(string));
                 dt.AcceptChanges();
@@ -112,7 +111,10 @@ namespace PSW.ITT.Service.Strategies
 
 
                 var propertyNameList = Command.UnitOfWork.SheetAttributeMappingRepository.Where(new { isActive = true ,SheetType = RequestDTO.FileType}).ToList();
-
+                foreach (var cols in propertyNameList)
+                {
+                    formatTable.Columns.Add(cols.NameLong.ToString(), typeof(string));
+                }
             if (RequestDTO.FileType == (short)FileTypeEnum.VALIDATE_PRODUCTCODE_TEMPLETE)
                 {
 
@@ -130,8 +132,8 @@ namespace PSW.ITT.Service.Strategies
                         formatTable.Columns.Add(processingResponse, typeof(string));
                         DataRow row = formatTable.NewRow();
                         row.ItemArray = dt.Rows[0].ItemArray;
-                        row[dt.Columns.Count] = "Error";
-                        row[dt.Columns.Count + 1] = processingResponse;
+                        row[errorColumnPosition] = "Error";
+                        row[errorColumnIndexPosition] = processingResponse;
 
                         formatTable.Rows.Add(row);
                         // return BadRequestReply($"Error in File.");
