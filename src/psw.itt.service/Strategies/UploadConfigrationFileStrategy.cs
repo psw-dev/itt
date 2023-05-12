@@ -726,8 +726,11 @@ namespace PSW.ITT.Service.Strategies
 
         private void InsertProductCodeRecord(UnitOfWork uow, DataRow Row, short status, UploadConfigrationFileRequestDTO request, long fileUploadHistoryID, List<SheetAttributeMapping> propertyNameList, int userRoleId)
         {
-            string productCode = Row["Product Code"].ToString();
-            string hsCode = Row["HSCode"].ToString();
+            
+            string productCode = Row["Product Code (12 digit)"].ToString();
+            string hsCode = Row["HSCode (8 digit)"].ToString();
+            // string productCode = Row["Product Code"].ToString();
+            // string hsCode = Row["HSCode"].ToString();
             var getFactor = Command.UnitOfWork.SheetAttributeMappingRepository.GetAgencyAttributeMapping(RequestDTO.TradeTranTypeID, RequestDTO.AgencyID, RequestDTO.FileType == (short)FileTypeEnum.UPDATE_REGULATIONS_TEMPLATE ? (short)FileTypeEnum.ADD_REGULATIONS_TEMPLATE : RequestDTO.FileType).Where(x => x.CheckDuplicate == true).ToList();
             // getFactor.RemoveAll(x => x.NameLong.Contains("HSCode"));
             // getFactor.RemoveAll(x => x.NameLong.Contains("Product Code"));
